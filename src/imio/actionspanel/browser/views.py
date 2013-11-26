@@ -25,9 +25,10 @@ class ActionsPanelView(BrowserView):
         self.request = request
         portal_state = getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
         self.portal = portal_state.portal()
-        self.SECTIONS_TO_RENDER = ['renderTransitions',
+        self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
-                                   'renderActions', ]
+                                   'renderActions', )
+        self.IGNORABLE_ACTIONS = ()
 
     def render(self,
                useIcons=True,
@@ -208,9 +209,6 @@ class ActionsPanelView(BrowserView):
     def listObjectButtonsActions(self):
         """
         """
-        ignorableActions = ()
-        if self.context.meta_type in ['Meeting', 'MeetingItem', 'MeetingFile', ]:
-            ignorableActions = ('copy', 'cut', 'paste', 'delete')
         actionsTool = getToolByName(self, 'portal_actions')
         allActions = actionsTool.listFilteredActionsFor(self.context)
 
@@ -220,7 +218,7 @@ class ActionsPanelView(BrowserView):
 
         res = []
         for action in objectButtonActions:
-            if not (action['id'] in ignorableActions):
+            if not (action['id'] in self.IGNORABLE_ACTIONS):
                 act = [action['url']]
                 # We try to append the url of the icon of the action
                 # look on the action itself
