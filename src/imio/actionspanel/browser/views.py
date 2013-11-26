@@ -273,6 +273,8 @@ class ActionsPanelView(BrowserView):
                     # make sure we only have the action icon name not a complete
                     # path including portal_url or so...
                     act.append(action['icon'].split('/')[-1])
+                else:
+                    act.append('')
                 act.append(action['title'])
                 act.append(action['id'])
                 res.append(act)
