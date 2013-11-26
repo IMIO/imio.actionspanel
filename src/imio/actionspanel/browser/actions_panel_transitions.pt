@@ -1,0 +1,51 @@
+<tal:comment replace="nothing">Available transitions</tal:comment>
+<tal:defines define="objectUID python: context.UID();
+                     useIcons view/useIcons;
+                     portal context/@@plone_portal_state/portal;
+                     portal_url context/@@plone_portal_state/portal_url;">
+<td tal:repeat="transition view/getTransitions"
+    class="noPadding" align="left">
+  <tal:transition define="transitionId python: transition['id'];
+                          imageName python:  transitionId + '.png';
+                          confirm python: str(transition['confirm']).lower();
+                          dummy view/saveHasActions;"
+                  condition="transition/may_trigger">
+
+    <a href="@@triggertransition"
+       class="#"
+       tal:attributes="href python: context.absolute_url()
+                                    + '/triggertransition?objectUid='
+                                    + objectUID
+                                    + '&transition='
+                                    + transition['name']
+                                    + (confirm=='false' and '&form.submitted=boolean:False' or '');
+                       class python: confirm=='true' and 'link-overlay-actionspanel transition-overlay' or ''">
+      <tal:comment replace="nothing">Icon</tal:comment>
+      <img tal:condition="python: useIcons and hasattr(portal, imageName)"
+           tal:attributes="src string: $portal_url/$imageName;
+                           title python: transition['title'];"/>
+      <tal:comment replace="nothing">Display a input button if useIcons is False.  Moreover, a <form> is necessary
+                                     around an <input /> for IE...</tal:comment>
+      <form action="#"
+            tal:condition="python: not(useIcons and hasattr(portal, imageName))"
+            tal:attributes="action python: context.absolute_url() + '/@@triggertransition'">
+      <input type="hidden" name="objectUid" tal:attributes="value objectUID;"/>
+      <input type="hidden" name="transition" tal:attributes="value python: transition['name'];"/>
+      <input type="hidden" name="form.submitted" tal:attributes="value python: (confirm=='false' and '&form.submitted=boolean:True' or '');"/>
+      <input type="submit"
+             tal:attributes="class string:apButton apButtonWF apButtonWF_$transitionId;
+                             value python: transition['title'];
+                             size python: int(len(transition['title'])/1.2);" />
+      </form>
+    </a>
+
+  </tal:transition>
+
+  <tal:comment replace="nothing">The user can't trigger this transition: we tell him why.</tal:comment>
+  <input type="button" disabled
+         tal:condition="not: transition/may_trigger" class="apButton fakeButton"
+         tal:attributes="value transition/title;
+                         title transition/reason"
+         i18n:attributes="value" />
+</td>
+</tal:defines>

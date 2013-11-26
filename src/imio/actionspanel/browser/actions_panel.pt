@@ -1,0 +1,8 @@
+<metal:actions define-macro="ploneMeetingActions" i18n:domain="plone">
+  <table class="no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
+    <tr>
+      <tal:sections replace="structure view/renderSections" />
+    </tr>
+    <tr tal:condition="not: view/hasActions"><td>-</td></tr>
+  </table>
+</metal:actions>

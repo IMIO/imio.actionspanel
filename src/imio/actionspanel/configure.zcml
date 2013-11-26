@@ -1,0 +1,21 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+           i18n_domain="imio.actionspanel">
+
+  <include package=".browser" />
+  <include package="Products.GenericSetup" file="meta.zcml" />
+
+  <i18n:registerTranslations directory="locales" />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="imio.actionspanel"
+      directory="profiles/default"
+      description="Extension profile for PloneMeeting."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+</configure>

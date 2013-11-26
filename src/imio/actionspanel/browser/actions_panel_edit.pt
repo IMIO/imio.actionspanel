@@ -1,0 +1,14 @@
+<tal:defines define="useIcons view/useIcons;
+                     portal_url context/@@plone_portal_state/portal_url;">
+    <tal:comment replace="nothing">Edit action</tal:comment>
+    <td class="noPadding">
+      <tal:comment replace="nothing">Icon. We show this only in useIcons more, because if we are not in
+          this mode, the "edit" tab is present so is is redundant.</tal:comment>
+      <a tal:condition="useIcons"
+         tal:define="dummy view/saveHasActions;"
+         tal:attributes="href string:${context/absolute_url}/edit">
+        <img src="edit.gif" tal:attributes="src string:$portal_url/edit.gif" title="Edit" i18n:attributes="title" />
+      </a>
+    </td>
+
+</tal:defines>

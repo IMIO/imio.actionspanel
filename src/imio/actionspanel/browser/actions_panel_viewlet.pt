@@ -1,0 +1,1 @@
+<tal:renderViewlet replace='structure view/renderViewlet' />

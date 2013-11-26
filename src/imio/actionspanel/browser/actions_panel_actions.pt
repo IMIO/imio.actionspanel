@@ -1,0 +1,16 @@
+<tal:comment replace="nothing">Object actions</tal:comment>
+<td tal:repeat="action view/listObjectButtonsActions" class="noPadding">
+
+    <tal:comment replace="nothing">Icon</tal:comment>
+    <a tal:define="dummy view/saveHasActions;"
+       tal:attributes="href python: action[0]" tal:condition="python: view.useIcons and action[1]">
+      <img tal:attributes="src python: context.restrictedTraverse('@@plone_portal_state').portal_url() + '/' + action[1];
+                           title python: action[2];" i18n:attributes="title" />
+    </a>
+  <tal:comment replace="nothing">Button</tal:comment>
+  <input class="#"
+         tal:condition="python: not (view.useIcons and action[1])" type="button" i18n:attributes="value"
+         tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action[3];
+                         onClick python: action[0].startswith('javascript') and action[0] or 'href: window.location=\'%s\'' % action[0];
+                         value python: action[2];"/>
+</td>

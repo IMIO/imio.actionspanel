@@ -1,0 +1,39 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+    <!-- Publish static files -->
+    <browser:resourceDirectory
+        name="imio.actionspanel"
+        directory="static"
+        />
+
+    <browser:viewlet
+        name="imio.actionspanel"
+        for="*"
+        manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        class=".viewlets.ActionsPanelViewlet"
+        template="actions_panel_viewlet.pt"
+        permission="zope2.View"/>
+
+    <browser:page
+        for="*"
+        name="actions_panel"
+        class=".views.ActionsPanelView"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        template="actions_panel.pt"
+        allowed_attributes="render"
+        permission="zope2.View" />
+
+    <browser:page
+        for="*"
+        name="triggertransition"
+        class=".transitions.ConfirmTransitionView"
+        permission="zope2.View"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        template="transitions.pt"
+      />
+
+</configure>
