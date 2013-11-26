@@ -14,26 +14,26 @@ from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 
-from Products.PloneMeeting.utils import getCurrentMeetingObject
-
 
 class ActionsPanelView(BrowserView):
     """
       This manage the view displaying actions on context
     """
     def __init__(self, context, request):
+        super(ActionsPanelView, self).__init__(context, request)
         self.context = context
         self.request = request
         portal_state = getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
         self.portal = portal_state.portal()
+        self.SECTIONS_TO_RENDER = ['renderTransitions',
+                                   'renderEdit',
+                                   'renderActions', ]
 
     def render(self,
                useIcons=True,
                showTransitions=True,
                appendTypeNameToTransitionLabel=False,
-               showArrows=False,
                showEdit=True,
-               showDelete=True,
                showActions=True,
                **kwargs):
         """
@@ -41,27 +41,17 @@ class ActionsPanelView(BrowserView):
         self.useIcons = useIcons
         self.showTransitions = showTransitions
         self.appendTypeNameToTransitionLabel = appendTypeNameToTransitionLabel
-        self.showArrows = showArrows
         self.showEdit = showEdit
-        self.showDelete = showDelete
         self.showActions = showActions
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
 
-    def getSectionsToRender(self):
-        return ['renderTransitions',
-                'renderArrows',
-                'renderDelete',
-                'renderDeleteWholeMeeting',
-                'renderEdit',
-                'renderActions', ]
-
-    def renderSections(self):
+    def _renderSections(self):
         """
         """
         res = ''
-        for section in self.getSectionsToRender():
+        for section in self.SECTIONS_TO_RENDER:
             renderedSection = getattr(self, section)() or ''
             res += renderedSection
         return res
@@ -72,26 +62,6 @@ class ActionsPanelView(BrowserView):
         if self.showTransitions:
             return ViewPageTemplateFile("actions_panel_transitions.pt")(self)
         return ''
-
-    def renderArrows(self):
-        """
-        """
-        if self.showArrows and self.mayChangeOrder():
-            self.totalNbOfItems = self.kwargs['totalNbOfItems']
-            return ViewPageTemplateFile("actions_panel_arrows.pt")(self)
-        return ''
-
-    def renderDelete(self):
-        """
-        """
-        if self.showDelete and self.mayDelete():
-            return ViewPageTemplateFile("actions_panel_delete.pt")(self)
-        return ''
-
-    def renderDeleteWholeMeeting(self):
-        """
-        """
-        return ViewPageTemplateFile("actions_panel_deletewholemeeting.pt")(self)
 
     def renderEdit(self):
         """
@@ -113,21 +83,6 @@ class ActionsPanelView(BrowserView):
         return member.has_permission('Modify portal content', self.context) and \
             self.useIcons and not \
             self.context.meta_type == 'MeetingFile'
-
-    def mayChangeOrder(self):
-        """
-          Check if current user can change elements order in case arrows are shown.
-        """
-        meeting = getCurrentMeetingObject(self.context)
-        return meeting.wfConditions().mayChangeItemsOrder()
-
-    def mayDelete(self):
-        """
-          Check if current user may delete element.
-        """
-        member = self.context.restrictedTraverse('@@plone_portal_state').member()
-        isMeetingOrItem = self.context.meta_type in ('Meeting', 'MeetingItem')
-        return member.has_permission('Delete objects', self.context) and (isMeetingOrItem and self.context.wfConditions().mayDelete() or True)
 
     def saveHasActions(self):
         """
