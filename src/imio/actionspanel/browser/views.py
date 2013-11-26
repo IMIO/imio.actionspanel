@@ -30,6 +30,7 @@ class ActionsPanelView(BrowserView):
     def render(self,
                useIcons=True,
                showTransitions=True,
+               appendTypeNameToTransitionLabel=False,
                showArrows=False,
                showEdit=True,
                showDelete=True,
@@ -39,6 +40,7 @@ class ActionsPanelView(BrowserView):
         """
         self.useIcons = useIcons
         self.showTransitions = showTransitions
+        self.appendTypeNameToTransitionLabel = appendTypeNameToTransitionLabel
         self.showArrows = showArrows
         self.showEdit = showEdit
         self.showDelete = showDelete
@@ -101,7 +103,8 @@ class ActionsPanelView(BrowserView):
     def renderActions(self):
         """
         """
-        return ViewPageTemplateFile("actions_panel_actions.pt")(self)
+        if self.showActions:
+            return ViewPageTemplateFile("actions_panel_actions.pt")(self)
 
     def mayEdit(self):
         """
@@ -123,7 +126,8 @@ class ActionsPanelView(BrowserView):
           Check if current user may delete element.
         """
         member = self.context.restrictedTraverse('@@plone_portal_state').member()
-        return member.has_permission('Delete objects', self.context) and self.context.wfConditions().mayDelete()
+        isMeetingOrItem = self.context.meta_type in ('Meeting', 'MeetingItem')
+        return member.has_permission('Delete objects', self.context) and (isMeetingOrItem and self.context.wfConditions().mayDelete() or True)
 
     def saveHasActions(self):
         """
