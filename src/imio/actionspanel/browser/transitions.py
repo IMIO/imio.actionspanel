@@ -47,7 +47,7 @@ class ConfirmTransitionView(BrowserView):
         res = ''
         availableTransitions = self.context.restrictedTraverse('@@actions_panel').getTransitions()
         for availableTransition in availableTransitions:
-            if self.request.get('transition') == availableTransition['name'] and \
+            if self.request.get('transition') == availableTransition['id'] and \
                availableTransition['confirm'] is True:
                 res = self.request.get('transition')
         return res
