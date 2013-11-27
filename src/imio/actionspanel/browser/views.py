@@ -1,18 +1,23 @@
+import logging
+
 from appy.gen import No
 
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 
 from zope.component import getMultiAdapter
-from zope.i18n import translate
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import _checkPermission
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFPlone import PloneMessageFactory as _plone
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
+
+from imio.actionspanel import ActionsPanelMessageFactory as _
 
 
 class ActionsPanelView(BrowserView):
@@ -139,9 +144,7 @@ class ActionsPanelView(BrowserView):
                     preName = '%s.%s' % (self.context.meta_type, transition.id)
                     tInfo = {
                         'id': transition.id,
-                        'title': translate(transition.title,
-                                           domain='plone',
-                                           context=self.request),
+                        'title': _plone(transition.title),
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
                         'confirm': preName in toConfirm,
@@ -214,7 +217,7 @@ class ActionsPanelView(BrowserView):
 
     def listObjectButtonsActions(self):
         """
-          Return a
+          Return a list of object_buttons actions coming from portal_actions.
         """
         actionsTool = getToolByName(self, 'portal_actions')
         allActions = actionsTool.listFilteredActionsFor(self.context)
@@ -240,3 +243,63 @@ class ActionsPanelView(BrowserView):
                     act['icon'] = ''
                 res.append(act)
         return res
+
+    def triggerTransition(self, transition, comment):
+        """
+          Triggers a p_transition on self.context.
+        """
+        wfTool = getToolByName(self, 'portal_workflow')
+        member = self.context.restrictedTraverse('@@plone_portal_state').member()
+        try:
+            wfTool.doActionFor(self.context,
+                               transition,
+                               comment=comment)
+        except WorkflowException:
+            # fail silently if the user triggered a transition he could not
+            # this avoid WorkflowException error in the UI if a user double-click on an icon
+            # triggering a workflow transition
+            logger = logging.getLogger('imio.actionspanel')
+            logger.info("WorkflowException in imio.actionspanel.triggerTransition, the user '%s' "
+                        "tried to trigger the transition '%s' but he could not.  Double click in the UI?" %
+                        (member.getId(), self.request.get('transition')))
+        # use transition title to translate so if several transitions have the same title,
+        # we manage only one translation
+        transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[self.request['transition']].title or \
+            self.request['transition']
+        msg = _('%s_done_descr' % transition_title)
+        if msg.translate(msg) == msg:
+            # we add a default message "Content status has changed" if no
+            # translation found for constructed msgid %s_done_descr
+            msg = _plone("Item state changed.")
+        plone_utils = getToolByName(self.context, 'plone_utils')
+        plone_utils.addPortalMessage(msg)
+        if not member.has_permission('View', self.context):
+            # After having triggered a wfchange, it the current user
+            # can not access the obj anymore :
+            # - redirect the user to HTTP_REFERER if we where not on the obj
+            # - redirect the user to his home page if we were on the no more accessible obj
+            # - display a clear portal message
+            redirectToUrl = self._redirectToUrl()
+            # add a specific portal_message before redirecting the user
+            msg = _('redirected_after_transition_not_viewable',
+                    context=self.request,
+                    default="You have been redirected here because you do not have "
+                            "access anymore to the element you just changed the state for.")
+            plone_utils.addPortalMessage(msg, 'warning')
+
+            return self.request.RESPONSE.redirect(redirectToUrl)
+        else:
+            return self._gotoReferer()
+
+    def _redirectToUrl(self):
+        """
+          Return the url the user must be redirected to.
+        """
+        return self.request['HTTP_REFERER']
+
+    def _gotoReferer(self):
+        """
+          This method allows to go specify where to go back after a transition has been triggered.
+        """
+        urlBack = self.request['HTTP_REFERER']
+        return self.request.RESPONSE.redirect(urlBack)

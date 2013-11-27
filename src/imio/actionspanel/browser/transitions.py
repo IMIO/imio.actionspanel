@@ -1,8 +1,8 @@
-from Products.Five.browser import BrowserView
-from Products.CMFCore.utils import getToolByName
-
 from zope.component import getMultiAdapter
 from plone.memoize.instance import memoize
+
+from Products.Five.browser import BrowserView
+from Products.CMFCore.utils import getToolByName
 
 
 class ConfirmTransitionView(BrowserView):
@@ -16,10 +16,6 @@ class ConfirmTransitionView(BrowserView):
         self.request = request
         portal_state = getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
         self.portal = portal_state.portal()
-        self.tool = self.getPloneMeetingTool()
-        self.meetingConfig = self.getCurrentMeetingConfig()
-        # if we received a 'groupId', it means that we have to edit an existing advice
-        self.groupId = self.request.form.get('groupId', '')
 
     def __call__(self):
         # check that the user has actually a transition to trigger with confirmation
@@ -32,7 +28,10 @@ class ConfirmTransitionView(BrowserView):
         submitted = form.get('form.buttons.save', False) or form.get('form.submitted', False)
         cancelled = form.get('form.buttons.cancel', False)
         if submitted:
-            self.tool.triggerTransition()
+            uid_catalog = getToolByName(self.context, 'uid_catalog')
+            obj = uid_catalog(UID=self.request['objectUid'])[0].getObject()
+            obj.restrictedTraverse('@@actions_panel').triggerTransition(self.request.get('transition'),
+                                                                        self.request.get('comment'))
         elif cancelled:
             # the only way to enter here is the popup overlay not to be shown
             # because while using the popup overlay, the jQ function take care of hidding it
@@ -64,15 +63,3 @@ class ConfirmTransitionView(BrowserView):
           Initialize values for the 'lStartNumber' form field
         '''
         return self.request.get('lStartNumber')
-
-    @memoize
-    def getPloneMeetingTool(self):
-        '''Returns the tool.'''
-        return getToolByName(self.portal, 'portal_plonemeeting')
-
-    @memoize
-    def getCurrentMeetingConfig(self):
-        '''Returns the current meetingConfig.'''
-        tool = self.tool
-        res = tool.getMeetingConfig(self.context)
-        return res

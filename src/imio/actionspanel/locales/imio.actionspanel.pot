@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-26 11:01+0000\n"
+"POT-Creation-Date: 2013-11-27 10:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,21 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.actionspanel\n"
 
+#: ./browser/views.py:270
+msgid "%s_done_descr"
+msgstr ""
+
+#. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
+#: ./browser/views.py:282
+msgid "redirected_after_transition_not_viewable"
+msgstr ""
+
 #: ./browser/transitions.pt:22
 msgid "transition_comment"
 msgstr ""
 
-#. Default: "Are you sure you want to ${transition_name} this element? If yes, you can enter a comment below (optional)."
+#. Default: "Confirm workflow transition ${transition_name}"
 #: ./browser/transitions.pt:21
 msgid "workflow_confirm"
 msgstr ""
+
