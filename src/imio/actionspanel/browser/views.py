@@ -38,6 +38,8 @@ class ActionsPanelView(BrowserView):
                showActions=True,
                **kwargs):
         """
+          Master method that will render the content.
+          This is not supposed to be overrided.
         """
         self.useIcons = useIcons
         self.showTransitions = showTransitions
@@ -50,6 +52,8 @@ class ActionsPanelView(BrowserView):
 
     def _renderSections(self):
         """
+          This will check what sections need to be rendered.
+          This is not supposed to be overrided.
         """
         res = ''
         for section in self.SECTIONS_TO_RENDER:
@@ -59,6 +63,7 @@ class ActionsPanelView(BrowserView):
 
     def renderTransitions(self):
         """
+          Render the current context available workflow transitions.
         """
         if self.showTransitions:
             return ViewPageTemplateFile("actions_panel_transitions.pt")(self)
@@ -66,13 +71,17 @@ class ActionsPanelView(BrowserView):
 
     def renderEdit(self):
         """
+          Render a 'edit' action.  By default, only available when actions are displayed
+          as icons because when it is not the case, we already have a 'edit' tab and that would
+          be redundant.
         """
-        if self.showEdit and self.mayEdit():
+        if self.showEdit and self.useIcons and self.mayEdit():
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
         return ''
 
     def renderActions(self):
         """
+          Render actions coming from portal_actions.object_buttons and available on the context.
         """
         if self.showActions:
             return ViewPageTemplateFile("actions_panel_actions.pt")(self)
@@ -91,13 +100,14 @@ class ActionsPanelView(BrowserView):
         self.hasActions = True
 
     def getTransitions(self):
-        '''This method is similar to portal_workflow.getTransitionsFor, but
-           with some improvements:
-           - we retrieve transitions that the user can't trigger, but for
-             which he needs to know for what reason he can't trigger it;
-           - for every transition, we know if we need to display a confirm
-             popup or not.
-        '''
+        """
+          This method is similar to portal_workflow.getTransitionsFor, but
+          with some improvements:
+          - we retrieve transitions that the user can't trigger, but for
+            which he needs to know for what reason he can't trigger it;
+          - for every transition, we know if we need to display a confirm
+            popup or not.
+        """
         res = []
         # Get the workflow definition for p_obj.
         wfTool = getToolByName(self.context, 'portal_workflow')
@@ -154,9 +164,11 @@ class ActionsPanelView(BrowserView):
         return []
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
-        '''This method is similar to DCWorkflow.Guard.check, but allows to
-           retrieve the truth value as a appy.gen.No instance, not simply "1"
-           or "0".'''
+        """
+          This method is similar to DCWorkflow.Guard.check, but allows to
+          retrieve the truth value as a appy.gen.No instance, not simply "1"
+          or "0".
+        """
         u_roles = None
         if wf_def.manager_bypass:
             # Possibly bypass.
@@ -202,6 +214,7 @@ class ActionsPanelView(BrowserView):
 
     def listObjectButtonsActions(self):
         """
+          Return a
         """
         actionsTool = getToolByName(self, 'portal_actions')
         allActions = actionsTool.listFilteredActionsFor(self.context)
@@ -213,16 +226,17 @@ class ActionsPanelView(BrowserView):
         res = []
         for action in objectButtonActions:
             if not (action['id'] in self.IGNORABLE_ACTIONS):
-                act = [action['url']]
+                act = {}
+                act['id'] = action['id']
+                act['title'] = action['title']
+                act['url'] = action['url']
                 # We try to append the url of the icon of the action
                 # look on the action itself
                 if action['icon']:
                     # make sure we only have the action icon name not a complete
                     # path including portal_url or so...
-                    act.append(action['icon'].split('/')[-1])
+                    act['icon'] = action['icon'].split('/')[-1]
                 else:
-                    act.append('')
-                act.append(action['title'])
-                act.append(action['id'])
+                    act['icon'] = ''
                 res.append(act)
         return res
