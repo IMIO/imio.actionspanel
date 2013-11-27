@@ -266,11 +266,9 @@ class ActionsPanelView(BrowserView):
         # we manage only one translation
         transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[self.request['transition']].title or \
             self.request['transition']
-        msg = _('%s_done_descr' % transition_title)
-        if msg.translate(msg) == msg:
-            # we add a default message "Content status has changed" if no
-            # translation found for constructed msgid %s_done_descr
-            msg = _plone("Item state changed.")
+        # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
+        msg = _('%s_done_descr' % transition_title,
+                default=_plone("Item state changed."))
         plone_utils = getToolByName(self.context, 'plone_utils')
         plone_utils.addPortalMessage(msg)
         if not member.has_permission('View', self.context):
