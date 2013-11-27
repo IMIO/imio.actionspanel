@@ -79,11 +79,10 @@ class ActionsPanelView(BrowserView):
 
     def mayEdit(self):
         """
+          Method that check if special 'edit' action has to be displayed.
         """
         member = self.context.restrictedTraverse('@@plone_portal_state').member()
-        return member.has_permission('Modify portal content', self.context) and \
-            self.useIcons and not \
-            self.context.meta_type == 'MeetingFile'
+        return member.has_permission('Modify portal content', self.context) and self.useIcons
 
     def saveHasActions(self):
         """
@@ -111,7 +110,7 @@ class ActionsPanelView(BrowserView):
         if not currentState:
             return res
         # Get the transitions to confirm from the config.
-        toConfirm = self._getTransitionsToConfirm()
+        toConfirm = self._transitionsToConfirm()
         # Analyse all the transitions that start from this state.
         for transitionId in currentState.transitions:
             transition = workflow.transitions.get(transitionId, None)
@@ -147,17 +146,12 @@ class ActionsPanelView(BrowserView):
                     res.append(tInfo)
         return res
 
-    def _getTransitionsToConfirm(self):
+    def _transitionsToConfirm(self):
         """
           Return the list of transitions the user will have to confirm, aka
           the user will be able to enter a comment for.
         """
-        toConfirm = []
-        tool = getToolByName(self, 'portal_plonemeeting')
-        cfg = tool.getMeetingConfig(self.context)
-        if cfg:
-            toConfirm = cfg.getTransitionsToConfirm()
-        return toConfirm
+        return []
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
         '''This method is similar to DCWorkflow.Guard.check, but allows to
