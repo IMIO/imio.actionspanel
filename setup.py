@@ -43,6 +43,7 @@ setup(
     install_requires=[
         'Plone',
         'setuptools',
+        'appy',
     ],
     extras_require={
         'test': [
