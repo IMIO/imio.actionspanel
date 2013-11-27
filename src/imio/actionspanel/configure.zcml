@@ -14,7 +14,7 @@
       name="default"
       title="imio.actionspanel"
       directory="profiles/default"
-      description="Extension profile for PloneMeeting."
+      description="Extension profile for imio.actionspanel."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
