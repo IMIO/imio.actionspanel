@@ -16,8 +16,8 @@
                                     + '/triggertransition?objectUid='
                                     + objectUID
                                     + '&transition='
-                                    + transition['name']
-                                    + (confirm=='false' and '&form.submitted=boolean:False' or '');
+                                    + transition['id']
+                                    + (confirm=='false' and '&form.submitted=boolean:True' or '');
                        class python: confirm=='true' and 'link-overlay-actionspanel transition-overlay' or ''">
       <tal:comment replace="nothing">Icon</tal:comment>
       <img tal:condition="python: useIcons and hasattr(portal, imageName)"
@@ -29,7 +29,7 @@
             tal:condition="python: not(useIcons and hasattr(portal, imageName))"
             tal:attributes="action python: context.absolute_url() + '/@@triggertransition'">
       <input type="hidden" name="objectUid" tal:attributes="value objectUID;"/>
-      <input type="hidden" name="transition" tal:attributes="value python: transition['name'];"/>
+      <input type="hidden" name="transition" tal:attributes="value python: transition['id'];"/>
       <input type="hidden" name="form.submitted" tal:attributes="value python: (confirm=='false' and '&form.submitted=boolean:True' or '');"/>
       <input type="submit"
              tal:attributes="class string:apButton apButtonWF apButtonWF_$transitionId;

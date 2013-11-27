@@ -6,6 +6,7 @@ from AccessControl import getSecurityManager
 from Acquisition import aq_base
 
 from zope.component import getMultiAdapter
+from zope.i18n import translate
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -144,7 +145,11 @@ class ActionsPanelView(BrowserView):
                     preName = '%s.%s' % (self.context.meta_type, transition.id)
                     tInfo = {
                         'id': transition.id,
-                        'title': _plone(transition.title),
+                        # if the transition.id is not translated, use translated transition.title...
+                        'title': _plone(transition.id,
+                                        default=translate(transition.title,
+                                                          domain="plone",
+                                                          context=self.request)),
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
                         'confirm': preName in toConfirm,
@@ -163,8 +168,10 @@ class ActionsPanelView(BrowserView):
         """
           Return the list of transitions the user will have to confirm, aka
           the user will be able to enter a comment for.
+          This is a per meta_type list of transitions to confirm.
+          So for example, this could be ['ATDocument.reject', 'ATFolder.publish', 'Collection.publish', ]
         """
-        return []
+        return ['ATDocument.reject', ]
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
         """
