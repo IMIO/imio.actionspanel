@@ -171,7 +171,7 @@ class ActionsPanelView(BrowserView):
           This is a per meta_type list of transitions to confirm.
           So for example, this could be ['ATDocument.reject', 'ATFolder.publish', 'Collection.publish', ]
         """
-        return ['ATDocument.reject', ]
+        return ()
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
         """
