@@ -147,7 +147,10 @@ class ActionsPanelView(BrowserView):
                                                             self.context)
                 if mayTrigger or isinstance(mayTrigger, No):
                     # Information about this transition must be part of result.
-                    preName = '%s.%s' % (self.context.meta_type, transition.id)
+                    # check if the transition have to be confirmed regarding
+                    # current object meta_type/portal_type and transition to trigger
+                    preNameMetaType = '%s.%s' % (self.context.meta_type, transition.id)
+                    preNamePortalType = '%s.%s' % (self.context.portal_type, transition.id)
                     tInfo = {
                         'id': transition.id,
                         # if the transition.id is not translated, use translated transition.title...
@@ -157,7 +160,7 @@ class ActionsPanelView(BrowserView):
                                                           context=self.request)),
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
-                        'confirm': preName in toConfirm,
+                        'confirm': preNameMetaType in toConfirm or preNamePortalType in toConfirm,
                         'url': transition.actbox_url %
                             {'content_url': self.context.absolute_url(),
                              'portal_url': '',
@@ -173,8 +176,10 @@ class ActionsPanelView(BrowserView):
         """
           Return the list of transitions the user will have to confirm, aka
           the user will be able to enter a comment for.
-          This is a per meta_type list of transitions to confirm.
-          So for example, this could be ['ATDocument.reject', 'ATFolder.publish', 'Collection.publish', ]
+          This is a per meta_type or portal_type list of transitions to confirm.
+          So for example, this could be :
+          ('ATDocument.reject', 'Document.publish', 'Collection.publish', )
+          --> ATDocument is a meta_type and Document is a portal_type for example
         """
         return ()
 
