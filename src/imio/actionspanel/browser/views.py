@@ -34,7 +34,12 @@ class ActionsPanelView(BrowserView):
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderActions', )
+        # portal_actions.object_buttons action ids not to keep
+        # every actions will be kept except actions listed here
         self.IGNORABLE_ACTIONS = ()
+        # portal_actions.object_buttons action ids to keep
+        # if you define some here, only these actions will be kept
+        self.ACCEPTABLE_ACTIONS = ('duplicate', )
 
     def render(self,
                useIcons=True,
@@ -235,7 +240,8 @@ class ActionsPanelView(BrowserView):
 
         res = []
         for action in objectButtonActions:
-            if not (action['id'] in self.IGNORABLE_ACTIONS):
+            if (self.ACCEPTABLE_ACTIONS and action['id'] in self.ACCEPTABLE_ACTIONS) or \
+               (not self.ACCEPTABLE_ACTIONS and not action['id'] in self.IGNORABLE_ACTIONS):
                 act = {}
                 act['id'] = action['id']
                 act['title'] = action['title']
