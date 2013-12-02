@@ -39,7 +39,7 @@ class ActionsPanelView(BrowserView):
         self.IGNORABLE_ACTIONS = ()
         # portal_actions.object_buttons action ids to keep
         # if you define some here, only these actions will be kept
-        self.ACCEPTABLE_ACTIONS = ('duplicate', )
+        self.ACCEPTABLE_ACTIONS = ()
 
     def render(self,
                useIcons=True,
