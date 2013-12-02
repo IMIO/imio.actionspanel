@@ -8,6 +8,6 @@
   <input class="#"
          tal:condition="python: not (view.useIcons and action['icon'])" type="button" i18n:attributes="value"
          tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action['id'];
-                         onClick python: action['url'].startswith('javascript') and action['url'] or 'href: window.location=\'%s\'' % action['url'];
+                         onClick python: action['url'].startswith('javascript') and action['url'] or 'window.location=\'%s\'' % action['url'];
                          value python: action['title'];"/>
 </td>
