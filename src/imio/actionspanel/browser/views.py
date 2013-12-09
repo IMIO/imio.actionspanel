@@ -255,8 +255,14 @@ class ActionsPanelView(BrowserView):
                 # look on the action itself
                 if action['icon']:
                     # make sure we only have the action icon name not a complete
-                    # path including portal_url or so...
-                    act['icon'] = action['icon'].split('/')[-1]
+                    # path including portal_url or so, just take care that we do not have
+                    # an image in a static resource folder
+                    splittedIconPath = action['icon'].split('/')
+                    if len(splittedIconPath) > 1 and '++resource++' in splittedIconPath[-2]:
+                        # keep last 2 parts of the path
+                        act['icon'] = '/'.join((splittedIconPath[-2], splittedIconPath[-1], ))
+                    else:
+                        act['icon'] = splittedIconPath[-1]
                 else:
                     act['icon'] = ''
                 res.append(act)
