@@ -33,7 +33,7 @@
       <input type="hidden" name="form.submitted" tal:attributes="value python: (confirm=='false' and '&form.submitted=boolean:True' or '');"/>
       <input type="submit"
              tal:attributes="class string:apButton apButtonWF apButtonWF_$transitionId;
-                             value python: view.appendTypeNameToTransitionLabel and (transition['title'] + ' ' + context.utranslate(msgid=context.portal_type, domain='plone')) or transition['title'];
+                             value python: view.appendTypeNameToTransitionLabel and (context.utranslate(transition['title'], domain='plone') + ' ' + context.utranslate(msgid=context.portal_type, domain='plone')) or transition['title'];
                              size python: int(len(transition['title'])/1.2);" />
       </form>
     </a>
