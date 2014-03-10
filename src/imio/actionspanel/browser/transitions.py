@@ -1,4 +1,3 @@
-from zope.component import getMultiAdapter
 from plone.memoize.instance import memoize
 
 from Products.Five.browser import BrowserView
@@ -14,8 +13,6 @@ class ConfirmTransitionView(BrowserView):
         super(BrowserView, self).__init__(context, request)
         self.context = context
         self.request = request
-        portal_state = getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
-        self.portal = portal_state.portal()
 
     def __call__(self):
         # check that the user has actually a transition to trigger with confirmation
@@ -41,9 +38,7 @@ class ConfirmTransitionView(BrowserView):
 
     @memoize
     def initTransition(self):
-        '''
-          Initialize values for the 'transition' form field
-        '''
+        '''Initialize values for the 'transition' form field.'''
         res = ''
         availableTransitions = self.context.restrictedTraverse('@@actions_panel').getTransitions()
         for availableTransition in availableTransitions:
@@ -53,13 +48,9 @@ class ConfirmTransitionView(BrowserView):
         return res
 
     def initIStartNumber(self):
-        '''
-          Initialize values for the 'iStartNumber' form field
-        '''
+        '''Initialize values for the 'iStartNumber' form field.'''
         return self.request.get('iStartNumber')
 
     def initLStartNumber(self):
-        '''
-          Initialize values for the 'lStartNumber' form field
-        '''
+        '''Initialize values for the 'lStartNumber' form field.'''
         return self.request.get('lStartNumber')

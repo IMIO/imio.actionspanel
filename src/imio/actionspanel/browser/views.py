@@ -5,7 +5,6 @@ from appy.gen import No
 from AccessControl import getSecurityManager
 from Acquisition import aq_base
 
-from zope.component import getMultiAdapter
 from zope.i18n import translate
 
 from Products.Five import BrowserView
@@ -23,14 +22,16 @@ from imio.actionspanel import ActionsPanelMessageFactory as _
 
 class ActionsPanelView(BrowserView):
     """
-      This manage the view displaying actions on context
+      This manage the view displaying actions on context.
     """
     def __init__(self, context, request):
         super(ActionsPanelView, self).__init__(context, request)
         self.context = context
         self.request = request
-        portal_state = getMultiAdapter((self.context, self.request), name=u'plone_portal_state')
-        self.portal = portal_state.portal()
+        self.member = self.request.get('imio.actionspanel_member_cachekey', None)
+        if not self.member:
+            self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+            self.request.set('imio.actionspanel_member_cachekey', self.member)
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderActions', )
@@ -101,12 +102,11 @@ class ActionsPanelView(BrowserView):
         """
           Method that check if special 'edit' action has to be displayed.
         """
-        member = self.context.restrictedTraverse('@@plone_portal_state').member()
-        return member.has_permission('Modify portal content', self.context) and self.useIcons
+        return self.member.has_permission('Modify portal content', self.context) and self.useIcons
 
     def saveHasActions(self):
         """
-          Save the fact that we have actions
+          Save the fact that we have actions.
         """
         self.hasActions = True
 
@@ -121,11 +121,14 @@ class ActionsPanelView(BrowserView):
         """
         res = []
         # Get the workflow definition for p_obj.
-        wfTool = getToolByName(self.context, 'portal_workflow')
-        workflows = wfTool.getWorkflowsFor(self.context)
-        if not workflows:
-            return res
-        workflow = workflows[0]
+        workflow = self.request.get('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, None)
+        if not workflow:
+            wfTool = getToolByName(self.context, 'portal_workflow')
+            workflows = wfTool.getWorkflowsFor(self.context)
+            if not workflows:
+                return res
+            workflow = workflows[0]
+            self.request.set('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, workflow)
         # What is the current state for self.context?
         currentState = workflow._getWorkflowStateOf(self.context)
         if not currentState:
@@ -189,10 +192,15 @@ class ActionsPanelView(BrowserView):
           retrieve the truth value as a appy.gen.No instance, not simply "1"
           or "0".
         """
+        if not sm:
+            sm = self.request.get('imio.actionspanel_sm_cachekey', None)
+            if not sm:
+                sm = getSecurityManager()
+                self.request.set('imio.actionspanel_sm_cachekey', sm)
         u_roles = None
         if wf_def.manager_bypass:
             # Possibly bypass.
-            u_roles = sm.getUser().getRolesInContext(ob)
+            u_roles = self.member.getRolesInContext(ob)
             if 'Manager' in u_roles:
                 return 1
         if guard.permissions:
@@ -204,7 +212,7 @@ class ActionsPanelView(BrowserView):
         if guard.roles:
             # Require at least one of the given roles.
             if u_roles is None:
-                u_roles = sm.getUser().getRolesInContext(ob)
+                u_roles = self.member.getRolesInContext(ob)
             for role in guard.roles:
                 if role in u_roles:
                     break
@@ -212,7 +220,7 @@ class ActionsPanelView(BrowserView):
                 return 0
         if guard.groups:
             # Require at least one of the specified groups.
-            u = sm.getUser()
+            u = self.member
             b = aq_base(u)
             if hasattr(b, 'getGroupsInContext'):
                 u_groups = u.getGroupsInContext(ob)
@@ -237,7 +245,13 @@ class ActionsPanelView(BrowserView):
           Return a list of object_buttons actions coming from portal_actions.
         """
         actionsTool = getToolByName(self, 'portal_actions')
-        allActions = actionsTool.listFilteredActionsFor(self.context)
+        # we only want object_buttons, so ignore other categories and providers
+        IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
+                                'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder']
+        IGNORABLE_PROVIDERS = ['portal_workflow', 'portal_types', ]
+        allActions = actionsTool.listFilteredActionsFor(self.context,
+                                                        ignore_providers=IGNORABLE_PROVIDERS,
+                                                        ignore_categories=IGNORABLE_CATEGORIES)
 
         objectButtonActions = []
         if 'object_buttons' in allActions:
@@ -273,7 +287,6 @@ class ActionsPanelView(BrowserView):
           Triggers a p_transition on self.context.
         """
         wfTool = getToolByName(self, 'portal_workflow')
-        member = self.context.restrictedTraverse('@@plone_portal_state').member()
         try:
             wfTool.doActionFor(self.context,
                                transition,
@@ -285,7 +298,7 @@ class ActionsPanelView(BrowserView):
             logger = logging.getLogger('imio.actionspanel')
             logger.info("WorkflowException in imio.actionspanel.triggerTransition, the user '%s' "
                         "tried to trigger the transition '%s' but he could not.  Double click in the UI?" %
-                        (member.getId(), self.request.get('transition')))
+                        (self.member.getId(), self.request.get('transition')))
         # use transition title to translate so if several transitions have the same title,
         # we manage only one translation
         transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[self.request['transition']].title or \
@@ -295,7 +308,7 @@ class ActionsPanelView(BrowserView):
                 default=_plone("Item state changed."))
         plone_utils = getToolByName(self.context, 'plone_utils')
         plone_utils.addPortalMessage(msg)
-        if not member.has_permission('View', self.context):
+        if not self.member.has_permission('View', self.context):
             # After having triggered a wfchange, it the current user
             # can not access the obj anymore :
             # - redirect the user to HTTP_REFERER if we where not on the obj
