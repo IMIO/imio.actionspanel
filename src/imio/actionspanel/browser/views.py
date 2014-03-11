@@ -248,7 +248,7 @@ class ActionsPanelView(BrowserView):
         # we only want object_buttons, so ignore other categories and providers
         IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
                                 'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder']
-        IGNORABLE_PROVIDERS = ['portal_workflow', 'portal_types', ]
+        IGNORABLE_PROVIDERS = ['portal_workflow', ]
         allActions = actionsTool.listFilteredActionsFor(self.context,
                                                         ignore_providers=IGNORABLE_PROVIDERS,
                                                         ignore_categories=IGNORABLE_CATEGORIES)
