@@ -24,16 +24,16 @@ class ConfirmTransitionView(BrowserView):
         # the confirmation popup
         submitted = form.get('form.buttons.save', False) or form.get('form.submitted', False)
         cancelled = form.get('form.buttons.cancel', False)
-        if submitted:
-            uid_catalog = getToolByName(self.context, 'uid_catalog')
-            obj = uid_catalog(UID=self.request['objectUid'])[0].getObject()
-            obj.restrictedTraverse('@@actions_panel').triggerTransition(self.request.get('transition'),
-                                                                        self.request.get('comment'))
-        elif cancelled:
+        if cancelled:
             # the only way to enter here is the popup overlay not to be shown
             # because while using the popup overlay, the jQ function take care of hidding it
             # while the Cancel button is hit
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
+        elif submitted:
+            uid_catalog = getToolByName(self.context, 'uid_catalog')
+            obj = uid_catalog(UID=self.request['objectUid'])[0].getObject()
+            return obj.restrictedTraverse('@@actions_panel').triggerTransition(self.request.get('transition'),
+                                                                               self.request.get('comment'))
         return self.index()
 
     @memoize
