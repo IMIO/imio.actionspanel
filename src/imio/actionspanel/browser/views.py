@@ -317,11 +317,9 @@ class ActionsPanelView(BrowserView):
             redirectToUrl = self._redirectToUrl()
             # add a specific portal_message before redirecting the user
             msg = _('redirected_after_transition_not_viewable',
-                    context=self.request,
                     default="You have been redirected here because you do not have "
                             "access anymore to the element you just changed the state for.")
             plone_utils.addPortalMessage(msg, 'warning')
-
             return self.request.RESPONSE.redirect(redirectToUrl)
         else:
             return self._gotoReferer()
