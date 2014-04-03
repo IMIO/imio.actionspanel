@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.2 (unreleased)
+----------------
+- Nothing yet
+
 1.1 (2014-04-03)
 ----------------
 - Optimized to be "listing-aware" do some caching by storing not changing parameters
