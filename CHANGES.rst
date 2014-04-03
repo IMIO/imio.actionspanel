@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1 (unreleased)
+1.1 (2014-04-03)
 ----------------
 - Optimized to be "listing-aware" do some caching by storing not changing parameters
   into the request and so avoid to recompute it each time the view is instanciated
