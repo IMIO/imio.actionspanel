@@ -2,7 +2,6 @@ import logging
 
 from appy.gen import No
 
-from AccessControl import getSecurityManager
 from Acquisition import aq_base
 
 from zope.i18n import translate
