@@ -145,7 +145,7 @@ class ActionsPanelView(BrowserView):
                     mayTrigger = True
                 else:
                     mayTrigger = self._checkTransitionGuard(transition.guard,
-                                                            getSecurityManager(),
+                                                            self.member,
                                                             workflow,
                                                             self.context)
                 if mayTrigger or isinstance(mayTrigger, No):
@@ -192,15 +192,10 @@ class ActionsPanelView(BrowserView):
           retrieve the truth value as a appy.gen.No instance, not simply "1"
           or "0".
         """
-        if not sm:
-            sm = self.request.get('imio.actionspanel_sm_cachekey', None)
-            if not sm:
-                sm = getSecurityManager()
-                self.request.set('imio.actionspanel_sm_cachekey', sm)
         u_roles = None
         if wf_def.manager_bypass:
             # Possibly bypass.
-            u_roles = self.member.getRolesInContext(ob)
+            u_roles = sm.getRolesInContext(ob)
             if 'Manager' in u_roles:
                 return 1
         if guard.permissions:
@@ -212,7 +207,7 @@ class ActionsPanelView(BrowserView):
         if guard.roles:
             # Require at least one of the given roles.
             if u_roles is None:
-                u_roles = self.member.getRolesInContext(ob)
+                u_roles = sm.getRolesInContext(ob)
             for role in guard.roles:
                 if role in u_roles:
                     break
@@ -220,7 +215,7 @@ class ActionsPanelView(BrowserView):
                 return 0
         if guard.groups:
             # Require at least one of the specified groups.
-            u = self.member
+            u = sm
             b = aq_base(u)
             if hasattr(b, 'getGroupsInContext'):
                 u_groups = u.getGroupsInContext(ob)
