@@ -2,5 +2,5 @@
   <tr>
     <tal:sections replace="structure view/_renderSections" />
   </tr>
-  <tr tal:condition="not: view/hasActions"><td>-</td></tr>
+  <tr tal:condition="python: view.useIcons and not view.hasActions"><td>-</td></tr>
 </table>

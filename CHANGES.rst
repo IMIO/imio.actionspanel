@@ -4,7 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 - Do not lookup an object UID in the uid_catalog,
-  this fails when using dexterity, use portal_catalog
+  this fails when using dexterity, use portal_catalog or
+  check context UID if element is not indexed
+- Do not display a '-' when no actions to display and not using icons
 
 1.1 (2014-04-03)
 ----------------
