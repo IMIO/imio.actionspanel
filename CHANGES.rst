@@ -7,6 +7,8 @@ Changelog
   this fails when using dexterity, use portal_catalog or
   check context UID if element is not indexed
 - Do not display a '-' when no actions to display and not using icons
+- Implement '__call__' instead of 'render' on the actions panel view
+  so calling the view is simpler
 
 1.1 (2014-04-03)
 ----------------

@@ -41,13 +41,13 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-    def render(self,
-               useIcons=True,
-               showTransitions=True,
-               appendTypeNameToTransitionLabel=False,
-               showEdit=True,
-               showActions=True,
-               **kwargs):
+    def __call__(self,
+                 useIcons=True,
+                 showTransitions=True,
+                 appendTypeNameToTransitionLabel=False,
+                 showEdit=True,
+                 showActions=True,
+                 **kwargs):
         """
           Master method that will render the content.
           This is not supposed to be overrided.
