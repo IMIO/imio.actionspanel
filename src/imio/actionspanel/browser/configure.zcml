@@ -33,7 +33,19 @@
         class=".transitions.ConfirmTransitionView"
         permission="zope2.View"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
-        template="transitions.pt"
-      />
+        template="transitions.pt" />
+
+    <browser:page
+        for="*"
+        name="delete_givenuid"
+        class=".views.DeleteGivenUidView"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        permission="zope2.View" />
+
+    <browser:page
+        for="*"
+        name="actions_panel_javascript_variables.js"
+        class=".jsvariables.JSVariables"
+        permission="zope.Public" />
 
 </configure>

@@ -7,4 +7,5 @@
              expression=""
              id="++resource++imio.actionspanel/actionspanel.js"
              inline="False"/>
+ <javascript id="actions_panel_javascript_variables.js" />
 </object>

@@ -17,6 +17,8 @@ from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 
 from imio.actionspanel import ActionsPanelMessageFactory as _
+from imio.actionspanel.interfaces import IContentDeletable
+from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 
 
 class ActionsPanelView(BrowserView):
@@ -33,10 +35,12 @@ class ActionsPanelView(BrowserView):
             self.request.set('imio.actionspanel_member_cachekey', self.member)
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
+                                   'renderOwnDelete',
                                    'renderActions', )
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
         self.IGNORABLE_ACTIONS = ()
+
         # portal_actions.object_buttons action ids to keep
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
@@ -46,6 +50,7 @@ class ActionsPanelView(BrowserView):
                  showTransitions=True,
                  appendTypeNameToTransitionLabel=False,
                  showEdit=True,
+                 showOwnDelete=True,
                  showActions=True,
                  **kwargs):
         """
@@ -56,6 +61,10 @@ class ActionsPanelView(BrowserView):
         self.showTransitions = showTransitions
         self.appendTypeNameToTransitionLabel = appendTypeNameToTransitionLabel
         self.showEdit = showEdit
+        self.showOwnDelete = showOwnDelete
+        # if we manage our own delete, do not use Plone default one
+        if self.showOwnDelete and not 'delete' in self.IGNORABLE_ACTIONS:
+            self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
         self.showActions = showActions
         self.kwargs = kwargs
         self.hasActions = False
@@ -88,6 +97,16 @@ class ActionsPanelView(BrowserView):
         """
         if self.showEdit and self.useIcons and self.mayEdit():
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
+        return ''
+
+    def renderOwnDelete(self):
+        """
+          Render our own version of the 'delete' action.
+        """
+        if self.showOwnDelete and \
+           self.member.has_permission('Delete objects', self.context) and \
+           IContentDeletable(self.context).mayDelete():
+            return ViewPageTemplateFile("actions_panel_own_delete.pt")(self)
         return ''
 
     def renderActions(self):
@@ -330,3 +349,68 @@ class ActionsPanelView(BrowserView):
         """
         urlBack = self.request['HTTP_REFERER']
         return self.request.RESPONSE.redirect(urlBack)
+
+
+class DeleteGivenUidView(BrowserView):
+    """
+      View that ease deletion of elements by not checking the 'Delete objects' permission on parent
+      but only on the object to delete itself.
+      Callable using self.portal.restrictedTraverse('@@delete_givenuid)(object_to_delete.UID()) in the code
+      and using classic traverse in a url : http://nohost/plonesite/delete_givenuid?object_uid=anUID
+    """
+    def __call__(self, object_uid):
+        logger = logging.getLogger('imio.actionspanel')
+        membershipTool = getToolByName(self, 'portal_membership')
+        member = membershipTool.getAuthenticatedMember()
+
+        # Get the object to delete
+        # try to get it from the portal_catalog
+        catalog_brains = self.context.portal_catalog(UID=object_uid)
+        # if not found, try to get it from the uid_catalog
+        if not catalog_brains:
+            catalog_brains = self.context.uid_catalog(UID=object_uid)
+        # if nto found at all, raise
+        if not catalog_brains:
+            raise KeyError('The given uid could not be found!')
+        obj = catalog_brains[0].getObject()
+        objectUrl = obj.absolute_url()
+
+        # we use an adapter to manage if we may delete the object
+        # that checks if the user has the 'Delete objects' permission
+        # on the content by default but that could be overrided
+        if member.has_permission("Delete objects", obj) and IContentDeletable(obj).mayDelete():
+            msg = {'message': 'object_deleted',
+                   'type': 'info'}
+            logMsg = '%s at %s deleted by "%s"' % \
+                     (obj.meta_type, obj.absolute_url_path(), member.getId())
+            # remove the object
+            # just manage BeforeDeleteException because we rise it ourselves
+            from OFS.ObjectManager import BeforeDeleteException
+            try:
+                unrestrictedRemoveGivenObject(self.context, obj)
+                logger.info(logMsg)
+            except BeforeDeleteException, exc:
+                msg = {'message': exc.message,
+                       'type': 'error'}
+        else:
+            msg = {'message': 'cant_delete_object',
+                   'type': 'error'}
+
+        # Redirect the user to the correct page and display the correct message.
+        refererUrl = self.request['HTTP_REFERER']
+        if not refererUrl.startswith(objectUrl):
+            urlBack = refererUrl
+        else:
+            # we were on the object, redirect to the home page of the current meetingConfig
+            # redirect to the exact home page url, not to the home page that redirects
+            # to the meeting folder page or the portal_message is lost
+            mc = self.context.portal_plonemeeting.getMeetingConfig(self.context)
+            app = self.context.portal_plonemeeting.getPloneMeetingFolder(mc.id)
+            urlBack = app.restrictedTraverse('@@meetingfolder_redirect_view').getFolderRedirectUrl()
+
+        # Add the message. If I try to get plone_utils directly from context
+        # (context.plone_utils), in some cases (ie, the user does not own context),
+        # Unauthorized is raised (?).
+        self.context.portal_plonemeeting.plone_utils.addPortalMessage(**msg)
+        return self.request.RESPONSE.redirect(urlBack)
+
