@@ -24,7 +24,6 @@
         class=".views.ActionsPanelView"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
         template="actions_panel.pt"
-        allowed_attributes="render"
         permission="zope2.View" />
 
     <browser:page
