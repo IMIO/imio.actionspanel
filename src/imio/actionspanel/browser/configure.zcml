@@ -16,7 +16,7 @@
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
         class=".viewlets.ActionsPanelViewlet"
         template="actions_panel_viewlet.pt"
-        permission="zope2.View"/-->
+        permission="zope2.View" /-->
 
     <browser:page
         for="*"
