@@ -1,4 +1,5 @@
 import logging
+logger = logging.getLogger('imio.actionspanel')
 
 from appy.gen import No
 
@@ -310,7 +311,6 @@ class ActionsPanelView(BrowserView):
             # fail silently if the user triggered a transition he could not
             # this avoid WorkflowException error in the UI if a user double-click on an icon
             # triggering a workflow transition
-            logger = logging.getLogger('imio.actionspanel')
             logger.info("WorkflowException in imio.actionspanel.triggerTransition, the user '%s' "
                         "tried to trigger the transition '%s' but he could not.  Double click in the UI?" %
                         (self.member.getId(), self.request.get('transition')))
@@ -360,11 +360,13 @@ class DeleteGivenUidView(BrowserView):
       Callable using self.portal.restrictedTraverse('@@delete_givenuid)(object_to_delete.UID()) in the code
       and using classic traverse in a url : http://nohost/plonesite/delete_givenuid?object_uid=anUID
     """
-    def __call__(self, object_uid):
-        logger = logging.getLogger('imio.actionspanel')
-        membershipTool = getToolByName(self, 'portal_membership')
-        member = membershipTool.getAuthenticatedMember()
+    def __init__(self, context, request):
+        super(DeleteGivenUidView, self).__init__(context, request)
+        self.context = context
+        self.request = request
+        self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
 
+    def __call__(self, object_uid):
         # Get the object to delete
         # try to get it from the portal_catalog
         catalog_brains = self.context.portal_catalog(UID=object_uid)
@@ -380,17 +382,15 @@ class DeleteGivenUidView(BrowserView):
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
         # on the content by default but that could be overrided
-        if member.has_permission("Delete objects", obj) and IContentDeletable(obj).mayDelete():
+        self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+        if self.member.has_permission("Delete objects", obj) and IContentDeletable(obj).mayDelete():
             msg = {'message': 'object_deleted',
                    'type': 'info'}
-            logMsg = '%s at %s deleted by "%s"' % \
-                     (obj.meta_type, obj.absolute_url_path(), member.getId())
             # remove the object
             # just manage BeforeDeleteException because we rise it ourselves
             from OFS.ObjectManager import BeforeDeleteException
             try:
                 unrestrictedRemoveGivenObject(obj)
-                logger.info(logMsg)
             except BeforeDeleteException, exc:
                 msg = {'message': exc.message,
                        'type': 'error'}
@@ -403,18 +403,16 @@ class DeleteGivenUidView(BrowserView):
         # Redirect the user to the correct page and display the correct message.
         refererUrl = self.request['HTTP_REFERER']
         if not refererUrl.startswith(objectUrl):
-            urlBack = refererUrl
+            backURL = refererUrl
         else:
-            # we were on the object, redirect to the home page of the current meetingConfig
-            # redirect to the exact home page url, not to the home page that redirects
-            # to the meeting folder page or the portal_message is lost
-            mc = self.context.portal_plonemeeting.getMeetingConfig(self.context)
-            app = self.context.portal_plonemeeting.getPloneMeetingFolder(mc.id)
-            urlBack = app.restrictedTraverse('@@meetingfolder_redirect_view').getFolderRedirectUrl()
+            backURL = self._computeBackURL()
+        self.portal.plone_utils.addPortalMessage(**msg)
+        return self.request.RESPONSE.redirect(backURL)
 
-        # Add the message. If I try to get plone_utils directly from context
-        # (context.plone_utils), in some cases (ie, the user does not own context),
-        # Unauthorized is raised (?).
-        self.context.portal_plonemeeting.plone_utils.addPortalMessage(**msg)
-        return self.request.RESPONSE.redirect(urlBack)
-
+    def _computeBackURL(self):
+        '''This is made to be overriden...'''
+        # find a parent the current user may access
+        parent = self.context.getParentNode()
+        while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
+            parent = parent.getParentNode()
+        return parent.absolute_url()
