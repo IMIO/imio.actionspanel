@@ -15,7 +15,6 @@ class ContentDeletableAdapter(object):
 
     def __init__(self, context):
         self.context = context
-        self.request = self.context.REQUEST
 
     def mayDelete(self):
         '''See docstring in interfaces.py'''

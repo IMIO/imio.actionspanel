@@ -6,7 +6,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.security import OmnipotentUser
 
 
-def unrestrictedRemoveGivenObject(context, object_to_delete):
+def unrestrictedRemoveGivenObject(object_to_delete):
     """
       This method removed the given object  view removes a given object but as a Manager,
       so calling it will have relevant permissions.
@@ -18,7 +18,7 @@ def unrestrictedRemoveGivenObject(context, object_to_delete):
     # save current SecurityManager to fall back to it after deletion
     oldsm = getSecurityManager()
     # login as an omnipotent user
-    portal = getToolByName(context, 'portal_url').getPortalObject()
+    portal = getToolByName(object_to_delete, 'portal_url').getPortalObject()
     newSecurityManager(None, APOmnipotentUser().__of__(portal.aq_inner.aq_parent.acl_users))
     # removes the object
     parent = object_to_delete.aq_inner.aq_parent

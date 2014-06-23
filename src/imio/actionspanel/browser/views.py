@@ -4,6 +4,8 @@ from appy.gen import No
 
 from Acquisition import aq_base
 
+from AccessControl import Unauthorized
+
 from zope.i18n import translate
 
 from Products.Five import BrowserView
@@ -387,14 +389,16 @@ class DeleteGivenUidView(BrowserView):
             # just manage BeforeDeleteException because we rise it ourselves
             from OFS.ObjectManager import BeforeDeleteException
             try:
-                unrestrictedRemoveGivenObject(self.context, obj)
+                unrestrictedRemoveGivenObject(obj)
                 logger.info(logMsg)
             except BeforeDeleteException, exc:
                 msg = {'message': exc.message,
                        'type': 'error'}
         else:
-            msg = {'message': 'cant_delete_object',
-                   'type': 'error'}
+            # as the action calling delete_givenuid is already protected by the chek
+            # made in the 'if' here above, if we arrive here it is that user is doing
+            # something wrong, we raise Unauthorized
+            raise Unauthorized
 
         # Redirect the user to the correct page and display the correct message.
         refererUrl = self.request['HTTP_REFERER']
