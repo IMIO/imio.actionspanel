@@ -384,7 +384,7 @@ class DeleteGivenUidView(BrowserView):
         # on the content by default but that could be overrided
         self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
         if self.member.has_permission("Delete objects", obj) and IContentDeletable(obj).mayDelete():
-            msg = {'message': 'object_deleted',
+            msg = {'message': _('object_deleted'),
                    'type': 'info'}
             # remove the object
             # just manage BeforeDeleteException because we rise it ourselves
