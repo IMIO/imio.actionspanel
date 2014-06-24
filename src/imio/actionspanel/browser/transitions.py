@@ -30,8 +30,18 @@ class ConfirmTransitionView(BrowserView):
             # while the Cancel button is hit
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         elif submitted:
-            uid_catalog = getToolByName(self.context, 'uid_catalog')
-            obj = uid_catalog(UID=self.request['objectUid'])[0].getObject()
+            portal_catalog = getToolByName(self.context, 'portal_catalog')
+            brains = portal_catalog(UID=self.request['objectUid'])
+            if not brains:
+                # in case the element is not found in portal_catalog,
+                # for example with an not indexed element, we look UID on context
+                # to see if it is the element we want to trigger transition for
+                if self.context.UID() == self.request['objectUid']:
+                    obj = self.context
+                else:
+                    raise KeyError('Object with given UID was not found!')
+            else:
+                obj = brains[0].getObject()
             return obj.restrictedTraverse('@@actions_panel').triggerTransition(self.request.get('transition'),
                                                                                self.request.get('comment'))
         return self.index()

@@ -10,6 +10,11 @@
 
   <i18n:registerTranslations directory="locales" />
 
+  <adapter for="OFS.interfaces.IItem"
+           factory=".adapters.ContentDeletableAdapter"
+           provides=".interfaces.IContentDeletable"
+            />
+
   <genericsetup:registerProfile
       name="default"
       title="imio.actionspanel"

@@ -16,7 +16,7 @@
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
         class=".viewlets.ActionsPanelViewlet"
         template="actions_panel_viewlet.pt"
-        permission="zope2.View"/-->
+        permission="zope2.View" /-->
 
     <browser:page
         for="*"
@@ -24,7 +24,6 @@
         class=".views.ActionsPanelView"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
         template="actions_panel.pt"
-        allowed_attributes="render"
         permission="zope2.View" />
 
     <browser:page
@@ -33,7 +32,19 @@
         class=".transitions.ConfirmTransitionView"
         permission="zope2.View"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
-        template="transitions.pt"
-      />
+        template="transitions.pt" />
+
+    <browser:page
+        for="*"
+        name="delete_givenuid"
+        class=".views.DeleteGivenUidView"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        permission="zope2.View" />
+
+    <browser:page
+        for="*"
+        name="actions_panel_javascript_variables.js"
+        class=".jsvariables.JSVariables"
+        permission="zope.Public" />
 
 </configure>
