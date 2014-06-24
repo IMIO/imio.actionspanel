@@ -1,0 +1,2 @@
+<td tal:actions content="structure view/allowed_content_types" />
+</td>
