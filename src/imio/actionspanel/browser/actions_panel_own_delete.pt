@@ -11,7 +11,7 @@
           <input type="hidden" name="object_uid" tal:attributes="value objectUID" />
           <tal:comment replace="nothing">Icon</tal:comment>
           <img tal:condition="useIcons" i18n:attributes="title" title="Delete"
-               tal:attributes="src string: $portal_url/delete_icon.png"
+               tal:attributes="src string: $portal_url/delete_icon.gif"
                onClick="javascript:confirmDeleteObject(this, 'delete_confirm_message')" style="cursor:pointer"/>
 
           <tal:comment replace="nothing">Button</tal:comment>
