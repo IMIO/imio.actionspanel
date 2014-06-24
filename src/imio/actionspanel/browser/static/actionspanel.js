@@ -5,6 +5,13 @@ function confirmDeleteObject(theElement, msgName){
     if (confirm(msg)) { getEnclosingForm(theElement).submit(); }
 }
 
+function getEnclosingForm(elem) {
+  // Gets the form that surrounds the HTML p_elem.
+  var node = elem.parentNode;
+  while (node.nodeName != "FORM") { node = node.parentNode; }
+  return node;
+}
+
 initializeTransitionsOverlays = function () {
     jQuery(function($) {
       // Add transition confirmation popup
