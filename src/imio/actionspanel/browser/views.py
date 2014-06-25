@@ -23,6 +23,7 @@ from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 
+from zope.security import checkPermission
 
 class ActionsPanelView(BrowserView):
     """
@@ -39,7 +40,9 @@ class ActionsPanelView(BrowserView):
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderOwnDelete',
-                                   'renderActions', )
+                                   'renderActions',
+                                   'renderAllowedContentTypes'
+                                   )
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
         self.IGNORABLE_ACTIONS = ()
@@ -55,6 +58,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showOwnDelete=True,
                  showActions=True,
+                 showAllowedContentTypes=True,
                  **kwargs):
         """
           Master method that will render the content.
@@ -69,6 +73,7 @@ class ActionsPanelView(BrowserView):
         if self.showOwnDelete and not 'delete' in self.IGNORABLE_ACTIONS:
             self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
         self.showActions = showActions
+        self.showAllowedContentTypes = showAllowedContentTypes
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -118,6 +123,13 @@ class ActionsPanelView(BrowserView):
         """
         if self.showActions:
             return ViewPageTemplateFile("actions_panel_actions.pt")(self)
+
+    def renderAllowedContentTypes(self):
+        """
+          Render allowed_content_types coming from portal_type.
+        """
+        if self.showAllowedContentTypes:
+            return ViewPageTemplateFile("actions_panel_allowed_content_types.pt")(self)
 
     def mayEdit(self):
         """
@@ -255,6 +267,39 @@ class ActionsPanelView(BrowserView):
             res = expr(econtext)
             return res
         return 1
+
+    def allowed_content_types(self):
+        """Return content types allowed"""
+
+        actions = []
+
+        types_tool = getToolByName(self, 'portal_types')
+        portal_type = types_tool.get(self.context.portal_type)
+        allowed_content_types = portal_type.allowed_content_types
+        for content_type in allowed_content_types:
+            portal_type = types_tool.get(content_type)
+            add_permission = portal_type.add_permission
+            if checkPermission(add_permission, self.context):
+                url = '{}/++add++{}'.format(
+                    self.context.absolute_url(),
+                    content_type
+                )
+                action = '<a name=add_{} href={} class={} >\
+                    {} {}\
+                    </a>'.format(
+                        content_type,
+                        url,
+                        "apButton apButtonAction",
+                        translate('add', 'imio.actionspanel', target_language='fr', default='add'),
+                        translate(content_type,
+                            portal_type.i18n_domain,
+                            target_language='fr',
+                            default=content_type).encode('utf-8')
+                    )
+                actions.append(action)
+        actions = ''.join(actions)
+        actions = '<span>{}</span>'.format(actions)
+        return actions
 
     def listObjectButtonsActions(self):
         """
