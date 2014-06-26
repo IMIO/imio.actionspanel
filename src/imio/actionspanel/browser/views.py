@@ -277,6 +277,7 @@ class ActionsPanelView(BrowserView):
         portal_type = types_tool.get(self.context.portal_type)
         allowed_content_types = portal_type.allowed_content_types
         for content_type in allowed_content_types:
+            action = {}
             portal_type = types_tool.get(content_type)
             add_permission = portal_type.add_permission
             if checkPermission(add_permission, self.context):
@@ -284,21 +285,15 @@ class ActionsPanelView(BrowserView):
                     self.context.absolute_url(),
                     content_type
                 )
-                action = '<a name=add_{} href={} class={} >\
-                    {} {}\
-                    </a>'.format(
-                        content_type,
-                        url,
-                        "apButton apButtonAction",
-                        translate('add', 'imio.actionspanel', target_language='fr', default='add'),
-                        translate(content_type,
-                            portal_type.i18n_domain,
-                            target_language='fr',
-                            default=content_type).encode('utf-8')
-                    )
+                action['title'] = '{}'.format(
+                    translate(content_type,
+                        portal_type.i18n_domain,
+                        target_language='fr',
+                        default=content_type
+                    ).encode('utf-8')
+                )
+                action['url'] = url
                 actions.append(action)
-        actions = ''.join(actions)
-        actions = '<span>{}</span>'.format(actions)
         return actions
 
     def listObjectButtonsActions(self):

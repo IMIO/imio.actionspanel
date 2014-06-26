@@ -18,7 +18,7 @@ msgstr ""
 "Domain: imio.actionspanel\n"
 
 
-msgid "add"
+msgid "add an element"
 msgstr ""
 
 #. Default: "Item state changed."

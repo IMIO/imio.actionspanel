@@ -15,8 +15,8 @@ msgstr ""
 "Domain: imio.actionspanel\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-msgid "add"
-msgstr "ajouter"
+msgid "add an element"
+msgstr "ajout d'un élément"
 
 #. Default: "Item state changed."
 #: ./browser/views.py:367
