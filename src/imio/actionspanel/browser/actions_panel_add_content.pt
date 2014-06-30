@@ -1,5 +1,5 @@
 <td i18n:domain="imio.actionspanel">
-  <tal:block define="content_actions view/allowed_content_types;">
+  <tal:block define="content_actions view/add_contents;">
     <form action=''>
       <select name="Add element" onchange="javascript:window.location=this.value;">
         <option value=# i18n:translate="">add an element</option>

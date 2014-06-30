@@ -24,6 +24,7 @@ from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 
 from zope.security import checkPermission
+from zope.component import getMultiAdapter
 
 class ActionsPanelView(BrowserView):
     """
@@ -41,7 +42,7 @@ class ActionsPanelView(BrowserView):
                                    'renderEdit',
                                    'renderOwnDelete',
                                    'renderActions',
-                                   'renderAllowedContentTypes'
+                                   'renderAddContent'
                                    )
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
@@ -58,7 +59,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showOwnDelete=True,
                  showActions=True,
-                 showAllowedContentTypes=True,
+                 showAddContent=True,
                  **kwargs):
         """
           Master method that will render the content.
@@ -73,7 +74,7 @@ class ActionsPanelView(BrowserView):
         if self.showOwnDelete and not 'delete' in self.IGNORABLE_ACTIONS:
             self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
         self.showActions = showActions
-        self.showAllowedContentTypes = showAllowedContentTypes
+        self.showAddContent = showAddContent
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -124,12 +125,12 @@ class ActionsPanelView(BrowserView):
         if self.showActions:
             return ViewPageTemplateFile("actions_panel_actions.pt")(self)
 
-    def renderAllowedContentTypes(self):
+    def renderAddContent(self):
         """
           Render allowed_content_types coming from portal_type.
         """
-        if self.showAllowedContentTypes:
-            return ViewPageTemplateFile("actions_panel_allowed_content_types.pt")(self)
+        if self.showAddContent:
+            return ViewPageTemplateFile("actions_panel_add_content.pt")(self)
 
     def mayEdit(self):
         """
@@ -268,31 +269,29 @@ class ActionsPanelView(BrowserView):
             return res
         return 1
 
-    def allowed_content_types(self):
-        """Return content types allowed"""
+    def add_contents(self):
+        """Return content to add"""
 
         actions = []
-
         types_tool = getToolByName(self, 'portal_types')
-        portal_type = types_tool.get(self.context.portal_type)
-        allowed_content_types = portal_type.allowed_content_types
-        for content_type in allowed_content_types:
+        factories_view = getMultiAdapter((self.context, self.request),
+            name='folder_factories'
+        )
+        results = factories_view.addable_types()
+        for result in results:
             action = {}
-            portal_type = types_tool.get(content_type)
+            portal_type = types_tool.get(result['id'])
             add_permission = portal_type.add_permission
             if checkPermission(add_permission, self.context):
-                url = '{}/++add++{}'.format(
-                    self.context.absolute_url(),
-                    content_type
-                )
                 action['title'] = '{}'.format(
-                    translate(content_type,
+                    translate(
+                        result['id'],
                         portal_type.i18n_domain,
                         target_language='fr',
-                        default=content_type
+                        default=result['id']
                     ).encode('utf-8')
                 )
-                action['url'] = url
+                action['url'] = result['action']
                 actions.append(action)
         return actions
 
