@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-06-23 14:09+0000\n"
+"POT-Creation-Date: 2014-06-25 08:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,8 +15,11 @@ msgstr ""
 "Domain: imio.actionspanel\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
+msgid "add an element"
+msgstr "ajout d'un élément"
+
 #. Default: "Item state changed."
-#: ./browser/views.py:322
+#: ./browser/views.py:367
 msgid "%s_done_descr"
 msgstr ""
 
@@ -24,12 +27,12 @@ msgstr ""
 msgid "delete_confirm_message"
 msgstr "Etes-vous certain de vouloir supprimer cet élément?"
 
-#: ./browser/views.py:387
+#: ./browser/views.py:432
 msgid "object_deleted"
 msgstr "L'élément a été supprimé."
 
 #. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
-#: ./browser/views.py:334
+#: ./browser/views.py:379
 msgid "redirected_after_transition_not_viewable"
 msgstr "Vous avez été redirigé ici parce que l'élément pour lequel vous venez de changer l'état ne vous est plus accessible."
 
@@ -41,3 +44,4 @@ msgstr "Commentaire"
 #: ./browser/transitions.pt:21
 msgid "workflow_confirm"
 msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
+

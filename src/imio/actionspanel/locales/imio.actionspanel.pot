@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-06-23 14:09+0000\n"
+"POT-Creation-Date: 2014-06-25 08:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,12 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.actionspanel\n"
 
+
+msgid "add an element"
+msgstr ""
+
 #. Default: "Item state changed."
-#: ./browser/views.py:322
+#: ./browser/views.py:367
 msgid "%s_done_descr"
 msgstr ""
 
@@ -26,12 +30,12 @@ msgstr ""
 msgid "delete_confirm_message"
 msgstr ""
 
-#: ./browser/views.py:387
+#: ./browser/views.py:432
 msgid "object_deleted"
 msgstr ""
 
 #. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
-#: ./browser/views.py:334
+#: ./browser/views.py:379
 msgid "redirected_after_transition_not_viewable"
 msgstr ""
 

@@ -8,6 +8,7 @@ By default, so called sections available are :
 - transitions
 - edit
 - actions
+- allowed content types
 
 Transitions :
 =============
