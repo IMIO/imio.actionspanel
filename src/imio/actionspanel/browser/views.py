@@ -41,7 +41,7 @@ class ActionsPanelView(BrowserView):
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderOwnDelete',
-                                   'renderActions', )
+                                   'renderActions',
                                    'renderOwnDelete',
                                    'renderAddContent'
                                    )
@@ -60,7 +60,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showOwnDelete=True,
                  showActions=True,
-                 showAddContent=True,
+                 showAddContent=False,
                  **kwargs):
         """
           Master method that will render the content.
