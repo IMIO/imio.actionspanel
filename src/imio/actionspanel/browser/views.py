@@ -44,6 +44,7 @@ class ActionsPanelView(BrowserView):
                                    'renderActions',
                                    'renderOwnDelete',
                                    'renderAddContent'
+                                   'renderHistory'
                                    )
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
@@ -61,6 +62,7 @@ class ActionsPanelView(BrowserView):
                  showOwnDelete=True,
                  showActions=True,
                  showAddContent=False,
+                 showHistory=False,
                  **kwargs):
         """
           Master method that will render the content.
@@ -76,6 +78,7 @@ class ActionsPanelView(BrowserView):
             self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
         self.showActions = showActions
         self.showAddContent = showAddContent
+        self.showHistory = showHistory
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -133,11 +136,26 @@ class ActionsPanelView(BrowserView):
         if self.showAddContent:
             return ViewPageTemplateFile("actions_panel_add_content.pt")(self)
 
+    def renderHistory(self):
+        """
+          Render a link to the object's history (@@historyview).
+        """
+        if self.showHistory and self.useIcons and self.showHistoryForContext():
+            return ViewPageTemplateFile("actions_panel_history.pt")(self)
+
+    def showHistoryForContext(self):
+        """
+          Should an access to the @@historyview be shown for the object?
+        """
+        if not _checkPermission('CMFEditions: Access previous versions', self.context):
+            return False
+        return True
+
     def mayEdit(self):
         """
           Method that check if special 'edit' action has to be displayed.
         """
-        return self.member.has_permission('Modify portal content', self.context) and self.useIcons
+        return self.member.has_permission('Modify portal content', self.context)
 
     def saveHasActions(self):
         """
