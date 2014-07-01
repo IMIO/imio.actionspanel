@@ -16,7 +16,7 @@ msgstr ""
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
 msgid "add an element"
-msgstr "ajout d'un élément"
+msgstr "Ajout d'un élément"
 
 #. Default: "Item state changed."
 #: ./browser/views.py:367
