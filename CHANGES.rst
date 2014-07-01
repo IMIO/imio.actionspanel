@@ -3,16 +3,17 @@ Changelog
 
 1.3 (unreleased)
 ----------------
+- Added section that render a link to the object's history if useIcons is True
 
-1.2
----
+1.2 (2014-07-01)
+----------------
 - Do not lookup an object UID in the uid_catalog,
   this fails when using dexterity, use portal_catalog or
   check context UID if element is not indexed
 - Do not display a '-' when no actions to display and not using icons
 - Implement '__call__' instead of 'render' on the actions panel view
   so calling the view is simpler
--Display AddContent actions.
+- Display AddContent actions.
 
 1.1 (2014-04-03)
 ----------------
