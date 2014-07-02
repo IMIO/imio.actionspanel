@@ -43,9 +43,8 @@ class ActionsPanelView(BrowserView):
                                    'renderOwnDelete',
                                    'renderActions',
                                    'renderOwnDelete',
-                                   'renderAddContent'
-                                   'renderHistory'
-                                   )
+                                   'renderAddContent',
+                                   'renderHistory')
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
         self.IGNORABLE_ACTIONS = ()
