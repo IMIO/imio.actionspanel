@@ -1,7 +1,5 @@
 <tal:defines define="objectUID python: context.UID();
-                     useIcons view/useIcons;
-                     portal context/@@plone_portal_state/portal;
-                     portal_url context/@@plone_portal_state/portal_url;">
+                     useIcons view/useIcons;">
 <td tal:repeat="transition view/getTransitions"
     class="noPadding" align="left">
   <tal:transition define="transitionId python: transition['id'];
@@ -20,13 +18,13 @@
                                     + (confirm=='false' and '&form.submitted=boolean:True' or '');
                        class python: confirm=='true' and 'link-overlay-actionspanel transition-overlay' or ''">
       <tal:comment replace="nothing">Icon</tal:comment>
-      <img tal:condition="python: useIcons and hasattr(portal, imageName)"
-           tal:attributes="src string: $portal_url/$imageName;
+      <img tal:condition="python: useIcons and hasattr(view.portal, imageName)"
+           tal:attributes="src string: ${view/portal_url}/$imageName;
                            title python: transition['title'];"/>
       <tal:comment replace="nothing">Display a input button if useIcons is False.  Moreover, a <form> is necessary
                                      around an <input /> for IE...</tal:comment>
       <form action="#"
-            tal:condition="python: not(useIcons and hasattr(portal, imageName))"
+            tal:condition="python: not(useIcons and hasattr(view.portal, imageName))"
             tal:attributes="action python: context.absolute_url() + '/@@triggertransition'">
       <input type="hidden" name="objectUid" tal:attributes="value objectUID;"/>
       <input type="hidden" name="transition" tal:attributes="value python: transition['id'];"/>

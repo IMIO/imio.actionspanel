@@ -26,6 +26,7 @@ from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from zope.security import checkPermission
 from zope.component import getMultiAdapter
 
+
 class ActionsPanelView(BrowserView):
     """
       This manage the view displaying actions on context.
@@ -38,6 +39,13 @@ class ActionsPanelView(BrowserView):
         if not self.member:
             self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
             self.request.set('imio.actionspanel_member_cachekey', self.member)
+        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
+        self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
+        if not self.portal_url or not self.portal:
+            self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
+            self.portal_url = self.portal.absolute_url()
+            self.request.set('imio.actionspanel_portal_url_cachekey', self.portal_url)
+            self.request.set('imio.actionspanel_portal_cachekey', self.portal)
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderOwnDelete',
@@ -52,6 +60,8 @@ class ActionsPanelView(BrowserView):
         # portal_actions.object_buttons action ids to keep
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
+
+
 
     def __call__(self,
                  useIcons=True,

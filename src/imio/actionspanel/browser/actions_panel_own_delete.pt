@@ -1,8 +1,6 @@
 <tal:comment replace="nothing">Available transitions</tal:comment>
 <tal:defines define="objectUID python: context.UID();
-                     useIcons view/useIcons;
-                     portal context/@@plone_portal_state/portal;
-                     portal_url context/@@plone_portal_state/portal_url;">
+                     useIcons view/useIcons;">
 
     <tal:comment replace="nothing">Delete icon/button</tal:comment>
     <td class="noPadding" i18n:domain="plone">
@@ -11,7 +9,7 @@
           <input type="hidden" name="object_uid" tal:attributes="value objectUID" />
           <tal:comment replace="nothing">Icon</tal:comment>
           <img tal:condition="useIcons" i18n:attributes="title" title="Delete"
-               tal:attributes="src string: $portal_url/delete_icon.png"
+               tal:attributes="src string: ${view/portal_url}/delete_icon.png"
                onClick="javascript:confirmDeleteObject(this)" style="cursor:pointer"/>
 
           <tal:comment replace="nothing">Button</tal:comment>
