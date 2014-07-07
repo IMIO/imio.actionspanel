@@ -1,7 +1,12 @@
-<td class="noPadding" i18n:domain="plone">
-  <a tal:define="dummy view/saveHasActions;"
+<td class="noPadding" i18n:domain="imio.actionspanel">
+  <a tal:define="dummy view/saveHasActions;
+                 iconName python: (view.showHistoryLastEventHasComments and view.historyLastEventHasComments()) and 'history_last_event_has_comment.gif' or 'history.gif'"
      tal:attributes="href string:${context/absolute_url}/@@historyview"
      class="overlay-history">
-    <img src="history.gif" tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/history.gif" title="History" i18n:attributes="title" />
+    <img src="history.gif"
+         tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/${iconName};
+                         title string:${iconName}_icon_title;"
+         title="History"
+         i18n:attributes="title" />
   </a>
 </td>

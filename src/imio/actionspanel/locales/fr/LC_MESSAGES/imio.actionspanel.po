@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-06-25 08:56+0000\n"
+"POT-Creation-Date: 2014-07-07 14:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,24 +15,33 @@ msgstr ""
 "Domain: imio.actionspanel\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-msgid "add an element"
-msgstr "ajout d'un élément"
-
 #. Default: "Item state changed."
-#: ./browser/views.py:367
+#: ./browser/views.py:423
 msgid "%s_done_descr"
 msgstr ""
+
+#: ./browser/actions_panel_add_content.pt:5
+msgid "add an element"
+msgstr "ajout d'un élément"
 
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
 msgstr "Etes-vous certain de vouloir supprimer cet élément?"
 
-#: ./browser/views.py:432
+#: ./browser/actions_panel_history.pt
+msgid "history.gif_icon_title"
+msgstr "Historique de l'élément"
+
+#: ./browser/actions_panel_history.pt
+msgid "history_last_event_has_comment.gif_icon_title"
+msgstr "Historique de l'élément (un commentaire a été renseigné lors du dernier événement)"
+
+#: ./browser/views.py:488
 msgid "object_deleted"
 msgstr "L'élément a été supprimé."
 
 #. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
-#: ./browser/views.py:379
+#: ./browser/views.py:435
 msgid "redirected_after_transition_not_viewable"
 msgstr "Vous avez été redirigé ici parce que l'élément pour lequel vous venez de changer l'état ne vous est plus accessible."
 
@@ -44,4 +53,3 @@ msgstr "Commentaire"
 #: ./browser/transitions.pt:21
 msgid "workflow_confirm"
 msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
-

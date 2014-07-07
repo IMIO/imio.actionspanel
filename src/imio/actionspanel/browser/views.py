@@ -61,7 +61,11 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-
+        # when using showHistory and showHistoryLastEventHasComments
+        # we can give a list of comments we do not consider
+        # for example is some default comments are added at specific time
+        # just for information
+        self.IGNORABLE_HISTORY_COMMENTS = ('', u'', None)
 
     def __call__(self,
                  useIcons=True,
@@ -72,6 +76,7 @@ class ActionsPanelView(BrowserView):
                  showActions=True,
                  showAddContent=False,
                  showHistory=False,
+                 showHistoryLastEventHasComments=True,
                  **kwargs):
         """
           Master method that will render the content.
@@ -88,6 +93,7 @@ class ActionsPanelView(BrowserView):
         self.showActions = showActions
         self.showAddContent = showAddContent
         self.showHistory = showHistory
+        self.showHistoryLastEventHasComments = showHistoryLastEventHasComments
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -159,6 +165,34 @@ class ActionsPanelView(BrowserView):
         if not _checkPermission('CMFEditions: Access previous versions', self.context):
             return False
         return True
+
+    def historyLastEventHasComments(self):
+        '''
+          Returns True if the last event of the object's history has a comment.
+        '''
+        history = self.context.workflow_history
+        # workflow_history is like :
+        # {'my_content_workflow': ({'action': None, 'review_state': 'created', 'actor': 'admin',
+        #                           'comments': 'My comment', 'time': DateTime('2014/06/05 14:35 GMT+2')},
+        #  'my_content_former_workflow': ({'action': None, 'review_state': 'created', 'actor': 'admin',
+        #                           'comments': 'My comment', 'time': DateTime('2012/02/02 12:00 GMT+2')}, }
+        # if we have only one key in the history, we take relevant corresponding actions but if we have
+        # several keys, we need to get current workflow and to reach relevant actions
+        keys = history.keys()
+        lastEvent = {'comments': ''}
+        if len(keys) == 1:
+            lastEvent = history[keys[0]][-1]
+        elif len(keys) > 1:
+            # get current workflow history
+            wfTool = getToolByName(self.context, 'portal_workflow')
+            contextWFs = wfTool.getWorkflowsFor(self.context)
+            if not contextWFs:
+                return False
+            currentWFId = contextWFs[0].getId()
+            lastEvent = history[currentWFId][-1]
+        if not lastEvent['comments'] in self.IGNORABLE_HISTORY_COMMENTS:
+            return True
+        return False
 
     def mayEdit(self):
         """

@@ -17,3 +17,12 @@ msgstr ""
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
 msgstr ""
+
+#: ./browser/actions_panel_history.pt
+msgid "history.gif_icon_title"
+msgstr ""
+
+#: ./browser/actions_panel_history.pt
+msgid "history_last_event_has_comment.gif_icon_title"
+msgstr ""
+
