@@ -170,7 +170,9 @@ class ActionsPanelView(BrowserView):
         '''
           Returns True if the last event of the object's history has a comment.
         '''
-        history = self.context.workflow_history
+        history = getattr(aq_base(self.context), 'workflow_history', None)
+        if not history:
+            return False
         # workflow_history is like :
         # {'my_content_workflow': ({'action': None, 'review_state': 'created', 'actor': 'admin',
         #                           'comments': 'My comment', 'time': DateTime('2014/06/05 14:35 GMT+2')},
