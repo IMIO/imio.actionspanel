@@ -50,7 +50,6 @@ class ActionsPanelView(BrowserView):
                                    'renderEdit',
                                    'renderOwnDelete',
                                    'renderActions',
-                                   'renderOwnDelete',
                                    'renderAddContent',
                                    'renderHistory')
         # portal_actions.object_buttons action ids not to keep
