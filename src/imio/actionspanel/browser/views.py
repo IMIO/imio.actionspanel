@@ -70,7 +70,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showOwnDelete=True,
                  showActions=True,
-                 showAddContent=True,
+                 showAddContent=False,
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
                  **kwargs):
