@@ -4,9 +4,9 @@ logger = logging.getLogger('imio.actionspanel')
 from appy.gen import No
 
 from Acquisition import aq_base
-
 from AccessControl import Unauthorized
 
+from zope.component import getMultiAdapter
 from zope.i18n import translate
 
 from Products.Five import BrowserView
@@ -22,9 +22,6 @@ from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
-
-from zope.security import checkPermission
-from zope.component import getMultiAdapter
 
 
 class ActionsPanelView(BrowserView):
@@ -73,7 +70,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showOwnDelete=True,
                  showActions=True,
-                 showAddContent=False,
+                 showAddContent=True,
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
                  **kwargs):
@@ -332,31 +329,13 @@ class ActionsPanelView(BrowserView):
             return res
         return 1
 
-    def add_contents(self):
-        """Return content to add"""
-
-        actions = []
-        types_tool = getToolByName(self, 'portal_types')
+    def addableContents(self):
+        """
+          Return addable content types.
+        """
         factories_view = getMultiAdapter((self.context, self.request),
-            name='folder_factories'
-        )
-        results = factories_view.addable_types()
-        for result in results:
-            action = {}
-            portal_type = types_tool.get(result['id'])
-            add_permission = portal_type.add_permission
-            if checkPermission(add_permission, self.context):
-                action['title'] = '{}'.format(
-                    translate(
-                        result['id'],
-                        portal_type.i18n_domain,
-                        target_language='fr',
-                        default=result['id']
-                    ).encode('utf-8')
-                )
-                action['url'] = result['action']
-                actions.append(action)
-        return actions
+                                         name='folder_factories')
+        return factories_view.addable_types()
 
     def listObjectButtonsActions(self):
         """
