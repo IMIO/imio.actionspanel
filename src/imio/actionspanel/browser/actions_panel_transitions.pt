@@ -2,11 +2,7 @@
                      useIcons view/useIcons;">
 <td tal:repeat="transition view/getTransitions"
     class="noPadding" align="left">
-  <tal:transition define="transitionId python: transition['id'];
-                          imageName python:  transitionId + '.png';
-                          confirm python: str(transition['confirm']).lower();
-                          dummy view/saveHasActions;"
-                  condition="transition/may_trigger">
+  <tal:transition condition="transition/may_trigger">
 
     <a href="@@triggertransition"
        class="#"
@@ -16,11 +12,15 @@
                                     + '&transition='
                                     + transition['id']
                                     + (confirm=='false' and '&form.submitted=boolean:True' or '');
-                       class python: confirm=='true' and 'link-overlay-actionspanel transition-overlay' or ''">
+                       class python: confirm=='true' and 'link-overlay-actionspanel transition-overlay' or ''"
+       tal:define="transitionId python: transition['id'];
+                   imageName python:  transitionId + '.png';
+                   confirm python: str(transition['confirm']).lower();
+                   dummy view/saveHasActions;">
       <tal:comment replace="nothing">Icon</tal:comment>
       <img tal:condition="python: useIcons and hasattr(view.portal, imageName)"
            tal:attributes="src string: ${view/portal_url}/$imageName;
-                           title python: transition['title'];"/>
+                           title transition/title;"/>
       <tal:comment replace="nothing">Display a input button if useIcons is False.  Moreover, a <form> is necessary
                                      around an <input /> for IE...</tal:comment>
       <form action="#"
@@ -39,10 +39,20 @@
   </tal:transition>
 
   <tal:comment replace="nothing">The user can't trigger this transition: we tell him why.</tal:comment>
-  <input type="button" disabled
-         tal:condition="not: transition/may_trigger" class="apButton fakeButton"
-         tal:attributes="value transition/title;
-                         title transition/reason"
-         i18n:attributes="value" />
+  <tal:notTriggerableTransition condition="not: transition/may_trigger">
+    <tal:defines define="transitionId python: transition['id'];
+                         imageName python:  transitionId + '.png';">
+        <input type="button" disabled
+               tal:condition="python: not(useIcons and hasattr(view.portal, imageName))"
+               class="apButton notTriggerableTransitionButton"
+               tal:attributes="value transition/title;
+                               title transition/reason"
+               i18n:attributes="value" />
+        <img class="notTriggerableTransitionImage"
+             tal:condition="python: useIcons and hasattr(view.portal, imageName)"
+             tal:attributes="src string: ${view/portal_url}/$imageName;
+                             title python: '%s -> %s' % (transition['title'], transition['reason']);"/>
+    </tal:defines>
+  </tal:notTriggerableTransition>
 </td>
 </tal:defines>
