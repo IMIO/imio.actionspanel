@@ -4,6 +4,9 @@ Changelog
 1.3 (unreleased)
 ----------------
 - Added section that render a link to the object's history if useIcons is True
+- Not triggerable transitions are now also displayed using icon if useIcons is True,
+  before, not triggerable transitions where always displayed as button, no mater useIcons
+  was True or False
 
 1.2 (2014-07-01)
 ----------------
