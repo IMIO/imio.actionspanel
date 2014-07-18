@@ -427,11 +427,8 @@ class ActionsPanelView(BrowserView):
         plone_utils.addPortalMessage(msg)
         if not self.member.has_permission('View', self.context):
             # After having triggered a wfchange, it the current user
-            # can not access the obj anymore :
-            # - redirect the user to HTTP_REFERER if we where not on the obj
-            # - redirect the user to his home page if we were on the no more accessible obj
-            # - display a clear portal message
-            redirectToUrl = self._redirectToUrl()
+            # can not access the obj anymore, try to find a place viewable by the user
+            redirectToUrl = self._redirectToViewableUrl()
             # add a specific portal_message before redirecting the user
             msg = _('redirected_after_transition_not_viewable',
                     default="You have been redirected here because you do not have "
@@ -441,11 +438,32 @@ class ActionsPanelView(BrowserView):
         else:
             return self._gotoReferer()
 
-    def _redirectToUrl(self):
+    def _redirectToViewableUrl(self):
         """
-          Return the url the user must be redirected to.
+          Return a url the user may access.
+          This is called when user does not have access anymore to
+          the object he triggered a transition for.
+          First check if HTTP_REFERER is not the object not accessible, if it is not, we redirect
+          to HTTP_REFERER, but if it is, we check parents until we find a viewable parent.
         """
-        return self.request['HTTP_REFERER']
+        http_referer = self.request['HTTP_REFERER']
+        if not http_referer.startswith(self.context.absolute_url()):
+            # HTTP_REFERER is not the object we have not access to anymore
+            # we can redirect to it...  probably...
+            redirectToUrl = http_referer
+        else:
+            # if HTTP_REFERER is the object we can not access anymore
+            # we will try to find a parent object we can be redirected to
+            parent = self.context.getParentNode()
+            while not self.member.has_permission('View', parent):
+                if parent.portal_type == 'Plone Site':
+                    # if we arrived to the root Plone Site and it is still
+                    # not viewable, we can not do anything else but raise an error...
+                    raise Exception('Unable to redirect user to a viewable place!')
+                else:
+                    parent = parent.getParentNode()
+            redirectToUrl = parent.absolute_url()
+        return redirectToUrl
 
     def _gotoReferer(self):
         """
