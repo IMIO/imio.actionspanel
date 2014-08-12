@@ -5,8 +5,13 @@ Changelog
 ----------------
 - Added section that render a link to the object's history if useIcons is True
 - Not triggerable transitions are now also displayed using icon if useIcons is True,
-  before, not triggerable transitions where always displayed as button, no mater useIcons
+  before, not triggerable transitions were always displayed as button, no mater useIcons
   was True or False
+- Simplified method that compute addable contents, the default 'folder_factories'
+  does all the job
+- Manage the fact that if after a transition has been triggered on an object,
+  this object is not accessible anymore to the current user, it is redirected
+  to a viewable place
 
 1.2 (2014-07-01)
 ----------------
