@@ -1,4 +1,4 @@
-<table class="no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
+<table class="actionspanel-no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
   <tr>
     <tal:sections replace="structure view/_renderSections" />
   </tr>
