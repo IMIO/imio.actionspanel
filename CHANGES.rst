@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.4 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
 1.3 (2014-08-19)
 ----------------
 - Added section that render a link to the object's history if useIcons is True
