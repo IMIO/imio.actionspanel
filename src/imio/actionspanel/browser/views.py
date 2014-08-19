@@ -478,7 +478,6 @@ class DeleteGivenUidView(BrowserView):
         if not catalog_brains:
             raise KeyError('The given uid could not be found!')
         obj = catalog_brains[0].getObject()
-        objectUrl = obj.absolute_url()
 
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
@@ -502,18 +501,20 @@ class DeleteGivenUidView(BrowserView):
             raise Unauthorized
 
         # Redirect the user to the correct page and display the correct message.
+        backURL = self._computeBackURL(obj)
+        self.portal.plone_utils.addPortalMessage(**msg)
+        return self.request.RESPONSE.redirect(backURL)
+
+    def _computeBackURL(self, obj):
+        '''This is made to be overriden...'''
+        objectUrl = obj.absolute_url()
         refererUrl = self.request['HTTP_REFERER']
         if not refererUrl.startswith(objectUrl):
             backURL = refererUrl
         else:
-            backURL = self._computeBackURL()
-        self.portal.plone_utils.addPortalMessage(**msg)
-        return self.request.RESPONSE.redirect(backURL)
-
-    def _computeBackURL(self):
-        '''This is made to be overriden...'''
         # find a parent the current user may access
-        parent = self.context.getParentNode()
-        while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
-            parent = parent.getParentNode()
-        return parent.absolute_url()
+            parent = self.context.getParentNode()
+            while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
+                parent = parent.getParentNode()
+            backURL = parent.absolute_url()
+        return backURL
