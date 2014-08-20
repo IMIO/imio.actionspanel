@@ -228,7 +228,7 @@ class ActionsPanelView(BrowserView):
         if not currentState:
             return res
         # Get the transitions to confirm from the config.
-        toConfirm = self._transitionsToConfirm()
+        toConfirm = self._transitionsToConfirmInfos()
         # Analyse all the transitions that start from this state.
         for transitionId in currentState.transitions:
             transition = workflow.transitions.get(transitionId, None)
@@ -248,6 +248,7 @@ class ActionsPanelView(BrowserView):
                     # current object meta_type/portal_type and transition to trigger
                     preNameMetaType = '%s.%s' % (self.context.meta_type, transition.id)
                     preNamePortalType = '%s.%s' % (self.context.portal_type, transition.id)
+                    confirmation_view = toConfirm.get(preNameMetaType, '') or toConfirm.get(preNamePortalType, '')
                     tInfo = {
                         'id': transition.id,
                         # if the transition.id is not translated, use translated transition.title...
@@ -259,7 +260,8 @@ class ActionsPanelView(BrowserView):
                                                              context=self.request)),
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
-                        'confirm': preNameMetaType in toConfirm or preNamePortalType in toConfirm,
+                        'confirm': bool(confirmation_view),
+                        'confirmation_view': confirmation_view,
                         'url': transition.actbox_url %
                             {'content_url': self.context.absolute_url(),
                              'portal_url': '',
@@ -271,6 +273,17 @@ class ActionsPanelView(BrowserView):
                     res.append(tInfo)
         return res
 
+    def _transitionsToConfirmInfos(self):
+        transitions = self._transitionsToConfirm()
+        default_confirm_view = 'triggertransition'
+        if type(transitions) is not dict:
+            transitions = dict([(t, default_confirm_view) for t in transitions])
+        else:
+            for name, confirm_view in transitions.iteritems():
+                if not confirm_view:
+                    transitions[name] = default_confirm_view
+        return transitions
+
     def _transitionsToConfirm(self):
         """
           Return the list of transitions the user will have to confirm, aka
@@ -279,6 +292,12 @@ class ActionsPanelView(BrowserView):
           So for example, this could be :
           ('ATDocument.reject', 'Document.publish', 'Collection.publish', )
           --> ATDocument is a meta_type and Document is a portal_type for example
+          The list can also be a dict with the key being the transition name to
+          confirm and the value being the name of the view to call to confirm
+          the transition. eg:
+          {'Document.reject': 'simpleconfirmview', 'Mytype.cancel': 'messageconfirmview'}
+          If no confirmation view is provided (empty string) imio.actionspanel confirmation
+          default view is used instead.
         """
         return ()
 
