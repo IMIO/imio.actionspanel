@@ -531,9 +531,16 @@ class DeleteGivenUidView(BrowserView):
         if not refererUrl.startswith(objectUrl):
             backURL = refererUrl
         else:
-        # find a parent the current user may access
-            parent = self.context.getParentNode()
-            while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
-                parent = parent.getParentNode()
-            backURL = parent.absolute_url()
+            # find a parent the current user may access
+            backURL = self._findViewablePlace(obj)
         return backURL
+
+    def _findViewablePlace(self, obj):
+        '''
+          Find a place the current user may access.
+          By default, it will try to find a viewable parent.
+        '''
+        parent = obj.getParentNode()
+        while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
+            parent = parent.getParentNode()
+        return parent.absolute_url()
