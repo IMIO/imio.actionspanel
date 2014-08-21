@@ -4,19 +4,27 @@ Changelog
 1.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added submethod _findViewablePlace in _computeBackURL were we can manage
+  where to redirect the member when he was on the object he just deleted.
+  This makes it possible to override only the _findVieawable method
+  and keep the other part of _computeBackURL that does manage the case when
+  the member was not on the object he just deleted.
 
 
 1.5 (2014-08-20)
 ----------------
 
-- Nothing changed yet.
+- Adpated _transitionsToConfirm method to be also able to provide custom 
+  view name to use as confirmation popup.
 
 
 1.4 (2014-08-19)
 ----------------
 
-- Nothing changed yet.
+- Moved complete computation of back url when an object is removed to
+  _computeBackURL, not only the case when we were on the object we just removed.
+- Added CSS class 'actionspanel-no-style-table' on the main actions_panel table
+  and defined styles for it to remove any border/margin/padding.
 
 
 1.3 (2014-08-19)
