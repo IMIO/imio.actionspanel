@@ -13,6 +13,7 @@ class ConfirmTransitionView(BrowserView):
         super(BrowserView, self).__init__(context, request)
         self.context = context
         self.request = request
+        self.actionspanel_view_name = self.request.get('actionspanel_view_name')
 
     def __call__(self):
         # check that the user has actually a transition to trigger with confirmation
@@ -31,8 +32,8 @@ class ConfirmTransitionView(BrowserView):
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         elif submitted:
             obj = self.get_object()
-            return obj.restrictedTraverse('@@actions_panel').triggerTransition(self.request.get('transition'),
-                                                                               self.request.get('comment'))
+            actionspanel_view = obj.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+            return actionspanel_view.triggerTransition(self.request.get('transition'), self.request.get('comment'))
         return self.index()
 
     def get_object(self):
@@ -57,7 +58,8 @@ class ConfirmTransitionView(BrowserView):
     def initTransition(self):
         '''Initialize values for the 'transition' form field.'''
         res = ''
-        availableTransitions = self.context.restrictedTraverse('@@actions_panel').getTransitions()
+        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        availableTransitions = actionspanel_view.getTransitions()
         for availableTransition in availableTransitions:
             if self.request.get('transition') == availableTransition['id'] and \
                availableTransition['confirm'] is True:
