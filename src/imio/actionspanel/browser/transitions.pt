@@ -15,6 +15,7 @@
           tal:attributes="action python:context.absolute_url() + '/@@triggertransition'">
     <input type="hidden" name="objectUid" tal:attributes="value context/UID"/>
     <input type="hidden" name="transition" tal:attributes="value view/initTransition"/>
+    <input type="hidden" name="actionspanel_view_name" tal:attributes="value view/actionspanel_view_name"/>
     <input type="hidden" name="iStartNumber" tal:attributes="value view/initIStartNumber"/>
     <input type="hidden" name="lStartNumber" tal:attributes="value view/initLStartNumber"/>
     <tal:comment replace="nothing">Explanation comment</tal:comment>
