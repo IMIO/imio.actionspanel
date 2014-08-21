@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.6 (unreleased)
+1.6 (2014-08-21)
 ----------------
 
 - Added submethod _findViewablePlace in _computeBackURL were we can manage
