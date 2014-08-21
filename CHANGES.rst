@@ -10,6 +10,9 @@ Changelog
   and keep the other part of _computeBackURL that does manage the case when
   the member was not on the object he just deleted.
 
+- Custom action_panels views can now be registered with a different name
+  than 'actions_panel'.
+
 
 1.5 (2014-08-20)
 ----------------
