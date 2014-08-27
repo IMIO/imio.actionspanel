@@ -10,9 +10,9 @@ Changelog
 1.6 (2014-08-21)
 ----------------
 
-- Added submethod _findViewablePlace in _computeBackURL were we can manage
+- Added submethod _findViewablePlace in _computeBackURL where we can manage
   where to redirect the member when he was on the object he just deleted.
-  This makes it possible to override only the _findVieawable method
+  This makes it possible to override only the _findViewable method
   and keep the other part of _computeBackURL that does manage the case when
   the member was not on the object he just deleted.
 
