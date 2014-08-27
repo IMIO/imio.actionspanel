@@ -271,6 +271,12 @@ class ActionsPanelView(BrowserView):
                         tInfo['may_trigger'] = False
                         tInfo['reason'] = mayTrigger.msg
                     res.append(tInfo)
+
+        # sort transitions by title
+        def _sortByTransitionTitle(x, y):
+            return cmp(x['title'], y['title'])
+        res.sort(_sortByTransitionTitle)
+
         return res
 
     def _transitionsToConfirmInfos(self):

@@ -4,7 +4,7 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Sort transitions by transition title, more easy to use when displaying several transitons.
 
 
 1.6 (2014-08-21)
@@ -23,7 +23,7 @@ Changelog
 1.5 (2014-08-20)
 ----------------
 
-- Adpated _transitionsToConfirm method to be also able to provide custom 
+- Adpated _transitionsToConfirm method to be also able to provide custom
   view name to use as confirmation popup.
 
 
