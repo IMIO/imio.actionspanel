@@ -23,6 +23,8 @@ from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 
+DEFAULT_CONFIRM_VIEW = '@@triggertransition'
+
 
 class ActionsPanelView(BrowserView):
     """
@@ -261,7 +263,7 @@ class ActionsPanelView(BrowserView):
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
                         'confirm': bool(confirmation_view),
-                        'confirmation_view': confirmation_view,
+                        'confirmation_view': confirmation_view or DEFAULT_CONFIRM_VIEW,
                         'url': transition.actbox_url %
                             {'content_url': self.context.absolute_url(),
                              'portal_url': '',
@@ -281,13 +283,12 @@ class ActionsPanelView(BrowserView):
 
     def _transitionsToConfirmInfos(self):
         transitions = self._transitionsToConfirm()
-        default_confirm_view = 'triggertransition'
         if type(transitions) is not dict:
-            transitions = dict([(t, default_confirm_view) for t in transitions])
+            transitions = dict([(t, DEFAULT_CONFIRM_VIEW) for t in transitions])
         else:
             for name, confirm_view in transitions.iteritems():
                 if not confirm_view:
-                    transitions[name] = default_confirm_view
+                    transitions[name] = DEFAULT_CONFIRM_VIEW
         return transitions
 
     def _transitionsToConfirm(self):
