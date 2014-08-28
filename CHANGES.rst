@@ -5,7 +5,9 @@ Changelog
 ----------------
 
 - Sort transitions by transition title, more easy to use when displaying several transitons.
-
+- Corrected bug where the link to trigger a transition that did not need to be confirmed,
+  did not contain the view name, only parameters.  This made the user being redirected to the object
+  view and not able to trigger the transition from another place.
 
 1.6 (2014-08-21)
 ----------------
