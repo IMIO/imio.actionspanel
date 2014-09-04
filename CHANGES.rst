@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.7 (unreleased)
+1.7 (2014-09-04)
 ----------------
 
 - Sort transitions by transition title, more easy to use when displaying several transitons.
