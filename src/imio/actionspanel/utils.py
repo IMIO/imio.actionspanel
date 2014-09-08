@@ -5,14 +5,8 @@ from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
-from zope.event import notify
-from zope.component.interfaces import ObjectEvent
-from zope.interface import implements
-
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.security import OmnipotentUser
-
-from imio.actionspanel.interfaces import IObjectWillBeRemovedEvent
 
 
 def unrestrictedRemoveGivenObject(object_to_delete):
@@ -34,7 +28,6 @@ def unrestrictedRemoveGivenObject(object_to_delete):
     logMsg = '%s at %s deleted by "%s"' % \
              (object_to_delete.meta_type, object_to_delete.absolute_url_path(), oldsm.getUser().getId())
     try:
-        notify(ObjectWillBeRemovedEvent(object_to_delete))
         parent.manage_delObjects([object_to_delete.getId(), ])
         logger.info(logMsg)
     except Exception, exc:
@@ -52,10 +45,3 @@ class APOmnipotentUser(OmnipotentUser):
     """
     def has_role(self, roles, obj=None):
         return True
-
-
-class ObjectWillBeRemovedEvent(ObjectEvent):
-    implements(IObjectWillBeRemovedEvent)
-
-    def __init__(self, object):
-        self.object = object

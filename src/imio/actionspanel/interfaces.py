@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from zope.component.interfaces import IObjectEvent
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IBrowserRequest
 
@@ -19,8 +18,3 @@ class IContentDeletable(Interface):
         """
           This method returns True if current context is deletable.
         """
-
-
-class IObjectWillBeRemovedEvent(IObjectEvent):
-    """
-    """

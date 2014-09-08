@@ -4,7 +4,9 @@ Changelog
 1.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Removed IObjectWillBeRemovedEvent, either use same event from OFS.interfaces or in case we use
+  AT, we could need to override manage_beforeDelete as it is called before IObjectWillBeRemovedEvent
+  in the OFS object removal machinery.
 
 
 1.7 (2014-09-04)
@@ -14,6 +16,7 @@ Changelog
 - Corrected bug where the link to trigger a transition that did not need to be confirmed,
   did not contain the view name, only parameters.  This made the user being redirected to the object
   view and not able to trigger the transition from another place.
+
 
 1.6 (2014-08-21)
 ----------------
