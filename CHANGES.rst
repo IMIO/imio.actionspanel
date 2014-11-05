@@ -7,6 +7,9 @@ Changelog
 - Removed IObjectWillBeRemovedEvent, either use same event from OFS.interfaces or in case we use
   AT, we could need to override manage_beforeDelete as it is called before IObjectWillBeRemovedEvent
   in the OFS object removal machinery.
+- Do only rely on 'mayDelete' method instead of checking 'Delete objects' and mayDelete method,
+  this way, we may handle case where user does not have the 'Delete objects' but we want him
+  to be able to delete an element nevertheless, in this case, the all logic is managed by mayDelete.
 
 
 1.7 (2014-09-04)
@@ -26,7 +29,6 @@ Changelog
   This makes it possible to override only the _findViewable method
   and keep the other part of _computeBackURL that does manage the case when
   the member was not on the object he just deleted.
-
 - Custom action_panels views can now be registered with a different name
   than 'actions_panel'.
 
