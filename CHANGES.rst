@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.8 (unreleased)
+1.8 (2014-11-05)
 ----------------
 
 - Removed IObjectWillBeRemovedEvent, either use same event from OFS.interfaces or in case we use
