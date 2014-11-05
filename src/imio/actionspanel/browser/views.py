@@ -130,7 +130,6 @@ class ActionsPanelView(BrowserView):
           Render our own version of the 'delete' action.
         """
         if self.showOwnDelete and \
-           self.member.has_permission('Delete objects', self.context) and \
            IContentDeletable(self.context).mayDelete():
             return ViewPageTemplateFile("actions_panel_own_delete.pt")(self)
         return ''
@@ -483,7 +482,7 @@ class ActionsPanelView(BrowserView):
 class DeleteGivenUidView(BrowserView):
     """
       View that ease deletion of elements by not checking the 'Delete objects' permission on parent
-      but only on the object to delete itself.
+      but only on the object to delete itself (default implentation of IContentDeletable.mayDelete).
       Callable using self.portal.restrictedTraverse('@@delete_givenuid)(object_to_delete.UID()) in the code
       and using classic traverse in a url : http://nohost/plonesite/delete_givenuid?object_uid=anUID
     """
@@ -509,7 +508,7 @@ class DeleteGivenUidView(BrowserView):
         # that checks if the user has the 'Delete objects' permission
         # on the content by default but that could be overrided
         self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
-        if self.member.has_permission("Delete objects", obj) and IContentDeletable(obj).mayDelete():
+        if IContentDeletable(obj).mayDelete():
             msg = {'message': _('object_deleted'),
                    'type': 'info'}
             # remove the object

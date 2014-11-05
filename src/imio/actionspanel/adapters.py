@@ -7,6 +7,9 @@
 # GNU General Public License (GPL)
 #
 
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import DeleteObjects
+
 
 class ContentDeletableAdapter(object):
     """
@@ -18,4 +21,5 @@ class ContentDeletableAdapter(object):
 
     def mayDelete(self):
         '''See docstring in interfaces.py'''
-        return True
+        member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+        return bool(member.has_permission(DeleteObjects, self.context))

@@ -17,4 +17,6 @@ class IContentDeletable(Interface):
     def mayDelete(context):
         """
           This method returns True if current context is deletable.
+          The default implementation does the work for checking 'Delete objects' on the
+          object we want to delete, not that permission on the parent.
         """
