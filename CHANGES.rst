@@ -4,7 +4,8 @@ Changelog
 1.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add a small margin-left to the 'notTriggerableTransitionImage' class so if several not
+  triggerable transition actions are displayed, it is not stuck together
 
 
 1.8 (2014-11-05)
