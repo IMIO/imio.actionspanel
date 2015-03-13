@@ -1,0 +1,6 @@
+<registry>
+
+    <records interface="imio.actionspanel.browser.registry.IImioActionsPanelConfig">
+    </records>
+
+</registry>
