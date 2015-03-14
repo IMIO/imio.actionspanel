@@ -49,10 +49,9 @@ class IImioActionsPanelConfig(Interface):
             if ' ' in val:
                 raise Invalid(_("The value cannot contain space: line ${i}, '${val}'", mapping={'i': i, 'val': value}))
             if val.find('|') <= 0:
-                view = ''
-                typ_trans = val
-            else:
-                (typ_trans, view) = val.split('|')
+                val += '|'
+            values[i-1] = val
+            (typ_trans, view) = val.split('|')
             if typ_trans in uniques:
                 raise Invalid(_("The transition value '${val}' is set multiple times.", mapping={'val': typ_trans}))
             uniques.append(typ_trans)
@@ -69,3 +68,4 @@ class IImioActionsPanelConfig(Interface):
             if transition not in transitions_for(typ):
                 raise Invalid(_("This transition id isn't valid for the portal_type: line ${i}, '${val}'",
                                 mapping={'i': i, 'val': value}))
+        data._Data_data___['value'] = values
