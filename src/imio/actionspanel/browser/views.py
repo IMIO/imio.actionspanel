@@ -308,6 +308,8 @@ class ActionsPanelView(BrowserView):
           default view is used instead.
         """
         values = api.portal.get_registry_record('imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions')
+        if values is None:
+            return
         return dict([val.split('|') for val in values])
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):

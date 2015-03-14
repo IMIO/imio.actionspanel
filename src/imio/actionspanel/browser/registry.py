@@ -14,6 +14,7 @@ class IImioActionsPanelConfig(Interface):
     transitions = schema.List(
         title=_(u'Transitions to confirm'),
         description=_(u'Define for each object transition the optional corresponding view'),
+        required=False,
         value_type=schema.BytesLine(
             title=_("Transition value"),
             description=_('Formatted like "portal_type" "." "transition name" "|" "view", '
@@ -30,6 +31,8 @@ class IImioActionsPanelConfig(Interface):
         if 'value' not in data._Data_data___:
             raise Invalid(_(u"Internal validation error"))
         values = data._Data_data___['value']
+        if values is None:
+            return
         i = 0
         portal = api.portal.getSite()
 
