@@ -9,6 +9,8 @@ from AccessControl import Unauthorized
 from zope.component import getMultiAdapter
 from zope.i18n import translate
 
+from plone import api
+
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
@@ -305,7 +307,8 @@ class ActionsPanelView(BrowserView):
           If no confirmation view is provided (empty string) imio.actionspanel confirmation
           default view is used instead.
         """
-        return ()
+        values = api.portal.get_registry_record('imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions')
+        return dict([val.split('|') for val in values])
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
         """
