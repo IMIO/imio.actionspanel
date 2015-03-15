@@ -19,3 +19,8 @@ table.actionspanel-no-style-table td {
     padding: 0 !important;
     margin: 0 !important;
 }
+
+span#content-history.highlight-history-link a {
+    color: red;
+    font-weight: bold;
+}

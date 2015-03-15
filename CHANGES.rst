@@ -4,6 +4,8 @@ Changelog
 1.9 (unreleased)
 ----------------
 
+- Highlight history link when transaction comment is present
+  [sgeulette]
 - Store transitions to confirm in the registry
   [sgeulette]
 - Add a small margin-left to the 'notTriggerableTransitionImage' class so if several not
