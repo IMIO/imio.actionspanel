@@ -44,6 +44,7 @@ setup(
         'Plone',
         'setuptools',
         'appy',
+        'imio.history',
     ],
     extras_require={
         'test': [

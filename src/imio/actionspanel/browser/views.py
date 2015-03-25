@@ -24,6 +24,8 @@ from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
+from imio.history.interfaces import IImioHistory
+
 
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
@@ -61,11 +63,6 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-        # when using showHistory and showHistoryLastEventHasComments
-        # we can give a list of comments we do not consider
-        # for example is some default comments are added at specific time
-        # just for information
-        self.IGNORABLE_HISTORY_COMMENTS = ('', u'', None)
 
     def __call__(self,
                  useIcons=True,
@@ -168,34 +165,10 @@ class ActionsPanelView(BrowserView):
         return True
 
     def historyLastEventHasComments(self):
-        '''
+        """
           Returns True if the last event of the object's history has a comment.
-        '''
-        history = getattr(aq_base(self.context), 'workflow_history', None)
-        if not history:
-            return False
-        # workflow_history is like :
-        # {'my_content_workflow': ({'action': None, 'review_state': 'created', 'actor': 'admin',
-        #                           'comments': 'My comment', 'time': DateTime('2014/06/05 14:35 GMT+2')},
-        #  'my_content_former_workflow': ({'action': None, 'review_state': 'created', 'actor': 'admin',
-        #                           'comments': 'My comment', 'time': DateTime('2012/02/02 12:00 GMT+2')}, }
-        # if we have only one key in the history, we take relevant corresponding actions but if we have
-        # several keys, we need to get current workflow and to reach relevant actions
-        keys = history.keys()
-        lastEvent = {'comments': ''}
-        if len(keys) == 1:
-            lastEvent = history[keys[0]][-1]
-        elif len(keys) > 1:
-            # get current workflow history
-            wfTool = getToolByName(self.context, 'portal_workflow')
-            contextWFs = wfTool.getWorkflowsFor(self.context)
-            if not contextWFs:
-                return False
-            currentWFId = contextWFs[0].getId()
-            lastEvent = history[currentWFId][-1]
-        if not lastEvent['comments'] in self.IGNORABLE_HISTORY_COMMENTS:
-            return True
-        return False
+        """
+        return IImioHistory(self.context).historyLastEventHasComments()
 
     def mayEdit(self):
         """
