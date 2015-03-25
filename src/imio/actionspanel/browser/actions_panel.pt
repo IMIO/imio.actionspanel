@@ -1,7 +1,3 @@
-<tal:viewlet condition="view/isViewlet">
-  <span id="actions-panel-history-data" style="display:None"
-        tal:attributes="data-history view/historyLastEventHasComments"></span>
-</tal:viewlet>
 <table class="actionspanel-no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
   <tr>
     <tal:sections replace="structure view/_renderSections" />

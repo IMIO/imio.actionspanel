@@ -63,7 +63,6 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-
     def __call__(self,
                  useIcons=True,
                  showTransitions=True,
@@ -74,7 +73,6 @@ class ActionsPanelView(BrowserView):
                  showAddContent=False,
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
-                 isViewlet=False,
                  **kwargs):
         """
           Master method that will render the content.
@@ -92,7 +90,6 @@ class ActionsPanelView(BrowserView):
         self.showAddContent = showAddContent
         self.showHistory = showHistory
         self.showHistoryLastEventHasComments = showHistoryLastEventHasComments
-        self.isViewlet = isViewlet
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
