@@ -1,13 +1,6 @@
 <tal:viewlet condition="view/isViewlet">
   <span id="actions-panel-history-data" style="display:None"
         tal:attributes="data-history view/historyLastEventHasComments"></span>
-  <script type="text/javascript">
-    $(document).ready(function(){
-        if ($('#actions-panel-history-data').data('history')=='True') {
-            $('span#content-history').addClass('highlight-history-link');
-        }
-    });
-  </script>
 </tal:viewlet>
 <table class="actionspanel-no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
   <tr>
