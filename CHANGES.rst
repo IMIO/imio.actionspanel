@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.9 (unreleased)
+1.9 (2015-03-30)
 ----------------
 
 - Store transitions to confirm in the registry
