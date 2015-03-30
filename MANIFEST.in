@@ -6,5 +6,5 @@ include Makefile
 recursive-include docs *.GPL
 recursive-include docs *.rst
 exclude .installed.cfg
-exclude .mr.developper.cfg
+exclude .mr.developer.cfg
 global-exclude *.pyc
