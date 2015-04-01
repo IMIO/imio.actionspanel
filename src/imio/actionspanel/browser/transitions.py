@@ -1,7 +1,6 @@
 from plone.memoize.instance import memoize
 
 from Products.Five.browser import BrowserView
-from Products.CMFCore.utils import getToolByName
 
 
 class ConfirmTransitionView(BrowserView):
@@ -31,28 +30,9 @@ class ConfirmTransitionView(BrowserView):
             # while the Cancel button is hit
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         elif submitted:
-            obj = self.get_object()
-            actionspanel_view = obj.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+            actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
             return actionspanel_view.triggerTransition(self.request.get('transition'), self.request.get('comment'))
         return self.index()
-
-    def get_object(self):
-        """
-        Returns the object to call the transition on.
-        """
-        portal_catalog = getToolByName(self.context, 'portal_catalog')
-        brains = portal_catalog(UID=self.request['objectUid'])
-        if not brains:
-            # in case the element is not found in portal_catalog,
-            # for example with an not indexed element, we look UID on context
-            # to see if it is the element we want to trigger transition for
-            if self.context.UID() == self.request['objectUid']:
-                obj = self.context
-            else:
-                raise KeyError('Object with given UID was not found!')
-        else:
-            obj = brains[0].getObject()
-        return obj
 
     @memoize
     def initTransition(self):
@@ -65,6 +45,14 @@ class ConfirmTransitionView(BrowserView):
                availableTransition['confirm'] is True:
                 res = self.request.get('transition')
         return res
+
+    def transition_title(self):
+        '''Returns transition title.'''
+        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        availableTransitions = actionspanel_view.getTransitions()
+        for availableTransition in availableTransitions:
+            if self.request.get('transition') == availableTransition['id']:
+                return availableTransition['title']
 
     def initIStartNumber(self):
         '''Initialize values for the 'iStartNumber' form field.'''

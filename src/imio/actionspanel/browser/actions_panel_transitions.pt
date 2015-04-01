@@ -1,5 +1,4 @@
-<tal:defines define="objectUID python: context.UID();
-                     useIcons view/useIcons;">
+<tal:defines define="useIcons view/useIcons;">
 <td tal:repeat="transition view/getTransitions"
     class="noPadding" align="left">
   <tal:transition condition="transition/may_trigger">
@@ -9,9 +8,7 @@
        tal:attributes="href python: context.absolute_url()
                                     + '/'
                                     + confirmation_view
-                                    + '?objectUid='
-                                    + objectUID
-                                    + '&transition='
+                                    + '?transition='
                                     + transition['id']
                                     + '&actionspanel_view_name='
                                     + view.__name__
@@ -31,7 +28,6 @@
       <form action="#"
             tal:condition="python: not(useIcons and hasattr(view.portal, imageName))"
             tal:attributes="action python: context.absolute_url() + '/@@triggertransition'">
-      <input type="hidden" name="objectUid" tal:attributes="value objectUID;"/>
       <input type="hidden" name="transition" tal:attributes="value python: transition['id'];"/>
       <input type="hidden" name="actionspanel_view_name" tal:attributes="value python: view.__name__;"/>
       <input type="hidden" name="form.submitted" tal:attributes="value python: (not confirm and '&form.submitted=boolean:True' or '');"/>

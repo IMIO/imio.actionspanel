@@ -4,7 +4,11 @@ Changelog
 1.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Use translated transition title in transition confirmation popup
+  [gbastien]
+- Simplified @@triggertransition view by not using objectUID anymore, we use the context
+  as the view is called on it, objectUID was legacy and useless
+  [gbastien]
 
 
 1.9 (2015-03-30)
