@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.10 (unreleased)
+1.10 (2015-04-01)
 -----------------
 
 - Use translated transition title in transition confirmation popup
