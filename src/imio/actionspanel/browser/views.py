@@ -240,7 +240,11 @@ class ActionsPanelView(BrowserView):
                         'url': transition.actbox_url %
                             {'content_url': self.context.absolute_url(),
                              'portal_url': '',
-                             'folder_url': ''}
+                             'folder_url': ''},
+                        'icon': transition.actbox_icon %
+                            {'content_url': self.context.absolute_url(),
+                             'portal_url': self.portal_url,
+                             'folder_url': ''},
                     }
                     if not mayTrigger:
                         tInfo['may_trigger'] = False

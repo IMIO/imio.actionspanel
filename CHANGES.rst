@@ -4,7 +4,9 @@ Changelog
 1.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Do not generate the image name to use for a transition but
+  use the actbox_icon defined on the transition
+  [gbastien]
 
 
 1.10 (2015-04-01)
