@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.11 (unreleased)
+1.11 (2015-04-23)
 -----------------
 
 - Do not generate the image name to use for a transition but
