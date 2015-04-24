@@ -1,3 +1,4 @@
+import urllib2
 import logging
 logger = logging.getLogger('imio.actionspanel')
 
@@ -25,7 +26,6 @@ from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.history.interfaces import IImioHistory
-
 
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
@@ -452,11 +452,18 @@ class ActionsPanelView(BrowserView):
             redirectToUrl = parent.absolute_url()
         return redirectToUrl
 
+    def buildExactReferer(self):
+        """
+          Keep the exact referer.  By default, we keep 'HTTP_REFERER' but this
+          is made to be overriden...
+        """
+        return urllib2.quote(self.request['HTTP_REFERER'])
+
     def _gotoReferer(self):
         """
           This method allows to go specify where to go back after a transition has been triggered.
         """
-        urlBack = self.request['HTTP_REFERER']
+        urlBack = urllib2.unquote(self.request.get('http_exact_referer', self.request['HTTP_REFERER']))
         return self.request.RESPONSE.redirect(urlBack)
 
 

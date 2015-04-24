@@ -12,13 +12,16 @@
                                     + transition['id']
                                     + '&actionspanel_view_name='
                                     + view.__name__
-                                    + (not confirm and '&form.submitted=boolean:True' or '');
+                                    + (not confirm and '&form.submitted=boolean:True' or '')
+                                    + '&http_exact_referer='
+                                    + http_exact_referer;
                        class python: confirm and 'link-overlay-actionspanel transition-overlay' or ''"
        tal:define="transitionId transition/id;
                    icon_url transition/icon;
                    confirm transition/confirm;
                    confirmation_view transition/confirmation_view;
-                   dummy view/saveHasActions;">
+                   dummy view/saveHasActions;
+                   http_exact_referer view/buildExactReferer;">
       <tal:comment replace="nothing">Icon</tal:comment>
       <img tal:condition="python: useIcons and icon_url"
            tal:attributes="src string: ${icon_url};
@@ -31,6 +34,7 @@
       <input type="hidden" name="transition" tal:attributes="value python: transition['id'];"/>
       <input type="hidden" name="actionspanel_view_name" tal:attributes="value python: view.__name__;"/>
       <input type="hidden" name="form.submitted" tal:attributes="value python: (not confirm and '&form.submitted=boolean:True' or '');"/>
+      <input type="hidden" name="http_exact_referer" tal:attributes="value http_exact_referer;"/>
       <input type="submit"
              tal:attributes="class string: apButton apButtonWF apButtonWF_$transitionId;
                              value python: view.appendTypeNameToTransitionLabel and (context.utranslate(transition['title'], domain='plone') + ' ' + context.utranslate(msgid=context.portal_type, domain='plone')) or transition['title'];
