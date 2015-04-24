@@ -4,7 +4,9 @@ Changelog
 1.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added method buildExactReferer used to compute the referer to use as backUrl
+  when a transition has been triggered on an element
+  [gbastien]
 
 
 1.11 (2015-04-23)
