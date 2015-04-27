@@ -12,6 +12,8 @@
                                     + transition['id']
                                     + '&actionspanel_view_name='
                                     + view.__name__
+                                    + '&backURL='
+                                    + view.buildBackURL()
                                     + (not confirm and '&form.submitted=boolean:True' or '');
                        class python: confirm and 'link-overlay-actionspanel transition-overlay' or ''"
        tal:define="transitionId transition/id;
@@ -29,6 +31,7 @@
             tal:condition="python: not(useIcons and icon_url)"
             tal:attributes="action python: context.absolute_url() + '/@@triggertransition'">
       <input type="hidden" name="transition" tal:attributes="value python: transition['id'];"/>
+      <input type="hidden" name="backURL" tal:attributes="value view/buildBackURL;"/>
       <input type="hidden" name="actionspanel_view_name" tal:attributes="value python: view.__name__;"/>
       <input type="hidden" name="form.submitted" tal:attributes="value python: (not confirm and '&form.submitted=boolean:True' or '');"/>
       <input type="submit"

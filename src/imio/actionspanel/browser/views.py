@@ -1,6 +1,7 @@
 import logging
 logger = logging.getLogger('imio.actionspanel')
 
+import urllib2
 from appy.gen import No
 
 from Acquisition import aq_base
@@ -62,6 +63,18 @@ class ActionsPanelView(BrowserView):
         # portal_actions.object_buttons action ids to keep
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
+
+        # specific management when actions panel is displayed in a facetednavigation
+        if self.request['URL'].endswith('@@faceted_query'):
+            # we are in a facetednav, save the current URL so it can be used
+            # as a backURL by various sections
+            res = []
+            for k, v in self.request.form.items():
+                # identify a facetednav widget id
+                if k.endswith('[]'):
+                    res.append("{0}={1}".format(k, v))
+            query = '&'.join(res)
+            self.request['SESSION']['facetednav_back_URL'] = "{0}#{1}".format(self.request['HTTP_REFERER'], query)
 
     def __call__(self,
                  useIcons=True,
@@ -452,12 +465,30 @@ class ActionsPanelView(BrowserView):
             redirectToUrl = parent.absolute_url()
         return redirectToUrl
 
+    def buildBackURL(self):
+        """ """
+        if self.request['URL'].endswith('@@faceted_query'):
+            # we are in a facetednav, save the current URL so it can be used
+            # as a backURL by various sections
+            res = []
+            for k, v in self.request.form.items():
+                # identify a facetednav widget id
+                if k.endswith('[]'):
+                    res.append("{0}={1}".format(k, v))
+            query = '&'.join(res)
+            backURL = "{0}#{1}".format(self.request['HTTP_REFERER'], query)
+        else:
+            backURL = self.context.absolute_url()
+        return urllib2.quote(backURL)
+
     def _gotoReferer(self):
         """
-          This method allows to go specify where to go back after a transition has been triggered.
+          Go back to the referer :
+          - either we were on a facetednav, go back to it;
+          - or we were on the object, go back to it.
         """
-        urlBack = self.request['HTTP_REFERER']
-        return self.request.RESPONSE.redirect(urlBack)
+        backURL = self.request.RESPONSE.redirect(self.request.form.get('backURL') or self.request.get('backURL'))
+        return self.request.RESPONSE.redirect(urllib2.unquote(backURL))
 
 
 class DeleteGivenUidView(BrowserView):
@@ -512,12 +543,11 @@ class DeleteGivenUidView(BrowserView):
         return self.request.RESPONSE.redirect(backURL)
 
     def _computeBackURL(self, obj):
-        '''This is made to be overriden...'''
-        objectUrl = obj.absolute_url()
-        refererUrl = self.request['HTTP_REFERER']
-        if not refererUrl.startswith(objectUrl):
-            backURL = refererUrl
-        else:
+        '''This will compute the back URL :
+           - if we were on a facetednav, then go back to it;
+           - either, we will be redirected to a viewable parent.'''
+        backURL = self.request.form['backURL']
+        if backURL.startswith(obj.absolute_url()):
             # find a parent the current user may access
             backURL = self._findViewablePlace(obj)
         return backURL

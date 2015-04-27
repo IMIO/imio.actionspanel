@@ -7,6 +7,7 @@
       <form name="deleteUidForm" action="delete_givenuid" tal:attributes="action string:${context/absolute_url}/delete_givenuid"
             tal:define="dummy view/saveHasActions;">
           <input type="hidden" name="object_uid" tal:attributes="value objectUID" />
+          <input type="hidden" name="backURL" tal:attributes="value view/buildBackURL" />
           <tal:comment replace="nothing">Icon</tal:comment>
           <img tal:condition="useIcons" i18n:attributes="title" title="Delete"
                tal:attributes="src string: ${view/portal_url}/delete_icon.png"
