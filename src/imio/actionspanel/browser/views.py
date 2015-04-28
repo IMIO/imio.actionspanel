@@ -7,7 +7,7 @@ from appy.gen import No
 from Acquisition import aq_base
 from AccessControl import Unauthorized
 
-from zope.component import getMultiAdapter
+from zope.component import getMultiAdapter, getAdapter
 from zope.i18n import translate
 
 from plone import api
@@ -178,7 +178,8 @@ class ActionsPanelView(BrowserView):
         """
           Returns True if the last event of the object's history has a comment.
         """
-        return IImioHistory(self.context).historyLastEventHasComments()
+        adapter = getAdapter(self.context, IImioHistory, 'workflow')
+        return adapter.historyLastEventHasComments()
 
     def mayEdit(self):
         """
