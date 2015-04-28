@@ -553,7 +553,7 @@ class DeleteGivenUidView(BrowserView):
         if backURL.startswith(obj.absolute_url()):
             # find a parent the current user may access
             backURL = self._findViewablePlace(obj)
-        return backURL
+        return urllib2.unquote(backURL)
 
     def _findViewablePlace(self, obj):
         '''
