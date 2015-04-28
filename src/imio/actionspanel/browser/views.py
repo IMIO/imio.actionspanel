@@ -466,7 +466,10 @@ class ActionsPanelView(BrowserView):
         return redirectToUrl
 
     def buildBackURL(self):
-        """ """
+        """
+          Build the back URL used by some sections.
+          This will return the URL to come back to after an action as been executed.
+        """
         if self.request['URL'].endswith('@@faceted_query'):
             # we are in a facetednav, save the current URL so it can be used
             # as a backURL by various sections
