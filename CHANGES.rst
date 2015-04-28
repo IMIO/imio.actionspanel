@@ -4,7 +4,10 @@ Changelog
 1.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Refactored the 'back to URL' mechanism to be able to pass it as argument
+  in the 'transition' and 'own delete' sections to define where to go back after
+  action has been executed
+  [gbastien]
 
 
 1.11 (2015-04-23)
