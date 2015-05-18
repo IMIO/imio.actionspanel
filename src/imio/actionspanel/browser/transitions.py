@@ -53,11 +53,3 @@ class ConfirmTransitionView(BrowserView):
         for availableTransition in availableTransitions:
             if self.request.get('transition') == availableTransition['id']:
                 return availableTransition['title']
-
-    def initIStartNumber(self):
-        '''Initialize values for the 'iStartNumber' form field.'''
-        return self.request.get('iStartNumber')
-
-    def initLStartNumber(self):
-        '''Initialize values for the 'lStartNumber' form field.'''
-        return self.request.get('lStartNumber')
