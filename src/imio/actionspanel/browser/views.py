@@ -550,7 +550,7 @@ class DeleteGivenUidView(BrowserView):
         '''This will compute the back URL :
            - if we were on a facetednav, then go back to it;
            - either, we will be redirected to a viewable parent.'''
-        backURL = urllib2.unquote(self.request.form['backURL'])
+        backURL = urllib2.unquote(self.request.form.get('backURL', self.request['HTTP_REFERER']))
         if backURL.startswith(obj.absolute_url()):
             # find a parent the current user may access
             backURL = self._findViewablePlace(obj)
