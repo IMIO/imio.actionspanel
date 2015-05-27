@@ -8,6 +8,8 @@ Changelog
   in the 'transition' and 'own delete' sections to define where to go back after
   action has been executed
   [gbastien]
+- Hide the Add menu if no addable content
+  [sgeulette]
 
 
 1.11 (2015-04-23)
