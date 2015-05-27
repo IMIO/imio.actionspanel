@@ -491,7 +491,9 @@ class ActionsPanelView(BrowserView):
           - either we were on a facetednav, go back to it;
           - or we were on the object, go back to it.
         """
-        backURL = self.request.RESPONSE.redirect(self.request.form.get('backURL') or self.request.get('backURL'))
+        backURL = self.request.RESPONSE.redirect(self.request.form.get('backURL', None) or
+                                                 self.request.get('backURL', None) or
+                                                 self.request.get('HTTP_REFERER'))
         return self.request.RESPONSE.redirect(urllib2.unquote(backURL))
 
 
