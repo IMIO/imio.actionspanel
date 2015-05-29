@@ -483,7 +483,7 @@ class ActionsPanelView(BrowserView):
             backURL = "{0}#{1}".format(self.request['HTTP_REFERER'], query)
         else:
             backURL = self.context.absolute_url()
-        return urllib2.quote(backURL)
+        return unicode(urllib2.quote(backURL), 'utf-8')
 
     def _gotoReferer(self):
         """
