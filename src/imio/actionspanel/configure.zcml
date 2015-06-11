@@ -8,6 +8,8 @@
   <include package=".browser" />
   <include package="Products.GenericSetup" file="meta.zcml" />
 
+  <include package="imio.history"/>
+
   <i18n:registerTranslations directory="locales" />
 
   <adapter for="OFS.interfaces.IItem"
