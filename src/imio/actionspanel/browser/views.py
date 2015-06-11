@@ -1,7 +1,6 @@
 import logging
 logger = logging.getLogger('imio.actionspanel')
 
-import urllib2
 from appy.gen import No
 
 from Acquisition import aq_base
@@ -446,12 +445,12 @@ class ActionsPanelView(BrowserView):
                     default="You have been redirected here because you do not have "
                             "access anymore to the element you just changed the state for.")
             plone_utils.addPortalMessage(msg, 'warning')
-            return self.request.RESPONSE.redirect(redirectToUrl)
+            return redirectToUrl
         else:
             # in some cases, redirection is managed at another level, by jQuery for example
             if not redirect:
                 return
-            return self._gotoReferer()
+            return self.request.get('HTTP_REFERER')
 
     def _redirectToViewableUrl(self):
         """
@@ -480,36 +479,6 @@ class ActionsPanelView(BrowserView):
             redirectToUrl = parent.absolute_url()
         return redirectToUrl
 
-    def buildBackURL(self):
-        """
-          Build the back URL used by some sections.
-          This will return the URL to come back to after an action as been executed.
-        """
-        if self.request['URL'].endswith('@@faceted_query'):
-            # we are in a facetednav, save the current URL so it can be used
-            # as a backURL by various sections
-            res = []
-            for k, v in self.request.form.items():
-                # identify a facetednav widget id
-                if k.endswith('[]'):
-                    res.append("{0}={1}".format(k, v))
-            query = '&'.join(res)
-            backURL = "{0}#{1}".format(self.request['HTTP_REFERER'], query)
-        else:
-            backURL = self.context.absolute_url()
-        return unicode(urllib2.quote(backURL), 'utf-8')
-
-    def _gotoReferer(self):
-        """
-          Go back to the referer :
-          - either we were on a facetednav, go back to it;
-          - or we were on the object, go back to it.
-        """
-        backURL = self.request.RESPONSE.redirect(self.request.form.get('backURL', None) or
-                                                 self.request.get('backURL', None) or
-                                                 self.request.get('HTTP_REFERER'))
-        return self.request.RESPONSE.redirect(urllib2.unquote(backURL))
-
 
 class DeleteGivenUidView(BrowserView):
     """
@@ -524,7 +493,7 @@ class DeleteGivenUidView(BrowserView):
         self.request = request
         self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
 
-    def __call__(self, object_uid):
+    def __call__(self, object_uid, redirect=True):
         # Get the object to delete
         # try to get it from the portal_catalog
         catalog_brains = self.context.portal_catalog(UID=object_uid)
@@ -558,19 +527,10 @@ class DeleteGivenUidView(BrowserView):
             raise Unauthorized
 
         # Redirect the user to the correct page and display the correct message.
-        backURL = self._computeBackURL(obj)
-        self.portal.plone_utils.addPortalMessage(**msg)
-        return self.request.RESPONSE.redirect(backURL)
-
-    def _computeBackURL(self, obj):
-        '''This will compute the back URL :
-           - if we were on a facetednav, then go back to it;
-           - either, we will be redirected to a viewable parent.'''
-        backURL = urllib2.unquote(self.request.form.get('backURL', self.request['HTTP_REFERER']))
-        if backURL.startswith(obj.absolute_url()):
-            # find a parent the current user may access
+        if redirect:
+            self.portal.plone_utils.addPortalMessage(**msg)
             backURL = self._findViewablePlace(obj)
-        return backURL
+            return self.request.RESPONSE.redirect(backURL)
 
     def _findViewablePlace(self, obj):
         '''

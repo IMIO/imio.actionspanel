@@ -47,11 +47,17 @@ $("input.trigger-transition-prevent-default").click(function(event){
 jQuery(document).ready(preventDefaultClickTransition);
 
 function triggerTransition(baseUrl, viewName, transition, tag) {
-    // find comment in the page
-    comment = '';
-    if ($('form#confirmTransitionForm textarea').length) {
-        comment = $('form#confirmTransitionForm textarea')[0].value;
-    }
+  // find comment in the page
+  comment = '';
+  if ($('form#confirmTransitionForm textarea').length) {
+      comment = $('form#confirmTransitionForm textarea')[0].value;
+  }
+
+  // refresh faceted if we are on it, else, let triggerTransition manage redirect
+  redirect = '0'
+  if (!Faceted.BASEURL) {
+    redirect = '1'
+  }
 
   $.ajax({
     url: baseUrl + "/" + viewName,
@@ -59,16 +65,43 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
     data: {'transition':transition,
            'comment': comment,
            'form.submitted': '1',
-           'redirect': '0'},
+           'redirect': redirect},
     cache: false,
     async: false,
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
-        if (Faceted.BASEURL) {
+        if (redirect === '0') {
             Faceted.URLHandler.hash_changed();
         }
         else {
-            window.location.href = window.location.href;
+            window.location.href = data;
+        }
+      },
+    error: function(jqXHR, textStatus, errorThrown) {
+      /*console.log(textStatus);*/
+      window.location.href = window.location.href;
+      }
+    });
+}
+
+function deleteElement(baseUrl, viewName, uid) {
+  redirect = '0'
+  if (!Faceted.BASEURL) {
+    redirect = '1'
+  }
+  $.ajax({
+    url: baseUrl + "/" + viewName,
+    dataType: 'html',
+    data: {'object_uid': uid,
+           'comment': comment,
+           'form.submitted': '1',
+           'redirect': redirect},
+    cache: false,
+    async: false,
+    success: function(data) {
+        // reload the faceted page if we are on it, refresh current if not
+        if (redirect) {
+            Faceted.URLHandler.hash_changed();
         }
       },
     error: function(jqXHR, textStatus, errorThrown) {

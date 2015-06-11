@@ -15,9 +15,6 @@ class ConfirmTransitionView(BrowserView):
         self.actionspanel_view_name = self.request.get('actionspanel_view_name', 'actions_panel')
 
     def __call__(self):
-        # check that the user has actually a transition to trigger with confirmation
-        if self.request.get('redirect') == '1' and not self.initTransition():
-            self.request.RESPONSE.redirect(self.context.absolute_url())
         form = self.request.form
         # either we received form.submitted in the request because we are triggering
         # a transition that does not need a confirmation or we clicked on the save button of
