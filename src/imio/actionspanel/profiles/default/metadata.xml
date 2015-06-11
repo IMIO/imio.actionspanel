@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <metadata>
  <version>1.4dev</version>
+  <dependencies>
+    <dependency>profile-imio.history:default</dependency>
+  </dependencies>
 </metadata>
