@@ -64,18 +64,6 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-        # specific management when actions panel is displayed in a facetednavigation
-        if self.request['URL'].endswith('@@faceted_query'):
-            # we are in a facetednav, save the current URL so it can be used
-            # as a backURL by various sections
-            res = []
-            for k, v in self.request.form.items():
-                # identify a facetednav widget id
-                if k.endswith('[]'):
-                    res.append("{0}={1}".format(k, v))
-            query = '&'.join(res)
-            self.request['SESSION']['facetednav_back_URL'] = "{0}#{1}".format(self.request['HTTP_REFERER'], query)
-
     def __call__(self,
                  useIcons=True,
                  showTransitions=True,
@@ -106,6 +94,10 @@ class ActionsPanelView(BrowserView):
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
+
+    def isInFacetedNavigation(self):
+        """Is the actions panel displayed in a faceted navigation?"""
+        return bool(self.request['URL'].endswith('@@faceted_query'))
 
     def _renderSections(self):
         """
@@ -351,6 +343,24 @@ class ActionsPanelView(BrowserView):
             return res
         return 1
 
+    def computeTriggerTransitionLink(self, transition):
+        """ """
+        return "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}".format(
+            self.context.absolute_url(),
+            transition['confirmation_view'],
+            transition['id'],
+            self.__name__,
+            not transition['confirm'] and '&form.submitted=1' or '')
+
+    def computeTriggerTransitionOnClick(self, transition):
+        """ """
+        if not transition['confirm']:
+            return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', transition='{1}', this);".format(
+                self.context.absolute_url(),
+                transition['id'])
+        else:
+            return ''
+
     def addableContents(self):
         """
           Return addable content types.
@@ -401,7 +411,7 @@ class ActionsPanelView(BrowserView):
                 res.append(act)
         return res
 
-    def triggerTransition(self, transition, comment):
+    def triggerTransition(self, transition, comment, redirect=True):
         """
           Triggers a p_transition on self.context.
         """
@@ -419,13 +429,14 @@ class ActionsPanelView(BrowserView):
                         (self.member.getId(), self.request.get('transition')))
         # use transition title to translate so if several transitions have the same title,
         # we manage only one translation
-        transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[self.request['transition']].title or \
-            self.request['transition']
+        transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[transition].title or \
+            transition
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
         msg = _('%s_done_descr' % transition_title,
                 default=_plone("Item state changed."))
         plone_utils = getToolByName(self.context, 'plone_utils')
         plone_utils.addPortalMessage(msg)
+
         if not self.member.has_permission('View', self.context):
             # After having triggered a wfchange, it the current user
             # can not access the obj anymore, try to find a place viewable by the user
@@ -437,6 +448,9 @@ class ActionsPanelView(BrowserView):
             plone_utils.addPortalMessage(msg, 'warning')
             return self.request.RESPONSE.redirect(redirectToUrl)
         else:
+            # in some cases, redirection is managed at another level, by jQuery for example
+            if not redirect:
+                return
             return self._gotoReferer()
 
     def _redirectToViewableUrl(self):
