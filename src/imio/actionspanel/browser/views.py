@@ -539,6 +539,9 @@ class DeleteGivenUidView(BrowserView):
           Find a place the current user may access.
           By default, it will try to find a viewable parent.
         '''
+        # redirect to HTTP_REFERER if it is not delete object
+        if not self.request['HTTP_REFERER'].startswith(self.context.absolute_url()):
+            return self.request['HTTP_REFERER']
         parent = obj.getParentNode()
         while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
             parent = parent.getParentNode()
