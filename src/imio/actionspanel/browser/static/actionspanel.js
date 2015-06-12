@@ -1,18 +1,12 @@
-/* Function that shows a popup that asks the user if he really wants to delete
-   some object. If confirmed, the form where p_theElement lies is posted. */
-function confirmDeleteObject(theElement, msgName){
+// Function that shows a popup that asks the user if he really wants to delete
+// some object. If confirmed, the form where p_theElement lies is posted.
+function confirmDeleteObject(theElement, base_url, object_uid, msgName){
     if (!msgName) {
         msgName = 'delete_confirm_message';
     };
     var msg = window.eval(msgName);
-    if (confirm(msg)) { getEnclosingForm(theElement).submit(); }
-}
-
-function getEnclosingForm(elem) {
-  // Gets the form that surrounds the HTML p_elem.
-  var node = elem.parentNode;
-  while (node.nodeName != "FORM") { node = node.parentNode; }
-  return node;
+    if (confirm(msg)) {
+        deleteElement(base_url, object_uid); }
 }
 
 initializeOverlays = function () {
@@ -84,26 +78,27 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
     });
 }
 
-function deleteElement(baseUrl, viewName, uid) {
-  redirect = '0'
+function deleteElement(baseUrl, object_uid) {
+  redirect = '0';
   if (!Faceted.BASEURL) {
-    redirect = '1'
+    redirect = '1';
   }
   $.ajax({
-    url: baseUrl + "/" + viewName,
+    url: baseUrl + "/@@delete_givenuid",
     dataType: 'html',
-    data: {'object_uid': uid,
-           'comment': comment,
-           'form.submitted': '1',
+    data: {'object_uid': object_uid,
            'redirect': redirect},
     cache: false,
     async: false,
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
-        if (redirect) {
+        if (redirect === '0') {
             Faceted.URLHandler.hash_changed();
         }
-      },
+        else {
+            window.location.href = data;
+        }
+    },
     error: function(jqXHR, textStatus, errorThrown) {
       /*console.log(textStatus);*/
       window.location.href = window.location.href;

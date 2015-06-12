@@ -360,6 +360,12 @@ class ActionsPanelView(BrowserView):
         else:
             return ''
 
+    def computeDeleteGivenUIDOnClick(self):
+        """ """
+        return "deleteElement(baseUrl='{0}', viewName='@@delete_givenuid', object_uid='{1}');".format(
+            self.context.absolute_url(),
+            self.context.UID())
+
     def addableContents(self):
         """
           Return addable content types.
@@ -469,13 +475,9 @@ class ActionsPanelView(BrowserView):
             # if HTTP_REFERER is the object we can not access anymore
             # we will try to find a parent object we can be redirected to
             parent = self.context.getParentNode()
-            while not self.member.has_permission('View', parent):
-                if parent.portal_type == 'Plone Site':
-                    # if we arrived to the root Plone Site and it is still
-                    # not viewable, we can not do anything else but raise an error...
-                    raise Exception('Unable to redirect user to a viewable place!')
-                else:
-                    parent = parent.getParentNode()
+            while (not self.member.has_permission('View', parent) and
+                   not parent.meta_type == 'Plone Site'):
+                parent = parent.getParentNode()
             redirectToUrl = parent.absolute_url()
         return redirectToUrl
 
@@ -494,6 +496,7 @@ class DeleteGivenUidView(BrowserView):
         self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
 
     def __call__(self, object_uid, redirect=True):
+        """ """
         # Get the object to delete
         # try to get it from the portal_catalog
         catalog_brains = self.context.portal_catalog(UID=object_uid)
@@ -529,8 +532,7 @@ class DeleteGivenUidView(BrowserView):
         # Redirect the user to the correct page and display the correct message.
         if redirect:
             self.portal.plone_utils.addPortalMessage(**msg)
-            backURL = self._findViewablePlace(obj)
-            return self.request.RESPONSE.redirect(backURL)
+            return self._findViewablePlace(obj)
 
     def _findViewablePlace(self, obj):
         '''

@@ -4,9 +4,9 @@ Changelog
 1.12 (unreleased)
 -----------------
 
-- Make trigger transition aware of faceted navigation.  If a transition is
-  triggered in a faceted navigation, only the faceted page is reloaded, not
-  the entire page
+- Make trigger transition and own delete aware of faceted navigation.
+  If the action is made in a faceted navigation, only the faceted page
+  is reloaded, not the entire page
   [gbastien]
 - Hide the Add menu if no addable content
   [sgeulette]
