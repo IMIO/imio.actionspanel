@@ -4,9 +4,9 @@ Changelog
 1.12 (unreleased)
 -----------------
 
-- Refactored the 'back to URL' mechanism to be able to pass it as argument
-  in the 'transition' and 'own delete' sections to define where to go back after
-  action has been executed
+- Make trigger transition aware of faceted navigation.  If a transition is
+  triggered in a faceted navigation, only the faceted page is reloaded, not
+  the entire page
   [gbastien]
 - Hide the Add menu if no addable content
   [sgeulette]
