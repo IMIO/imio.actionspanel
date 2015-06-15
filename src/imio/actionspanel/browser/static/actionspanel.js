@@ -1,6 +1,5 @@
 // Function that shows a popup that asks the user if he really wants to delete
-// some object. If confirmed, the form where p_theElement lies is posted.
-function confirmDeleteObject(theElement, base_url, object_uid, msgName){
+function confirmDeleteObject(base_url, object_uid, msgName){
     if (!msgName) {
         msgName = 'delete_confirm_message';
     };
