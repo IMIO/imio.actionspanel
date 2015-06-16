@@ -55,7 +55,7 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
   $.ajax({
     url: baseUrl + "/" + viewName,
     dataType: 'html',
-    data: {'transition':transition,
+    data: {'transition': transition,
            'comment': comment,
            'form.submitted': '1',
            'redirect': redirect},

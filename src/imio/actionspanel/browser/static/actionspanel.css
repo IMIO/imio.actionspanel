@@ -5,6 +5,7 @@ input.notTriggerableTransitionButton {
     padding: 0 3px 0 9px;
     color: #474747;
 }
+
 .notTriggerableTransitionImage {
     background: #ffd5c0 url("notTriggerableTransition.gif") no-repeat scroll 1px 1px;
     font-style: italic;
@@ -14,10 +15,13 @@ input.notTriggerableTransitionButton {
     border: 1px solid red;
     margin-left: 0.2em;
 }
+
+table.actionspanel-no-style-table,
 table.actionspanel-no-style-table td {
     border: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
+    vertical-align: sub;
 }
 
 span#content-history.highlight-history-link a {
