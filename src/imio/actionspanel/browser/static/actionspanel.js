@@ -65,6 +65,11 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === '0') && !(data)) {
             Faceted.URLHandler.hash_changed();
+            $.event.trigger({
+                type: "ap_transition_triggered",
+                tag: tag,
+                transition: transition,
+                comment: comment});
         }
         else {
             window.location.href = data;
