@@ -497,6 +497,11 @@ class DeleteGivenUidView(BrowserView):
 
     def __call__(self, object_uid, redirect=True):
         """ """
+        # redirect can by passed by jQuery, in this case, we receive '0' or '1'
+        if redirect == '0':
+            redirect = False
+        elif redirect == '1':
+            redirect = True
         # Get the object to delete
         # try to get it from the portal_catalog
         catalog_brains = self.context.portal_catalog(UID=object_uid)
@@ -530,8 +535,8 @@ class DeleteGivenUidView(BrowserView):
             raise Unauthorized
 
         # Redirect the user to the correct page and display the correct message.
+        self.portal.plone_utils.addPortalMessage(**msg)
         if redirect:
-            self.portal.plone_utils.addPortalMessage(**msg)
             return self._findViewablePlace(obj)
 
     def _findViewablePlace(self, obj):
