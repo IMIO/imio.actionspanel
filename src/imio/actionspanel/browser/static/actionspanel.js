@@ -44,6 +44,11 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
   comment = '';
   if ($('form#confirmTransitionForm textarea').length) {
       comment = $('form#confirmTransitionForm textarea')[0].value;
+      // find the right tag because we are in an overlay and the tag will
+      // never be found like being in a faceted
+      // find the button that opened this overlay
+      overlay_id = tag.closest('div.overlay-ajax').id;
+      tag = $('[rel="#' + overlay_id + '"]');
   }
 
   // refresh faceted if we are on it, else, let triggerTransition manage redirect
