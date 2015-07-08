@@ -47,7 +47,7 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
       // find the right tag because we are in an overlay and the tag will
       // never be found like being in a faceted
       // find the button that opened this overlay
-      overlay_id = tag.closest('div.overlay-ajax').id;
+      overlay_id = $(tag).closest('div.overlay-ajax').attr('id');
       tag = $('[rel="#' + overlay_id + '"]');
   }
 
