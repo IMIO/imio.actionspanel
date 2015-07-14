@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.12 (unreleased)
+1.12 (2015-07-14)
 -----------------
 
 - Make trigger transition and own delete aware of faceted navigation.
