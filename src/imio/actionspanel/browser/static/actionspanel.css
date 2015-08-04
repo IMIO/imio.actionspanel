@@ -28,3 +28,8 @@ span#content-history.highlight-history-link a {
     color: red;
     font-weight: bold;
 }
+
+div.popupbuttons {
+    text-align: center;
+    padding-top: 1em;
+}
