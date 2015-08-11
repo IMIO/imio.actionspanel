@@ -24,11 +24,11 @@
       <input tal:attributes="onClick python: context.restrictedTraverse('@@actions_panel').computeTriggerTransitionOnClick(view.initTransition()) + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
              type="submit"
              name="form.buttons.save"
-             class="context trigger-transition-prevent-default"
+             class="trigger-transition-prevent-default apButton"
              value="Save"
              i18n:attributes="value"
              i18n:domain="plone" />
-      <input type="submit" name="form.buttons.cancel" class="standalone" value="Cancel" i18n:attributes="value" i18n:domain="plone" />
+      <input type="submit" name="form.buttons.cancel" class="standalone apButton" value="Cancel" i18n:attributes="value" i18n:domain="plone" />
     </div>
     </form>
 
