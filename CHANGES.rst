@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.13 (unreleased)
+1.13 (2015-09-04)
 -----------------
 
 - CSS for buttons displayed on the transition confirmation popup
