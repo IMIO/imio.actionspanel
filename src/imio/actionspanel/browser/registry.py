@@ -3,7 +3,7 @@
 from zope import schema
 from zope.interface import Interface, Invalid, invariant
 from plone import api
-from .. import ActionsPanelMessageFactory as _
+from imio.actionspanel import ActionsPanelMessageFactory as _
 
 
 class IImioActionsPanelConfig(Interface):
@@ -53,7 +53,7 @@ class IImioActionsPanelConfig(Interface):
                 raise Invalid(_("The value cannot contain space: line ${i}, '${val}'", mapping={'i': i, 'val': value}))
             if val.find('|') <= 0:
                 val += '|'
-            values[i-1] = val
+            values[i - 1] = val
             (typ_trans, view) = val.split('|')
             if typ_trans in uniques:
                 raise Invalid(_("The transition value '${val}' is set multiple times.", mapping={'val': typ_trans}))

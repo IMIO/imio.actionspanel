@@ -84,7 +84,7 @@ class ActionsPanelView(BrowserView):
         self.showEdit = showEdit
         self.showOwnDelete = showOwnDelete
         # if we manage our own delete, do not use Plone default one
-        if self.showOwnDelete and not 'delete' in self.IGNORABLE_ACTIONS:
+        if self.showOwnDelete and 'delete' not in self.IGNORABLE_ACTIONS:
             self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
         self.showActions = showActions
         self.showAddContent = showAddContent
