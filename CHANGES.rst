@@ -4,14 +4,16 @@ Changelog
 1.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Use "POST" as type of jQuery.ajax used to add a comment to a workflow
+  transition or it fails when the comment is too long.
+  [gbastien]
 
 
 1.13 (2015-09-04)
 -----------------
 
 - CSS for buttons displayed on the transition confirmation popup
-  [gbastien] 
+  [gbastien]
 
 
 1.12 (2015-07-14)

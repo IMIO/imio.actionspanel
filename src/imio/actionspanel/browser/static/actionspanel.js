@@ -66,6 +66,7 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
            'redirect': redirect},
     cache: false,
     async: false,
+    type: "POST",
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === '0') && !(data)) {
