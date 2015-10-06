@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.14 (unreleased)
+1.14 (2015-10-06)
 -----------------
 
 - Use "POST" as type of jQuery.ajax used to add a comment to a workflow
