@@ -4,7 +4,9 @@ Changelog
 1.15 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Use an onClick instead of the 'href' on the actions rendered by the
+  'actions_panel_actions.pt' to be able to use a javascript method for the action URL.
+  [gbastien]
 
 
 1.14 (2015-10-06)
