@@ -4,15 +4,19 @@ Changelog
 1.15 (unreleased)
 -----------------
 
-- Use an onClick instead of the 'href' on the actions rendered by the
-  'actions_panel_actions.pt' to be able to use a javascript method for the action URL.
+- Use an onClick instead of the `href` on the actions rendered by the
+  `actions_panel_actions.pt` to be able to use a javascript method for
+  the action URL.
+  [gbastien]
+- Use `async:false` for jQuery.ajax calls so the ajax loader image (spinner)
+  is displayed in IE and Chrome.
   [gbastien]
 
 
 1.14 (2015-10-06)
 -----------------
 
-- Use "POST" as type of jQuery.ajax used to add a comment to a workflow
+- Use `POST` as type of jQuery.ajax used to add a comment to a workflow
   transition or it fails when the comment is too long.
   [gbastien]
 
@@ -58,7 +62,7 @@ Changelog
 
 - Store transitions to confirm in the registry
   [sgeulette]
-- Add a small margin-left to the 'notTriggerableTransitionImage' class so if several not
+- Add a small margin-left to the `notTriggerableTransitionImage` class so if several not
   triggerable transition actions are displayed, it is not stuck together
   [gbastien]
 - Rely on imio.history to manage history related section
@@ -70,8 +74,8 @@ Changelog
 - Removed IObjectWillBeRemovedEvent, either use same event from OFS.interfaces or in case we use
   AT, we could need to override manage_beforeDelete as it is called before IObjectWillBeRemovedEvent
   in the OFS object removal machinery.
-- Do only rely on 'mayDelete' method instead of checking 'Delete objects' and mayDelete method,
-  this way, we may handle case where user does not have the 'Delete objects' but we want him
+- Do only rely on `mayDelete` method instead of checking `Delete objects` and mayDelete method,
+  this way, we may handle case where user does not have the `Delete objects` but we want him
   to be able to delete an element nevertheless, in this case, the all logic is managed by mayDelete.
 
 
@@ -93,7 +97,7 @@ Changelog
   and keep the other part of _computeBackURL that does manage the case when
   the member was not on the object he just deleted.
 - Custom action_panels views can now be registered with a different name
-  than 'actions_panel'.
+  than `actions_panel`.
 
 
 1.5 (2014-08-20)
@@ -108,7 +112,7 @@ Changelog
 
 - Moved complete computation of back url when an object is removed to
   _computeBackURL, not only the case when we were on the object we just removed.
-- Added CSS class 'actionspanel-no-style-table' on the main actions_panel table
+- Added CSS class `actionspanel-no-style-table` on the main actions_panel table
   and defined styles for it to remove any border/margin/padding.
 
 
@@ -118,7 +122,7 @@ Changelog
 - Not triggerable transitions are now also displayed using icon if useIcons is True,
   before, not triggerable transitions were always displayed as button, no mater useIcons
   was True or False
-- Simplified method that compute addable contents, the default 'folder_factories'
+- Simplified method that compute addable contents, the default `folder_factories`
   does all the job
 - Manage the fact that if after a transition has been triggered on an object,
   this object is not accessible anymore to the current user, it is redirected
@@ -129,14 +133,14 @@ Changelog
 - Do not lookup an object UID in the uid_catalog,
   this fails when using dexterity, use portal_catalog or
   check context UID if element is not indexed
-- Do not display a '-' when no actions to display and not using icons
-- Implement '__call__' instead of 'render' on the actions panel view
+- Do not display a `-` when no actions to display and not using icons
+- Implement `__call__` instead of `render` on the actions panel view
   so calling the view is simpler
 - Display AddContent actions.
 
 1.1 (2014-04-03)
 ----------------
-- Optimized to be "listing-aware" do some caching by storing not changing parameters
+- Optimized to be `listing-aware` do some caching by storing not changing parameters
   into the request and so avoid to recompute it each time the view is instanciated
 - Corrected bug when a transition was triggered using the confirmation popup and
   resulting object was no more accessible, the popup was recomputed and it raised Unauthorized
