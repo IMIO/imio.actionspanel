@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.15 (unreleased)
+1.15 (2015-12-03)
 -----------------
 
 - Use an onClick instead of the `href` on the actions rendered by the
