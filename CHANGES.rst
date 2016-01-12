@@ -4,7 +4,9 @@ Changelog
 1.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Message when deleting an element (delete_confirm_message) is now more
+  clear to specify that element will be deleted from the system definitively.
+  [gbastien]
 
 
 1.15 (2015-12-03)

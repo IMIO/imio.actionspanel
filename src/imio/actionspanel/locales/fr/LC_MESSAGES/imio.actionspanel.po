@@ -26,7 +26,7 @@ msgstr "ajout d'un élément"
 
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
-msgstr "Etes-vous certain de vouloir supprimer cet élément?"
+msgstr "Etes-vous certain de vouloir supprimer définitivement cet élément de l'application?"
 
 #: ./browser/actions_panel_history.pt
 msgid "history.gif_icon_title"
