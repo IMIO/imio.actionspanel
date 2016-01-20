@@ -7,6 +7,10 @@ Changelog
 - Message when deleting an element (delete_confirm_message) is now more
   clear to specify that element will be deleted from the system definitively.
   [gbastien]
+- When a WorkflowException is raised during a WF transition, display the exception
+  message, this way a beforeTransition event may raise this exception and display
+  a particular message to the user.
+  [gbastien]
 
 
 1.15 (2015-12-03)

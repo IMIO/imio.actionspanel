@@ -288,7 +288,8 @@ class ActionsPanelView(BrowserView):
           If no confirmation view is provided (empty string) imio.actionspanel confirmation
           default view is used instead.
         """
-        values = api.portal.get_registry_record('imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions')
+        values = api.portal.get_registry_record(
+            'imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions')
         if values is None:
             return ()
         return dict([val.split('|') for val in values])
@@ -421,17 +422,15 @@ class ActionsPanelView(BrowserView):
           Triggers a p_transition on self.context.
         """
         wfTool = getToolByName(self, 'portal_workflow')
+        plone_utils = getToolByName(self.context, 'plone_utils')
         try:
             wfTool.doActionFor(self.context,
                                transition,
                                comment=comment)
-        except WorkflowException:
-            # fail silently if the user triggered a transition he could not
-            # this avoid WorkflowException error in the UI if a user double-click on an icon
-            # triggering a workflow transition
-            logger.info("WorkflowException in imio.actionspanel.triggerTransition, the user '%s' "
-                        "tried to trigger the transition '%s' but he could not.  Double click in the UI?" %
-                        (self.member.getId(), self.request.get('transition')))
+        except WorkflowException, exc:
+            plone_utils.addPortalMessage(exc.message, type='warning')
+            return
+
         # use transition title to translate so if several transitions have the same title,
         # we manage only one translation
         transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[transition].title or \
@@ -439,7 +438,6 @@ class ActionsPanelView(BrowserView):
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
         msg = _('%s_done_descr' % transition_title,
                 default=_plone("Item state changed."))
-        plone_utils = getToolByName(self.context, 'plone_utils')
         plone_utils.addPortalMessage(msg)
 
         if not self.member.has_permission('View', self.context):
