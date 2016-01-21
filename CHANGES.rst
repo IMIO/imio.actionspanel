@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.16 (unreleased)
+1.16 (2016-01-21)
 -----------------
 
 - Message when deleting an element (delete_confirm_message) is now more
