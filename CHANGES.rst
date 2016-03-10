@@ -4,8 +4,8 @@ Changelog
 1.17 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Made a transitions sort method, that can be overrided.
+  [sgeulette]
 
 1.16 (2016-01-21)
 -----------------

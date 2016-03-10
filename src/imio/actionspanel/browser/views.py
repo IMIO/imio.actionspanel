@@ -1,5 +1,6 @@
 import logging
 logger = logging.getLogger('imio.actionspanel')
+from operator import itemgetter
 
 from appy.gen import No
 
@@ -184,6 +185,10 @@ class ActionsPanelView(BrowserView):
         """
         self.hasActions = True
 
+    def sortTransitions(self, lst):
+        """ Sort the list of transitions by title """
+        lst.sort(key=itemgetter('title'))
+
     def getTransitions(self):
         """
           This method is similar to portal_workflow.getTransitionsFor, but
@@ -256,11 +261,7 @@ class ActionsPanelView(BrowserView):
                         tInfo['reason'] = mayTrigger.msg
                     res.append(tInfo)
 
-        # sort transitions by title
-        def _sortByTransitionTitle(x, y):
-            return cmp(x['title'], y['title'])
-        res.sort(_sortByTransitionTitle)
-
+        self.sortTransitions(res)
         return res
 
     def _transitionsToConfirmInfos(self):
