@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.17 (unreleased)
+1.17 (2016-04-15)
 -----------------
 
 - Made a transitions sort method, that can be overrided.
