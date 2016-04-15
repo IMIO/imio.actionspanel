@@ -30,7 +30,7 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
     ],
-    keywords='',
+    keywords='Plone Python IMIO',
     author='IMIO',
     author_email='dev@imio.be',
     url='http://pypi.python.org/pypi/imio.actionspanel',
