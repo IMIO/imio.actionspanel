@@ -4,8 +4,11 @@ Changelog
 1.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use window.open(url, '_parent') to manage actions instead of window.location
+  so new location is opened in the '_parent' frame, this way, when opened from
+  an iframe, the location is not opened in the iframe but in the parent/full
+  frame.
+  [gbastien]
 
 1.17 (2016-04-15)
 -----------------
