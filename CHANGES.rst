@@ -9,6 +9,9 @@ Changelog
   an iframe, the location is not opened in the iframe but in the parent/full
   frame.
   [gbastien]
+- Fixed CSS style for the notTriggerableTransition CSS class so it is displayed
+  correctly in Chrome.
+  [gbastien]
 
 1.17 (2016-04-15)
 -----------------

@@ -1,8 +1,8 @@
 input.notTriggerableTransitionButton {
-    background: #ffd5c0 url("notTriggerableTransition.gif") no-repeat scroll 3px 4px;
+    background: #ffd5c0 url("notTriggerableTransition.gif") no-repeat scroll 6px 4px;
     font-style: italic;
     cursor: help;
-    padding-left: 9px;
+    padding-left: 15px;
     color: #474747;
 }
 
