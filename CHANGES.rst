@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.18 (unreleased)
+1.18 (2016-06-17)
 -----------------
 
 - Use window.open(url, '_parent') to manage actions instead of window.location
