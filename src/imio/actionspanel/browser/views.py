@@ -105,6 +105,7 @@ class ActionsPanelView(BrowserView):
           This is not supposed to be overrided.
         """
         res = ''
+
         for section in self.SECTIONS_TO_RENDER:
             renderedSection = getattr(self, section)() or ''
             res += renderedSection
@@ -127,6 +128,27 @@ class ActionsPanelView(BrowserView):
         if self.showEdit and self.useIcons and self.mayEdit():
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
         return ''
+
+    def getEditAction(self):
+        """
+         Return 'edit' or 'external_edit' wheter the context is "externally editable"
+         or not.
+        """
+        edit_action = 'edit'
+        portal_properties = api.portal.get_tool('portal_properties')
+        external_edition = portal_properties.site_properties.ext_editor
+
+        portal_quickinstaller = api.portal.get_tool('portal_quickinstaller')
+        external_edit_installed = portal_quickinstaller.isProductInstalled('collective.externaleditor')
+
+        if external_edition and external_edit_installed:
+            from collective.externaleditor.browser.controlpanel import IExternalEditorSchema
+            portal = api.portal.get()
+            settings = IExternalEditorSchema(portal)
+            if self.context.portal_type in settings.externaleditor_enabled_types:
+                edit_action = 'external_edit'
+
+        return edit_action
 
     def renderOwnDelete(self):
         """
