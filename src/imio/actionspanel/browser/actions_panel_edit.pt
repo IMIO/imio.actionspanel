@@ -1,6 +1,6 @@
 <td class="noPadding" i18n:domain="plone">
   <a tal:define="dummy view/saveHasActions;"
-          tal:attributes="href string:${context/absolute_url}/${view/getEditAction}"
+     tal:attributes="href string:${context/absolute_url}/${view/getEditAction}"
      target="_parent">
     <img src="edit.gif" tal:attributes="src string:${view/portal_url}/edit.png" title="Edit" i18n:attributes="title" />
   </a>

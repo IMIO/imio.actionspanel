@@ -5,6 +5,7 @@ Changelog
 -----------------
 
 - Nothing changed yet.
+- Take external edition into account when rendering the 'edit' action.
 
 
 1.18 (2016-06-17)
