@@ -4,7 +4,6 @@ Changelog
 1.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
 - Take external edition into account when rendering the 'edit' action.
 
 
