@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.19 (unreleased)
+1.19 (2016-06-22)
 -----------------
 
 - Take external edition into account when rendering the 'edit' action.
