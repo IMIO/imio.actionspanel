@@ -4,20 +4,22 @@ Changelog
 1.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added possibility to define a CSS class on the edit action.  To do this,
+  pass the value for `edit_action_class` in the kwargs.  This make it possible
+  to use a class that will enable an overlay for the edit action.
+  [gbastien]
 
 1.19 (2016-06-22)
 -----------------
 
-- Take external edition into account when rendering the 'edit' action.
-
+- Take external edition into account when rendering the `edit` action.
+  [sdelcourt]
 
 1.18 (2016-06-17)
 -----------------
 
-- Use window.open(url, '_parent') to manage actions instead of window.location
-  so new location is opened in the '_parent' frame, this way, when opened from
+- Use window.open(url, `_parent`) to manage actions instead of window.location
+  so new location is opened in the `_parent` frame, this way, when opened from
   an iframe, the location is not opened in the iframe but in the parent/full
   frame.
   [gbastien]
