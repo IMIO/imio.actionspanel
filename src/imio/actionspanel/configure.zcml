@@ -1,8 +1,9 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:cmf="http://namespaces.zope.org/cmf"
            xmlns:five="http://namespaces.zope.org/five"
-           xmlns:i18n="http://namespaces.zope.org/i18n"
            xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
            i18n_domain="imio.actionspanel">
 
   <include package=".browser" />
@@ -10,12 +11,17 @@
 
   <include package="imio.history"/>
 
+  <include file="upgrades.zcml" />
+
   <i18n:registerTranslations directory="locales" />
 
   <adapter for="OFS.interfaces.IItem"
            factory=".adapters.ContentDeletableAdapter"
            provides=".interfaces.IContentDeletable"
             />
+
+  <!-- File System Directory Views registration -->
+  <cmf:registerDirectory name="actionspanel_plone"/>
 
   <genericsetup:registerProfile
       name="default"

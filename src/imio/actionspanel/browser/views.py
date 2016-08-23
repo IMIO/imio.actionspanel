@@ -40,6 +40,7 @@ class ActionsPanelView(BrowserView):
         super(ActionsPanelView, self).__init__(context, request)
         self.context = context
         self.request = request
+        self.parent = self.context.getParentNode()
         self.member = self.request.get('imio.actionspanel_member_cachekey', None)
         if not self.member:
             self.member = api.user.get_current()
@@ -66,12 +67,6 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-        # used to get the objectIds when using 'showArrows=True'
-        # this will let use arrows to sort items of same portal_type
-        # together in case several objects of various portal_types
-        # are in the same container
-        self.parentObjectIdPortalType = self.context.portal_type
-
     def __call__(self,
                  useIcons=True,
                  showTransitions=True,
@@ -83,6 +78,7 @@ class ActionsPanelView(BrowserView):
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
                  showArrows=False,
+                 arrowsPortalTypeAware=False,
                  **kwargs):
         """
           Master method that will render the content.
@@ -101,11 +97,11 @@ class ActionsPanelView(BrowserView):
         self.showHistory = showHistory
         self.showHistoryLastEventHasComments = showHistoryLastEventHasComments
         self.showArrows = showArrows
-        if self.showArrows is True:
-            self.parent = self.context.getParentNode()
-            self.parentObjectIds = [
-                ob.id for ob in self.parent.objectValues()
-                if (not self.parentObjectIdPortalType or ob.portal_type == self.parentObjectIdPortalType)]
+        # arrowsPortalTypeAware will change the script used to
+        # change object position.  It is used when several elements of
+        # various portal_type are in the same container but we want to
+        # order the elements of same portal_type together
+        self.arrowsPortalTypeAware = arrowsPortalTypeAware
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -132,12 +128,24 @@ class ActionsPanelView(BrowserView):
         """
         if not self.useIcons:
             return ''
+
         if self.showArrows and self.member.has_permission(ModifyPortalContent, self.parent):
+            self.parentObjectIds = [
+                ob.id for ob in self.parent.objectValues()
+                if (not self.arrowsPortalTypeAware or ob.portal_type == self.context.portal_type)]
             self.objId = self.context.getId()
-            self.moveUrl = "{0}/folder_position?position=%s&id=%s&template_id={1}".format(
-                self.parent.absolute_url(), self._returnTo())
+            self.moveUrl = self._moveUrl()
             return ViewPageTemplateFile("actions_panel_arrows.pt")(self)
         return ''
+
+    def _moveUrl(self):
+        """ """
+        script_name = 'folder_position'
+        if self.arrowsPortalTypeAware:
+            script_name = 'folder_position_typeaware'
+
+        return "{0}/{1}?position=%s&id=%s&template_id={2}".format(
+            self.parent.absolute_url(), script_name, self._returnTo())
 
     def _returnTo(self, ):
         """What URL should I return to after moving the element and page is refreshed."""

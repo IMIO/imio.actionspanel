@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.ckeditor">
+
+    <upgradeSteps
+        source="*"
+        destination="1.4"
+        profile="imio.actionspanel:default" >
+        <upgradeDepends
+            title="Register skins"
+            description="Register skins"
+            import_steps="skins"
+        />
+    </upgradeSteps>
+
+</configure>
