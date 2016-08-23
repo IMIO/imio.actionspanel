@@ -9,6 +9,10 @@ Changelog
   to use a class that will enable an overlay for the edit action.
   [gbastien]
 
+- Added section that renders arrows to move elements to top/up/down/bottom,
+  this only appears if useIcons is True.
+  [gbastien]
+
 1.19 (2016-06-22)
 -----------------
 

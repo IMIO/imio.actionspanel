@@ -7,14 +7,15 @@ from appy.gen import No
 from Acquisition import aq_base
 from AccessControl import Unauthorized
 
-from zope.component import getMultiAdapter, getAdapter
+from zope.component import getAdapter
+from zope.component import getMultiAdapter
 from zope.i18n import translate
 
 from plone import api
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import PloneMessageFactory as _plone
@@ -41,18 +42,19 @@ class ActionsPanelView(BrowserView):
         self.request = request
         self.member = self.request.get('imio.actionspanel_member_cachekey', None)
         if not self.member:
-            self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+            self.member = api.user.get_current()
             self.request.set('imio.actionspanel_member_cachekey', self.member)
         self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
         self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
         if not self.portal_url or not self.portal:
-            self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
+            self.portal = api.portal.get()
             self.portal_url = self.portal.absolute_url()
             self.request.set('imio.actionspanel_portal_url_cachekey', self.portal_url)
             self.request.set('imio.actionspanel_portal_cachekey', self.portal)
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
                                    'renderOwnDelete',
+                                   'renderArrows',
                                    'renderActions',
                                    'renderAddContent',
                                    'renderHistory')
@@ -64,6 +66,12 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
+        # used to get the objectIds when using 'showArrows=True'
+        # this will let use arrows to sort items of same portal_type
+        # together in case several objects of various portal_types
+        # are in the same container
+        self.parentObjectIdPortalType = self.context.portal_type
+
     def __call__(self,
                  useIcons=True,
                  showTransitions=True,
@@ -74,6 +82,7 @@ class ActionsPanelView(BrowserView):
                  showAddContent=False,
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
+                 showArrows=False,
                  **kwargs):
         """
           Master method that will render the content.
@@ -91,6 +100,12 @@ class ActionsPanelView(BrowserView):
         self.showAddContent = showAddContent
         self.showHistory = showHistory
         self.showHistoryLastEventHasComments = showHistoryLastEventHasComments
+        self.showArrows = showArrows
+        if self.showArrows is True:
+            self.parent = self.context.getParentNode()
+            self.parentObjectIds = [
+                ob.id for ob in self.parent.objectValues()
+                if (not self.parentObjectIdPortalType or ob.portal_type == self.parentObjectIdPortalType)]
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -110,6 +125,23 @@ class ActionsPanelView(BrowserView):
             renderedSection = getattr(self, section)() or ''
             res += renderedSection
         return res
+
+    def renderArrows(self):
+        """
+          Render arrows if user may change order of elements.
+        """
+        if not self.useIcons:
+            return ''
+        if self.showArrows and self.member.has_permission(ModifyPortalContent, self.parent):
+            self.objId = self.context.getId()
+            self.moveUrl = "{0}/folder_position?position=%s&id=%s&template_id={1}".format(
+                self.parent.absolute_url(), self._returnTo())
+            return ViewPageTemplateFile("actions_panel_arrows.pt")(self)
+        return ''
+
+    def _returnTo(self, ):
+        """What URL should I return to after moving the element and page is refreshed."""
+        return self.request.getURL()
 
     def renderTransitions(self):
         """
@@ -224,7 +256,7 @@ class ActionsPanelView(BrowserView):
         # Get the workflow definition for p_obj.
         workflow = self.request.get('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, None)
         if not workflow:
-            wfTool = getToolByName(self.context, 'portal_workflow')
+            wfTool = api.portal.get_tool('portal_workflow')
             workflows = wfTool.getWorkflowsFor(self.context)
             if not workflows:
                 return res
@@ -402,7 +434,7 @@ class ActionsPanelView(BrowserView):
         """
           Return a list of object_buttons actions coming from portal_actions.
         """
-        actionsTool = getToolByName(self, 'portal_actions')
+        actionsTool = api.portal.get_tool('portal_actions')
         # we only want object_buttons, so ignore other categories and providers
         IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
                                 'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder']
@@ -444,8 +476,8 @@ class ActionsPanelView(BrowserView):
         """
           Triggers a p_transition on self.context.
         """
-        wfTool = getToolByName(self, 'portal_workflow')
-        plone_utils = getToolByName(self.context, 'plone_utils')
+        wfTool = api.portal.get_tool('portal_workflow')
+        plone_utils = api.portal.get_tool('plone_utils')
         try:
             wfTool.doActionFor(self.context,
                                transition,
@@ -514,7 +546,7 @@ class DeleteGivenUidView(BrowserView):
         super(DeleteGivenUidView, self).__init__(context, request)
         self.context = context
         self.request = request
-        self.portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        self.portal = api.portal.get()
 
     def __call__(self, object_uid, redirect=True):
         """ """
@@ -537,7 +569,7 @@ class DeleteGivenUidView(BrowserView):
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
         # on the content by default but that could be overrided
-        self.member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+        self.member = api.user.get_current()
         if IContentDeletable(obj).mayDelete():
             msg = {'message': _('object_deleted'),
                    'type': 'info'}
