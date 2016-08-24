@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-07-07 14:09+0000\n"
+"POT-Creation-Date: 2016-08-24 08:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,55 @@ msgstr ""
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
 #. Default: "Item state changed."
-#: ./browser/views.py:423
+#: ./browser/views.py:502
 msgid "%s_done_descr"
 msgstr ""
 
-#: ./browser/actions_panel_add_content.pt:5
+#: ./browser/registry.py:16
+msgid "Define for each object transition the optional corresponding view"
+msgstr "Définissez pour chacune des transition le nom de la vue correspondante"
+
+#: ./browser/registry.py:20
+msgid "Formatted like \"portal_type\" \".\" \"transition name\" \"|\" \"view\", like \"Document.publish|\" . The view can be empty"
+msgstr ""
+
+#: ./browser/registry.py:32
+msgid "Internal validation error"
+msgstr ""
+
+#: ./skins/actionspanel_plone/folder_position_typeaware.cpy:54
+msgid "Item's position has changed."
+msgstr "La position de l'élément a changé."
+
+#: ./browser/registry.py:62
+msgid "The first part must contain one dot to separate the type and the transition: line ${i}, '${val}'"
+msgstr ""
+
+#: ./browser/registry.py:59
+msgid "The transition value '${val}' is set multiple times."
+msgstr ""
+
+#: ./browser/registry.py:53
+msgid "The value cannot contain space: line ${i}, '${val}'"
+msgstr ""
+
+#: ./browser/registry.py:70
+msgid "This portal_type doesn't exist: line ${i}, '${val}'"
+msgstr ""
+
+#: ./browser/registry.py:72
+msgid "This transition id isn't valid for the portal_type: line ${i}, '${val}'"
+msgstr ""
+
+#: ./browser/registry.py:19
+msgid "Transition value"
+msgstr ""
+
+#: ./browser/registry.py:15
+msgid "Transitions to confirm"
+msgstr ""
+
+#: ./browser/actions_panel_add_content.pt:6
 msgid "add an element"
 msgstr "ajout d'un élément"
 
@@ -36,20 +80,37 @@ msgstr "Historique de l'élément"
 msgid "history_last_event_has_comment.gif_icon_title"
 msgstr "Historique de l'élément (un commentaire a été renseigné lors du dernier événement)"
 
-#: ./browser/views.py:488
+#: ./browser/views.py:582
 msgid "object_deleted"
 msgstr "L'élément a été supprimé."
 
 #. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
-#: ./browser/views.py:435
+#: ./browser/views.py:511
 msgid "redirected_after_transition_not_viewable"
 msgstr "Vous avez été redirigé ici parce que l'élément pour lequel vous venez de changer l'état ne vous est plus accessible."
 
-#: ./browser/transitions.pt:22
+#: ./browser/actions_panel_arrows.pt:8
+msgid "title_move_item_bottom"
+msgstr "Descendre l'élément en dernière position"
+
+#: ./browser/actions_panel_arrows.pt:15
+msgid "title_move_item_down"
+msgstr "Descendre l'élément"
+
+#: ./browser/actions_panel_arrows.pt:29
+msgid "title_move_item_top"
+msgstr "Remonter l'élément en première position"
+
+#: ./browser/actions_panel_arrows.pt:22
+msgid "title_move_item_up"
+msgstr "Remonter l'élément"
+
+#: ./browser/transitions.pt:21
 msgid "transition_comment"
 msgstr "Commentaire"
 
 #. Default: "Confirm workflow transition ${transition_name}"
-#: ./browser/transitions.pt:21
+#: ./browser/transitions.pt:20
 msgid "workflow_confirm"
 msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
+
