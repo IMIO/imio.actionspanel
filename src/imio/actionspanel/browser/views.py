@@ -406,6 +406,18 @@ class ActionsPanelView(BrowserView):
             return res
         return 1
 
+    def getTransitionTitle(self, transition):
+        '''Render the transition title including portal_type title if necessary.'''
+        transition_title = transition['title']
+        if self.appendTypeNameToTransitionLabel:
+            typesTool = api.portal.get_tool('portal_types')
+            type_info = typesTool.getTypeInfo(self.context)
+            transition_title = u"{0} {1}".format(transition_title,
+                                                 translate(type_info.title,
+                                                           domain=type_info.i18n_domain,
+                                                           context=self.request))
+        return transition_title
+
     def computeTriggerTransitionLink(self, transition):
         """ """
         return "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}".format(

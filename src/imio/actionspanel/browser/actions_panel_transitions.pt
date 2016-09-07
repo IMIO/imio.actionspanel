@@ -20,7 +20,7 @@
             tal:condition="python: not(useIcons and icon_url)">
       <input type="submit"
              tal:attributes="class string: apButton apButtonWF apButtonWF_${transition/id};
-                             value python: view.appendTypeNameToTransitionLabel and (context.utranslate(transition['title'], domain='plone') + ' ' + context.utranslate(msgid=context.portal_type, domain='plone')) or transition['title'];
+                             value python: view.getTransitionTitle(transition);
                              size python: int(len(transition['title'])/1.2);" />
       </form>
     </a>
@@ -28,17 +28,18 @@
 
   <tal:comment replace="nothing">The user can't trigger this transition: we tell him why.</tal:comment>
   <tal:notTriggerableTransition condition="not: transition/may_trigger">
-    <tal:defines define="icon_url transition/icon;">
+    <tal:defines define="icon_url transition/icon;
+                         transition_title python: view.getTransitionTitle(transition);">
         <input type="button" disabled
                tal:condition="python: not(useIcons and icon_url)"
                class="apButton notTriggerableTransitionButton"
-               tal:attributes="value transition/title;
+               tal:attributes="value transition_title;
                                title transition/reason"
                i18n:attributes="value" />
         <img class="notTriggerableTransitionImage"
              tal:condition="python: useIcons and icon_url"
              tal:attributes="src string: ${icon_url};
-                             title string: ${transition/title} -> ${transition/reason};"/>
+                             title string:${transition_title} -> ${transition/reason};"/>
     </tal:defines>
   </tal:notTriggerableTransition>
 </td>

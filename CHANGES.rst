@@ -8,9 +8,12 @@ Changelog
   pass the value for `edit_action_class` in the kwargs.  This make it possible
   to use a class that will enable an overlay for the edit action.
   [gbastien]
-
 - Added section that renders arrows to move elements to top/up/down/bottom,
   this only appears if useIcons is True.
+  [gbastien]
+- While rendering transition button including portal_type title, translate
+  portal_type title in the domain defined on the typeInfo of portal_types,
+  not systematically in the "plone" domain.
   [gbastien]
 
 1.19 (2016-06-22)
