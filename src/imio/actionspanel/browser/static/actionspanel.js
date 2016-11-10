@@ -106,7 +106,7 @@ function deleteElement(baseUrl, object_uid, tag) {
             Faceted.URLHandler.hash_changed();
         }
         else {
-            if (data.search('<!DOCTYPE')) {
+            if (data.search('<!DOCTYPE') != -1) {
                 document.open();
                 document.write(data);
                 document.close();
