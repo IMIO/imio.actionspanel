@@ -1,7 +1,10 @@
 <td tal:repeat="action view/listObjectButtonsActions" class="noPadding" i18n:domain="plone">
     <a href="#"
-       tal:define="dummy view/saveHasActions;"
-       tal:attributes="onClick python: action['url'].startswith('javascript') and action['url'] or 'javascript:event.preventDefault();;window.open(\'%s\', \'_parent\')' % action['url'];"
+       tal:define="dummy view/saveHasActions;
+                   useOnClick python: action['url'].startswith('javascript');"
+       tal:attributes="onClick python: useOnClick and action['url'] or '';
+                       href python: not useOnClick and action['url'];"
+       target="_parent"
        tal:condition="python: view.useIcons and action['icon']">
       <img tal:attributes="src string:${view/portal_url}/${action/icon};
                            title python: action['title'];" i18n:attributes="title" />

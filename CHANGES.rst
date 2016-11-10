@@ -15,6 +15,10 @@ Changelog
   portal_type title in the domain defined on the typeInfo of portal_types,
   not systematically in the "plone" domain.
   [gbastien]
+- When an element is deleted, check if response received by JS method
+  `deleteElement` is an url or a page content.  In case a Redirect exception
+  is raised, we receive the entire page content and not an url to redirect to.
+  [gbastien]
 
 1.19 (2016-06-22)
 -----------------

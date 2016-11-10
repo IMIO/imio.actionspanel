@@ -28,7 +28,7 @@ def unrestrictedRemoveGivenObject(object_to_delete):
     logMsg = '%s at %s deleted by "%s"' % \
              (object_to_delete.meta_type, object_to_delete.absolute_url_path(), oldsm.getUser().getId())
     try:
-        parent.manage_delObjects([object_to_delete.getId(), ])
+        parent.manage_delObjects(object_to_delete.getId())
         logger.info(logMsg)
     except Exception, exc:
         # in case something wrong happen, make sure we fall back to original user

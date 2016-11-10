@@ -106,7 +106,14 @@ function deleteElement(baseUrl, object_uid, tag) {
             Faceted.URLHandler.hash_changed();
         }
         else {
-            window.location.href = data;
+            if (data.search('<!DOCTYPE')) {
+                document.open();
+                document.write(data);
+                document.close();
+            }
+            else {
+                window.location.href = data;
+            }
         }
     },
     error: function(jqXHR, textStatus, errorThrown) {
