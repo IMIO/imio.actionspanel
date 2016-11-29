@@ -19,6 +19,10 @@ Changelog
   `deleteElement` is an url or a page content.  In case a Redirect exception
   is raised, we receive the entire page content and not an url to redirect to.
   [gbastien]
+- Use permission `ManageProperties` to protect the `renderArrows` section.
+  Make sure `saveHasActions` is called correctly in the
+  `actions_panel_arrows.pt` template.
+  [gbastien]
 
 1.19 (2016-06-22)
 -----------------

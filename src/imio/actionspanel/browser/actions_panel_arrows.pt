@@ -5,28 +5,32 @@
                                   ">
     <a tal:condition="not:isLastId"
        tal:attributes="href python: view.moveUrl % ('bottom', view.objId);">
-        <img src="arrowBottom.png"
+        <img tal:define="dummy view/saveHasActions"
+             src="arrowBottom.png"
              tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowBottom.png;"
              title="title_move_item_bottom"
              i18n:attributes="title" />
     </a>
     <a tal:condition="not:isLastId"
        tal:attributes="href python: view.moveUrl % ('down', view.objId);">
-      <img src="arrowDown.png"
+      <img tal:define="dummy view/saveHasActions"
+           src="arrowDown.png"
            tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowDown.png;"
            title="title_move_item_down"
            i18n:attributes="title" />
     </a>
     <a tal:condition="not:isFirstId"
        tal:attributes="href python: view.moveUrl % ('up', view.objId);">
-      <img src="arrowUp.png"
+      <img tal:define="dummy view/saveHasActions"
+           src="arrowUp.png"
            tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowUp.png;"
            title="title_move_item_up"
            i18n:attributes="title" />
     </a>
     <a tal:condition="not:isFirstId"
        tal:attributes="href python: view.moveUrl % ('top', view.objId);">
-        <img src="arrowTop.png"
+        <img tal:define="dummy view/saveHasActions"
+             src="arrowTop.png"
              tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowTop.png;"
              title="title_move_item_top"
              i18n:attributes="title" />

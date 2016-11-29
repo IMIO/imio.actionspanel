@@ -15,7 +15,7 @@ from plone import api
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.permissions import ManageProperties
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import PloneMessageFactory as _plone
@@ -129,7 +129,7 @@ class ActionsPanelView(BrowserView):
         if not self.useIcons:
             return ''
 
-        if self.showArrows and self.member.has_permission(ModifyPortalContent, self.parent):
+        if self.showArrows and self.member.has_permission(ManageProperties, self.parent):
             self.parentObjectIds = [
                 ob.id for ob in self.parent.objectValues()
                 if (not self.arrowsPortalTypeAware or ob.portal_type == self.context.portal_type)]
