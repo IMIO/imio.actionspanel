@@ -23,6 +23,12 @@ Changelog
   Make sure `saveHasActions` is called correctly in the
   `actions_panel_arrows.pt` template.
   [gbastien]
+- Check if current context is a folderish in `addableContents` used for the
+  `deleteElement` section because `folder_factories` return parent's addable
+  content_types if current context is not folderish, this makes the button
+  appear when you can not add content, and if used, content is actually added
+  to the parent.
+  [gbastien]
 
 1.19 (2016-06-22)
 -----------------

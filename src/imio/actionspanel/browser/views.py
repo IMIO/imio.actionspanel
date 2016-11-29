@@ -446,6 +446,8 @@ class ActionsPanelView(BrowserView):
         """
           Return addable content types.
         """
+        if not self.context.isPrincipiaFolderish:
+            return []
         factories_view = getMultiAdapter((self.context, self.request),
                                          name='folder_factories')
         return factories_view.addable_types()
