@@ -299,12 +299,9 @@ class ActionsPanelView(BrowserView):
                     tInfo = {
                         'id': transition.id,
                         # if the transition.id is not translated, use translated transition.title...
-                        'title': translate(transition.id,
+                        'title': translate(transition.title,
                                            domain="plone",
-                                           context=self.request,
-                                           default=translate(transition.title,
-                                                             domain="plone",
-                                                             context=self.request)),
+                                           context=self.request),
                         'description': transition.description,
                         'name': transition.actbox_name, 'may_trigger': True,
                         'confirm': bool(confirmation_view),

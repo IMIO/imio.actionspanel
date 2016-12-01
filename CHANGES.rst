@@ -29,6 +29,8 @@ Changelog
   appear when you can not add content, and if used, content is actually added
   to the parent.
   [gbastien]
+- Translate workflow transition title and no more id
+  [sgeulette]
 
 1.19 (2016-06-22)
 -----------------
