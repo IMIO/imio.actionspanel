@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.20 (unreleased)
+1.20 (2016-12-05)
 -----------------
 
 - Added possibility to define a CSS class on the edit action.  To do this,
