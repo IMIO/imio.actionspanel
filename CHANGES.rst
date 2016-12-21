@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.21 (unreleased)
+1.21 (2016-12-21)
 -----------------
 
 - Implemented method `getGroups` for the APOmnipotentUser 
