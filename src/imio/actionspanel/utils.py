@@ -45,3 +45,6 @@ class APOmnipotentUser(OmnipotentUser):
     """
     def has_role(self, roles, obj=None):
         return True
+
+    def getGroups(self):
+        return []

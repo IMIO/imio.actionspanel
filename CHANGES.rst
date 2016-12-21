@@ -4,8 +4,10 @@ Changelog
 1.21 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Implemented method `getGroups` for the APOmnipotentUser 
+  that returns an empty list because default implementation
+  will raise an `AttributeError` on `portal_groups`.
+  [gbastien]
 
 1.20 (2016-12-05)
 -----------------
