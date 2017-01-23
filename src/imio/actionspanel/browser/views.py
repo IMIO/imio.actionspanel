@@ -7,11 +7,12 @@ from appy.gen import No
 from Acquisition import aq_base
 from AccessControl import Unauthorized
 
-from zope.component import getAdapter
+from zope.component import getAdapter, getUtility
 from zope.component import getMultiAdapter
 from zope.i18n import translate
 
 from plone import api
+from plone.registry.interfaces import IRegistry
 
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -175,17 +176,18 @@ class ActionsPanelView(BrowserView):
          or not.
         """
         edit_action = 'edit'
-        portal_properties = api.portal.get_tool('portal_properties')
-        external_edition = portal_properties.site_properties.ext_editor
 
         portal_quickinstaller = api.portal.get_tool('portal_quickinstaller')
         external_edit_installed = portal_quickinstaller.isProductInstalled('collective.externaleditor')
 
-        if external_edition and external_edit_installed:
-            from collective.externaleditor.browser.controlpanel import IExternalEditorSchema
-            portal = api.portal.get()
-            settings = IExternalEditorSchema(portal)
-            if self.context.portal_type in settings.externaleditor_enabled_types:
+        if external_edit_installed:
+            registry = getUtility(IRegistry)
+            # check if enabled
+            if not registry.get('externaleditor.ext_editor', False):
+                return edit_action
+            # check portal type
+            externaleditor_enabled_types = registry.get('externaleditor.externaleditor_enabled_types', [])
+            if self.context.portal_type in externaleditor_enabled_types:
                 edit_action = 'external_edit'
 
         return edit_action

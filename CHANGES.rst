@@ -4,13 +4,13 @@ Changelog
 1.22 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Corrected code to work with collective.externaleditor >= 1.0.3.
+  [sgeulette]
 
 1.21 (2016-12-21)
 -----------------
 
-- Implemented method `getGroups` for the APOmnipotentUser 
+- Implemented method `getGroups` for the APOmnipotentUser
   that returns an empty list because default implementation
   will raise an `AttributeError` on `portal_groups`.
   [gbastien]
