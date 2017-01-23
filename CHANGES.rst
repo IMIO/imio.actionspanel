@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.22 (unreleased)
+1.22 (2017-01-23)
 -----------------
 
 - Corrected code to work with collective.externaleditor >= 1.0.3.
