@@ -4,7 +4,8 @@ Changelog
 1.23 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fix workflow guard check on group conditions.
+  [sdelcourt]
 
 
 1.22 (2017-01-23)
