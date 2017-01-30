@@ -385,7 +385,7 @@ class ActionsPanelView(BrowserView):
                 return 0
         if guard.groups:
             # Require at least one of the specified groups.
-            u = sm
+            u = sm.getUser()
             b = aq_base(u)
             if hasattr(b, 'getGroupsInContext'):
                 u_groups = u.getGroupsInContext(ob)
