@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.23 (unreleased)
+1.23 (2017-01-30)
 -----------------
 
 - Fix workflow guard check on group conditions.
