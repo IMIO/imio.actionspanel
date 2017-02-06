@@ -4,8 +4,9 @@ Changelog
 1.24 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added class on form button.
+  Changed select translation.
+  [sgeulette]
 
 1.23 (2017-01-30)
 -----------------

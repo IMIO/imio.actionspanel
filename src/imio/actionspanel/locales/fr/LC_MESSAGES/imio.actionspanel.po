@@ -65,8 +65,8 @@ msgid "Transitions to confirm"
 msgstr ""
 
 #: ./browser/actions_panel_add_content.pt:6
-msgid "add an element"
-msgstr "ajout d'un élément"
+msgid "Add an element"
+msgstr "Ajout d'un élément"
 
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
@@ -113,4 +113,3 @@ msgstr "Commentaire"
 #: ./browser/transitions.pt:20
 msgid "workflow_confirm"
 msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
-

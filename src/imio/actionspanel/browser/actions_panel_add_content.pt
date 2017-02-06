@@ -1,9 +1,9 @@
 <td i18n:domain="imio.actionspanel"
     tal:define="addable_contents view/addableContents;"
     tal:condition="addable_contents">
-    <form action=''>
+    <form class="apFormButton" action=''>
       <select name="Add element" onchange="javascript:window.location=this.value;">
-        <option value=# i18n:translate="">add an element</option>
+        <option value=# i18n:translate="">Add an element</option>
         <option tal:repeat="addable_content addable_contents"
                 tal:attributes="value addable_content/action;"
                 tal:content="addable_content/title">
