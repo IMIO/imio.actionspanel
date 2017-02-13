@@ -7,6 +7,10 @@ Changelog
 - Added class on form button.
   Changed select translation.
   [sgeulette]
+- The transition reason for which a transition can not be triggered now contains
+  the msg as a `zope.i18nmessageid.message.Message` instance, so translate it.
+  This is done because the appy `No` msg attribute can not be unicode...
+  [gbastien]
 
 1.23 (2017-01-30)
 -----------------

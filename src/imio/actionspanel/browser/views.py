@@ -319,7 +319,8 @@ class ActionsPanelView(BrowserView):
                     }
                     if not mayTrigger:
                         tInfo['may_trigger'] = False
-                        tInfo['reason'] = mayTrigger.msg
+                        # mayTrigger.msg is a 'zope.i18nmessageid.message.Message', translate it now
+                        tInfo['reason'] = translate(mayTrigger.msg, context=self.request)
                     res.append(tInfo)
 
         self.sortTransitions(res)
