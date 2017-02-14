@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.24 (unreleased)
+1.24 (2017-02-14)
 -----------------
 
 - Added class on form button.
