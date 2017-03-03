@@ -473,24 +473,19 @@ class ActionsPanelView(BrowserView):
         for action in objectButtonActions:
             if (self.ACCEPTABLE_ACTIONS and action['id'] in self.ACCEPTABLE_ACTIONS) or \
                (not self.ACCEPTABLE_ACTIONS and not action['id'] in self.IGNORABLE_ACTIONS):
-                act = {}
-                act['id'] = action['id']
-                act['title'] = action['title']
-                act['url'] = action['url']
+                act = action.copy()
                 # We try to append the url of the icon of the action
                 # look on the action itself
-                if action['icon']:
+                if act['icon']:
                     # make sure we only have the action icon name not a complete
                     # path including portal_url or so, just take care that we do not have
                     # an image in a static resource folder
-                    splittedIconPath = action['icon'].split('/')
+                    splittedIconPath = act['icon'].split('/')
                     if len(splittedIconPath) > 1 and '++resource++' in splittedIconPath[-2]:
                         # keep last 2 parts of the path
                         act['icon'] = '/'.join((splittedIconPath[-2], splittedIconPath[-1], ))
                     else:
                         act['icon'] = splittedIconPath[-1]
-                else:
-                    act['icon'] = ''
                 res.append(act)
         return res
 

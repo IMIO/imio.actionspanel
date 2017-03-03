@@ -4,8 +4,8 @@ Changelog
 1.25 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Display the description of actions while displayed as input.
+  [gbastien]
 
 1.24 (2017-02-14)
 -----------------
