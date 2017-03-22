@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.25 (unreleased)
+1.25 (2017-03-22)
 -----------------
 
 - Display the description of actions while displayed as input.
