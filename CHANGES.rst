@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.26 (unreleased)
+1.26 (2017-04-13)
 -----------------
 
 - Make sure action title is translated.
