@@ -11,7 +11,7 @@
     </a>
   <tal:comment replace="nothing">Button</tal:comment>
   <input class="#"
-         tal:condition="python: not (view.useIcons and action['icon'])" type="button"
+         tal:condition="python: not (view.useIcons and action['icon'])" type="button" i18n:attributes="value;title"
          tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action['id'];
                          title python: action['description'];
                          onClick python: action['url'].startswith('javascript') and action['url'] or 'window.open(\'%s\', \'_parent\')' % action['url'];

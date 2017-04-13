@@ -4,8 +4,8 @@ Changelog
 1.26 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Make sure action title is translated.
+  [gbastien]
 
 1.25 (2017-03-22)
 -----------------
