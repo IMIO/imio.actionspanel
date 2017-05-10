@@ -4,6 +4,9 @@ Changelog
 1.27 (unreleased)
 -----------------
 
+- Use api.adopt_roles rather than create a super user to execute a "own" delete
+  action.
+  [sdelcourt]
 - Use plone.api.
   [gbastien]
 - Pass `**kwargs` to ContentDeletableAdapter.mayDelete.
