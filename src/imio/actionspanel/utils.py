@@ -15,8 +15,11 @@ def unrestrictedRemoveGivenObject(object_to_delete):
     """
     # removes the object
     parent = object_to_delete.aq_inner.aq_parent
-    logMsg = '%s at %s deleted by "%s"' % \
-             (object_to_delete.meta_type, object_to_delete.absolute_url_path(), api.user.get_current().getId())
+    logMsg = '{} at {} deleted by "{}"'.format(
+        object_to_delete.meta_type,
+        object_to_delete.absolute_url_path(),
+        api.user.get_current().getId()
+    )
     with api.env.adopt_roles(['Manager']):
         parent.manage_delObjects(object_to_delete.getId())
         logger.info(logMsg)
