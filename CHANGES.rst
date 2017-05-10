@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.27 (unreleased)
+1.27 (2017-05-10)
 -----------------
 
 - Use api.adopt_roles rather than create a super user to execute a "own" delete
