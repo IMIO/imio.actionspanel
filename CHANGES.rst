@@ -4,8 +4,10 @@ Changelog
 1.27 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use plone.api.
+  [gbastien]
+- Pass `**kwargs` to ContentDeletableAdapter.mayDelete.
+  [gbastien]
 
 1.26 (2017-04-13)
 -----------------

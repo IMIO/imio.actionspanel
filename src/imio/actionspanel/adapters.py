@@ -7,8 +7,8 @@
 # GNU General Public License (GPL)
 #
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import DeleteObjects
+from plone import api
 
 
 class ContentDeletableAdapter(object):
@@ -19,7 +19,7 @@ class ContentDeletableAdapter(object):
     def __init__(self, context):
         self.context = context
 
-    def mayDelete(self):
+    def mayDelete(self, **kwargs):
         '''See docstring in interfaces.py'''
-        member = getToolByName(self.context, 'portal_membership').getAuthenticatedMember()
+        member = api.user.get_current()
         return bool(member.has_permission(DeleteObjects, self.context))
