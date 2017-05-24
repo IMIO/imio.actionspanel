@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.28 (unreleased)
+1.28 (2017-05-24)
 -----------------
 
 - Added parameter `catch_before_delete_exception=True` to the 
