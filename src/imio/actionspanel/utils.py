@@ -1,7 +1,9 @@
-import logging
-logger = logging.getLogger('imio.actionspanel')
+# -*- coding: utf-8 -*-
 
+import logging
 from plone import api
+
+logger = logging.getLogger('imio.actionspanel')
 
 
 def unrestrictedRemoveGivenObject(object_to_delete):

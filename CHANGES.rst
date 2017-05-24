@@ -4,8 +4,14 @@ Changelog
 1.28 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `catch_before_delete_exception=True` to the 
+  `DeleteGivenUidView`.  By default it will catch `BeforeDeleteException`
+  but when set to False, it will not be catch it.  This let's catch
+  the exception in another method.
+  [gbastien]
+- Call `reindexObject` when the BeforeDeleteException is catched because at
+  this moment, object has already been unindexed.
+  [gbastien]
 
 1.27 (2017-05-10)
 -----------------

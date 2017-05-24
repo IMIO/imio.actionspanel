@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('imio.actionspanel')
+
 from operator import itemgetter
 
 from appy.gen import No
@@ -29,7 +29,7 @@ from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.history.interfaces import IImioHistory
 
-
+logger = logging.getLogger('imio.actionspanel')
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
 
@@ -565,7 +565,10 @@ class DeleteGivenUidView(BrowserView):
         self.request = request
         self.portal = api.portal.get()
 
-    def __call__(self, object_uid, redirect=True):
+    def __call__(self,
+                 object_uid,
+                 redirect=True,
+                 catch_before_delete_exception=True):
         """ """
         # redirect can by passed by jQuery, in this case, we receive '0' or '1'
         if redirect == '0':
@@ -596,10 +599,15 @@ class DeleteGivenUidView(BrowserView):
             try:
                 unrestrictedRemoveGivenObject(obj)
             except BeforeDeleteException, exc:
+                # need to reindexObject because it is unindexed before
+                # the exception is raised
+                obj.reindexObject()
                 msg = {'message': exc.message,
                        'type': 'error'}
+                if not catch_before_delete_exception:
+                    raise BeforeDeleteException(exc.message)
         else:
-            # as the action calling delete_givenuid is already protected by the chek
+            # as the action calling delete_givenuid is already protected by the check
             # made in the 'if' here above, if we arrive here it is that user is doing
             # something wrong, we raise Unauthorized
             raise Unauthorized
