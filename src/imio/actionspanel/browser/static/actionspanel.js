@@ -2,7 +2,7 @@
 function confirmDeleteObject(base_url, object_uid, tag, msgName){
     if (!msgName) {
         msgName = 'delete_confirm_message';
-    };
+    }
     var msg = window.eval(msgName);
     if (confirm(msg)) {
         deleteElement(base_url, object_uid, tag); }
@@ -36,7 +36,7 @@ $("a.trigger-transition-prevent-default").click(function(event) {
 $("input.trigger-transition-prevent-default").click(function(event){
   event.preventDefault();
 });
-}
+};
 jQuery(document).ready(preventDefaultClickTransition);
 
 function triggerTransition(baseUrl, viewName, transition, tag) {
@@ -52,9 +52,9 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
   }
 
   // refresh faceted if we are on it, else, let triggerTransition manage redirect
-  redirect = '0'
+  redirect = '0';
   if (!$('#faceted-form').has(tag).length) {
-    redirect = '1'
+    redirect = '1';
   }
 
   $.ajax({
@@ -104,6 +104,9 @@ function deleteElement(baseUrl, object_uid, tag) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === '0') && !(data)) {
             Faceted.URLHandler.hash_changed();
+            $.event.trigger({
+                type: "ap_delete_givenuid",
+                tag: tag});
         }
         else {
             if (data.search('<!DOCTYPE') != -1) {

@@ -4,8 +4,9 @@ Changelog
 1.29 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Trigger JS event `ap_delete_givenuid` when an element is removed from a
+  faceted page.
+  [gbastien]
 
 1.28 (2017-05-24)
 -----------------
