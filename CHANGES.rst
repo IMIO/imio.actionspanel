@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.29 (unreleased)
+1.29 (2017-08-30)
 -----------------
 
 - Trigger JS event `ap_delete_givenuid` when an element is removed from a
