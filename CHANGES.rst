@@ -7,6 +7,13 @@ Changelog
 - Trigger JS event `ap_delete_givenuid` when an element is removed from a
   faceted page.
   [gbastien]
+- Only show the actions panel viewlet on the view of the element, not on the
+  other templates like `folder_contents` because it also displays buttons and
+  user could be confused about that.
+  [gbastien]
+- Use same class `apButton` for buttons and select (add content) displayed on
+  the actions panel viewlet.
+  [gbastien]
 
 1.28 (2017-05-24)
 -----------------
