@@ -4,8 +4,9 @@ Changelog
 1.30 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Rely on `collective.fingerpointing` for logging capabilities, this replace the
+  log message when an element is deleted.
+  [gbastien]
 
 1.29 (2017-08-30)
 -----------------

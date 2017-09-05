@@ -1,4 +1,4 @@
-import logging
+# -*- coding: utf-8 -*-
 
 from operator import itemgetter
 
@@ -29,7 +29,6 @@ from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.history.interfaces import IImioHistory
 
-logger = logging.getLogger('imio.actionspanel')
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
 
