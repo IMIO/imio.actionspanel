@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.29.1 (unreleased)
+-------------------
+
+- Call `transaction.abort` when an error occurs during deletion in
+  `DeleteGivenUidView` to avoid leaving portal in an unconsitent state.
+  [gbastien]
+
 1.29 (2017-08-30)
 -----------------
 

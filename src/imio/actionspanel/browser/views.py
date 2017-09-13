@@ -1,5 +1,7 @@
 import logging
 
+import transaction
+
 from operator import itemgetter
 
 from appy.gen import No
@@ -589,7 +591,6 @@ class DeleteGivenUidView(BrowserView):
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
         # on the content by default but that could be overrided
-        self.member = api.user.get_current()
         if IContentDeletable(obj).mayDelete():
             msg = {'message': _('object_deleted'),
                    'type': 'info'}
@@ -599,10 +600,10 @@ class DeleteGivenUidView(BrowserView):
             try:
                 unrestrictedRemoveGivenObject(obj)
             except BeforeDeleteException, exc:
-                # need to reindexObject because it is unindexed before
-                # the exception is raised
-                obj.reindexObject()
-                msg = {'message': exc.message,
+                # abort because element was removed
+                transaction.abort()
+                msg = {'message': u'{0} ({1})'.format(
+                    exc.message, exc.__class__.__name__),
                        'type': 'error'}
                 if not catch_before_delete_exception:
                     raise BeforeDeleteException(exc.message)
@@ -614,7 +615,7 @@ class DeleteGivenUidView(BrowserView):
 
         # Redirect the user to the correct page and display the correct message.
         self.portal.plone_utils.addPortalMessage(**msg)
-        if redirect:
+        if redirect and not msg['type'] == 'error':
             return self._findViewablePlace(obj)
 
     def _findViewablePlace(self, obj):
@@ -625,7 +626,8 @@ class DeleteGivenUidView(BrowserView):
         # redirect to HTTP_REFERER if it is not delete object
         if not self.request['HTTP_REFERER'].startswith(self.context.absolute_url()):
             return self.request['HTTP_REFERER']
-        parent = obj.getParentNode()
-        while (not self.member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
-            parent = parent.getParentNode()
+        parent = obj.aq_inner.aq_parent
+        member = api.user.get_current()
+        while (not member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
+            parent = parent.aq_inner.aq_parent
         return parent.absolute_url()
