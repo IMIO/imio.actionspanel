@@ -7,6 +7,9 @@ Changelog
 - Rely on `collective.fingerpointing` for logging capabilities, this replace the
   log message when an element is deleted.
   [gbastien]
+- Call `transaction.abort` when an error occurs during deletion in
+  `DeleteGivenUidView` to avoid leaving portal in an unconsitent state.
+  [gbastien]
 
 1.29 (2017-08-30)
 -----------------
