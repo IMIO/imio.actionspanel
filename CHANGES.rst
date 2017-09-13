@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.29.1 (unreleased)
+1.29.1 (2017-09-13)
 -------------------
 
 - Call `transaction.abort` when an error occurs during deletion in
