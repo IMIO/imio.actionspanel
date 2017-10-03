@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.30 (unreleased)
+1.30 (2017-10-03)
 -----------------
 
 - Rely on `collective.fingerpointing` for logging capabilities, this replace the
