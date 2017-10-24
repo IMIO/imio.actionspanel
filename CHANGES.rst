@@ -4,8 +4,8 @@ Changelog
 1.31 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added icon on object buttons.
+  [sgeulette]
 
 1.30 (2017-10-03)
 -----------------
@@ -34,7 +34,7 @@ Changelog
 1.28 (2017-05-24)
 -----------------
 
-- Added parameter `catch_before_delete_exception=True` to the 
+- Added parameter `catch_before_delete_exception=True` to the
   `DeleteGivenUidView`.  By default it will catch `BeforeDeleteException`
   but when set to False, it will not be catch it.  This let's catch
   the exception in another method.

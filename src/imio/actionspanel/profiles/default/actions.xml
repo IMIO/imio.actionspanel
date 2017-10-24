@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<object name="portal_actions" meta_type="Plone Actions Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+ <action-provider name="portal_actions"/>
+
+ <object name="object_buttons" meta_type="CMF Action Category">
+
+  <object name="cut">
+   <property name="icon_expr">string:$portal_url/cut_icon.png</property>
+  </object>
+
+  <object name="copy">
+   <property name="icon_expr">string:$portal_url/copy_icon.png</property>
+  </object>
+
+  <object name="paste">
+   <property name="icon_expr">string:$portal_url/paste_icon.png</property>
+  </object>
+
+  <object name="delete">
+   <property name="icon_expr">string:$portal_url/delete_icon.png</property>
+  </object>
+
+  <object name="rename">
+   <property name="icon_expr">string:$portal_url/rename_icon.gif</property>
+  </object>
+
+ </object>
+
+ <object name="document_actions" meta_type="CMF Action Category">
+
+  <object name="extedit">
+   <property name="icon_expr">string:$portal_url/extedit_icon.png</property>
+  </object>
+
+ </object>
+
+</object>
