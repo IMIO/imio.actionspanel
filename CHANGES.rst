@@ -6,6 +6,8 @@ Changelog
 
 - Added icon on object buttons.
   [sgeulette]
+- Added separate external edit button
+  [sgeulette]
 
 1.30 (2017-10-03)
 -----------------

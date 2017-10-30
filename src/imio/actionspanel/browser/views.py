@@ -56,6 +56,7 @@ class ActionsPanelView(BrowserView):
             self.request.set('imio.actionspanel_portal_cachekey', self.portal)
         self.SECTIONS_TO_RENDER = ('renderTransitions',
                                    'renderEdit',
+                                   'renderExtEdit',
                                    'renderOwnDelete',
                                    'renderArrows',
                                    'renderActions',
@@ -74,6 +75,7 @@ class ActionsPanelView(BrowserView):
                  showTransitions=True,
                  appendTypeNameToTransitionLabel=False,
                  showEdit=True,
+                 showExtEdit=True,
                  showOwnDelete=True,
                  showActions=True,
                  showAddContent=False,
@@ -90,6 +92,7 @@ class ActionsPanelView(BrowserView):
         self.showTransitions = showTransitions
         self.appendTypeNameToTransitionLabel = appendTypeNameToTransitionLabel
         self.showEdit = showEdit
+        self.showExtEdit = showExtEdit
         self.showOwnDelete = showOwnDelete
         # if we manage our own delete, do not use Plone default one
         if self.showOwnDelete and 'delete' not in self.IGNORABLE_ACTIONS:
@@ -171,27 +174,15 @@ class ActionsPanelView(BrowserView):
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
         return ''
 
-    def getEditAction(self):
+    def renderExtEdit(self):
         """
-         Return 'edit' or 'external_edit' wheter the context is "externally editable"
-         or not.
+          Render a 'external_edit' action.  By default, only available when actions are displayed
+          as icons because when it is not the case, we already have a 'external_edit' viewlet and that would
+          be redundant.
         """
-        edit_action = 'edit'
-
-        portal_quickinstaller = api.portal.get_tool('portal_quickinstaller')
-        external_edit_installed = portal_quickinstaller.isProductInstalled('collective.externaleditor')
-
-        if external_edit_installed:
-            registry = getUtility(IRegistry)
-            # check if enabled
-            if not registry.get('externaleditor.ext_editor', False):
-                return edit_action
-            # check portal type
-            externaleditor_enabled_types = registry.get('externaleditor.externaleditor_enabled_types', [])
-            if self.context.portal_type in externaleditor_enabled_types:
-                edit_action = 'external_edit'
-
-        return edit_action
+        if self.showExtEdit and self.useIcons and self.mayExtEdit():
+            return ViewPageTemplateFile("actions_panel_ext_edit.pt")(self)
+        return ''
 
     def renderOwnDelete(self):
         """
@@ -243,6 +234,29 @@ class ActionsPanelView(BrowserView):
           Method that check if special 'edit' action has to be displayed.
         """
         return self.member.has_permission('Modify portal content', self.context)
+
+    def mayExtEdit(self):
+        """
+          Method that check if special 'external_edit' action has to be displayed.
+        """
+        if not self.member.has_permission('Modify portal content', self.context):
+            return False
+        portal_quickinstaller = api.portal.get_tool('portal_quickinstaller')
+        external_edit_installed = portal_quickinstaller.isProductInstalled('collective.externaleditor')
+        if not external_edit_installed:
+            return False
+        # Can be to slow for a dashboard ?
+        # view = getMultiAdapter((self.context, self.request), name='externalEditorEnabled')
+        # return view.available()
+        # The availability check can be simpler because external_edit view check also availability
+        # with available method
+        registry = getUtility(IRegistry)
+        # check if enabled
+        if not registry.get('externaleditor.ext_editor', False):
+            return False
+        # check portal type
+        externaleditor_enabled_types = registry.get('externaleditor.externaleditor_enabled_types', [])
+        return self.context.portal_type in externaleditor_enabled_types
 
     def saveHasActions(self):
         """
@@ -603,7 +617,7 @@ class DeleteGivenUidView(BrowserView):
                 transaction.abort()
                 msg = {'message': u'{0} ({1})'.format(
                     exc.message, exc.__class__.__name__),
-                       'type': 'error'}
+                    'type': 'error'}
                 if not catch_before_delete_exception:
                     raise BeforeDeleteException(exc.message)
         else:
