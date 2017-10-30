@@ -75,7 +75,7 @@ class ActionsPanelView(BrowserView):
                  showTransitions=True,
                  appendTypeNameToTransitionLabel=False,
                  showEdit=True,
-                 showExtEdit=True,
+                 showExtEdit=False,
                  showOwnDelete=True,
                  showActions=True,
                  showAddContent=False,
