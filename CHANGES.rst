@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.31 (unreleased)
+1.31 (2017-11-10)
 -----------------
 
 - Added icon on object buttons.
