@@ -4,8 +4,9 @@ Changelog
 1.32 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added possibility to define a target on the edit action. To do this,
+  pass the value for `edit_action_target` in the kwargs.
+  [sgeulette]
 
 1.31 (2017-11-10)
 -----------------
