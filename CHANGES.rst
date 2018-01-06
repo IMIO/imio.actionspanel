@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.32 (unreleased)
+1.32 (2018-01-06)
 -----------------
 
 - Added possibility to define a target on the edit action. To do this,
