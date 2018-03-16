@@ -37,7 +37,7 @@ setup(
         'setuptools',
         'appy',
         'collective.fingerpointing',
-        'imio.history',
+        'imio.history>=1.17',
         'plone.api',
     ],
     extras_require={

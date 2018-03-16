@@ -4,8 +4,9 @@ Changelog
 1.33 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Rely on imio.history IHContentHistoryView.show_history to know if the history
+  icon must be shown.  We need imio.history >= 1.17.
+  [gbastien]
 
 1.32 (2018-01-06)
 -----------------

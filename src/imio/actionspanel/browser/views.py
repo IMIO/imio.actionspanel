@@ -216,11 +216,11 @@ class ActionsPanelView(BrowserView):
 
     def showHistoryForContext(self):
         """
-          Should an access to the @@historyview be shown for the object?
+          Method to control access to the @@historyview view and so to the action icon.
+          We rely on view 'contenthistory' overrided in imio.history.
         """
-        if not _checkPermission('CMFEditions: Access previous versions', self.context):
-            return False
-        return True
+        contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
+        return contenthistory.show_history()
 
     def historyLastEventHasComments(self):
         """
