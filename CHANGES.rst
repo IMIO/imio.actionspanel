@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.33 (unreleased)
+1.33 (2018-03-19)
 -----------------
 
 - Rely on imio.history IHContentHistoryView.show_history to know if the history
