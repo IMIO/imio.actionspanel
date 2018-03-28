@@ -39,7 +39,7 @@
         <img class="notTriggerableTransitionImage"
              tal:condition="python: useIcons and icon_url"
              tal:attributes="src string: ${icon_url};
-                             title string:${transition_title} -> ${transition/reason};"/>
+                             title string:${transition_title} 🡒 ${transition/reason};"/>
     </tal:defines>
   </tal:notTriggerableTransition>
 </td>

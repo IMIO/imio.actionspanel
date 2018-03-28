@@ -4,8 +4,9 @@ Changelog
 1.34 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use a real arrow character `🡒` instead `->` when building the transition not
+  triggerable icon help message.
+  [gbastien]
 
 1.33 (2018-03-19)
 -----------------
