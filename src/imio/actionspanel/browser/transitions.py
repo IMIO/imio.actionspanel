@@ -26,7 +26,7 @@ class ConfirmTransitionView(BrowserView):
             # the only way to enter here is the popup overlay not to be shown
             # because while using the popup overlay, the jQ function take care of hidding it
             # while the Cancel button is hit
-            self.request.response.redirect(actionspanel_view._gotoReferer())
+            return self.request.response.redirect(self.context.absolute_url())
         elif submitted:
             return actionspanel_view.triggerTransition(transition=self.request.get('transition'),
                                                        comment=self.request.get('comment'),

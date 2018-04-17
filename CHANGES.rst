@@ -7,6 +7,10 @@ Changelog
 - Use a real arrow character `🡒` instead `->` when building the transition not
   triggerable icon help message.
   [gbastien]
+- Fixed call to unexisting method `actionspanel_view._gotoReferer()` when
+  cancelling transition confirmation popup (only happens if popup is not
+  correctly opened as an overlay).
+  [gbastien]
 
 1.33 (2018-03-19)
 -----------------
