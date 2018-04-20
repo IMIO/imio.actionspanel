@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.34 (unreleased)
+1.34 (2018-04-20)
 -----------------
 
 - Use a real arrow character `🡒` instead `->` when building the transition not
