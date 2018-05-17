@@ -20,7 +20,6 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.permissions import ManageProperties
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import PloneMessageFactory as _plone
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
@@ -514,7 +513,9 @@ class ActionsPanelView(BrowserView):
             wfTool.doActionFor(self.context,
                                transition,
                                comment=comment)
-        except WorkflowException, exc:
+        except Exception, exc:
+            # abort because element state was changed
+            transaction.abort()
             plone_utils.addPortalMessage(exc.message, type='warning')
             return
 

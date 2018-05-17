@@ -4,8 +4,12 @@ Changelog
 1.35 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `triggerTransition`, do not only catch `WorkflowException` as raised error
+  could be of another type.
+  [gbastien]
+- When an error occurs during a workflow transition, make sure we
+  `transaction.abort()` or `review_state` is changed nevertheless.
+  [gbastien]
 
 1.34 (2018-04-20)
 -----------------
