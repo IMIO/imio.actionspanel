@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.35 (unreleased)
+1.35 (2018-05-22)
 -----------------
 
 - In `triggerTransition`, do not only catch `WorkflowException` as raised error
