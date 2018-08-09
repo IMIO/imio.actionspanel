@@ -4,8 +4,9 @@ Changelog
 1.36 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Moved `views._redirectToViewableUrl` logic to `utils.findViewableURL` so it
+  can be used by external code.
+  [gbastien]
 
 1.35 (2018-05-22)
 -----------------

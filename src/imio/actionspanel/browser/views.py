@@ -1,34 +1,31 @@
 # -*- coding: utf-8 -*-
 
-import transaction
-
-from operator import itemgetter
-
-from appy.gen import No
-
-from Acquisition import aq_base
 from AccessControl import Unauthorized
-
-from zope.component import getAdapter, getUtility
-from zope.component import getMultiAdapter
-from zope.i18n import translate
-
+from Acquisition import aq_base
+from appy.gen import No
+from imio.actionspanel import ActionsPanelMessageFactory as _
+from imio.actionspanel.interfaces import IContentDeletable
+from imio.actionspanel.utils import findViewableURL
+from imio.actionspanel.utils import unrestrictedRemoveGivenObject
+from imio.history.interfaces import IImioHistory
+from operator import itemgetter
 from plone import api
 from plone.registry.interfaces import IRegistry
-
-from Products.Five import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.permissions import ManageProperties
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFPlone import PloneMessageFactory as _plone
-from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Expression import createExprContext
+from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
+from Products.Five import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope.component import getAdapter
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.i18n import translate
 
-from imio.actionspanel import ActionsPanelMessageFactory as _
-from imio.actionspanel.interfaces import IContentDeletable
-from imio.actionspanel.utils import unrestrictedRemoveGivenObject
-from imio.history.interfaces import IImioHistory
+import transaction
+
 
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
@@ -528,21 +525,17 @@ class ActionsPanelView(BrowserView):
                 default=_plone("Item state changed."))
         plone_utils.addPortalMessage(msg)
 
-        if not self.member.has_permission('View', self.context):
-            # After having triggered a wfchange, it the current user
-            # can not access the obj anymore, try to find a place viewable by the user
-            redirectToUrl = self._redirectToViewableUrl()
-            # add a specific portal_message before redirecting the user
-            msg = _('redirected_after_transition_not_viewable',
-                    default="You have been redirected here because you do not have "
-                            "access anymore to the element you just changed the state for.")
-            plone_utils.addPortalMessage(msg, 'warning')
+        http_referer = self.request.get('HTTP_REFERER')
+        # After having triggered a wfchange, it the current user
+        # can not access the obj anymore, try to find a place viewable by the user
+        redirectToUrl = self._redirectToViewableUrl()
+        if redirectToUrl != http_referer:
             return redirectToUrl
         else:
             # in some cases, redirection is managed at another level, by jQuery for example
             if not redirect:
                 return
-            return self.request.get('HTTP_REFERER')
+            return http_referer
 
     def _redirectToViewableUrl(self):
         """
@@ -552,20 +545,7 @@ class ActionsPanelView(BrowserView):
           First check if HTTP_REFERER is not the object not accessible, if it is not, we redirect
           to HTTP_REFERER, but if it is, we check parents until we find a viewable parent.
         """
-        http_referer = self.request['HTTP_REFERER']
-        if not http_referer.startswith(self.context.absolute_url()):
-            # HTTP_REFERER is not the object we have not access to anymore
-            # we can redirect to it...  probably...
-            redirectToUrl = http_referer
-        else:
-            # if HTTP_REFERER is the object we can not access anymore
-            # we will try to find a parent object we can be redirected to
-            parent = self.context.getParentNode()
-            while (not self.member.has_permission('View', parent) and
-                   not parent.meta_type == 'Plone Site'):
-                parent = parent.getParentNode()
-            redirectToUrl = parent.absolute_url()
-        return redirectToUrl
+        return findViewableURL(self.context, self.request, self.member)
 
 
 class DeleteGivenUidView(BrowserView):
