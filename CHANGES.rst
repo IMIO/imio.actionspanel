@@ -4,8 +4,9 @@ Changelog
 1.29.2 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Moved `views._redirectToViewableUrl` logic to `utils.findViewableURL` so it
+  can be used by external code.
+  [gbastien]
 
 1.29.1 (2017-09-13)
 -------------------

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-08-24 08:23+0000\n"
+"POT-Creation-Date: 2018-08-09 13:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,20 @@ msgstr ""
 "Domain: imio.actionspanel\n"
 
 #. Default: "Item state changed."
-#: ./browser/views.py:502
+#: ./browser/views.py:524
 msgid "%s_done_descr"
+msgstr ""
+
+#: ./browser/actions_panel_add_content.pt:6
+msgid "Add an element"
 msgstr ""
 
 #: ./browser/registry.py:16
 msgid "Define for each object transition the optional corresponding view"
+msgstr ""
+
+#: ./configure.zcml:32
+msgid "Extension profile for imio.actionspanel."
 msgstr ""
 
 #: ./browser/registry.py:20
@@ -66,10 +74,6 @@ msgstr ""
 msgid "Transitions to confirm"
 msgstr ""
 
-#: ./browser/actions_panel_add_content.pt:6
-msgid "add an element"
-msgstr ""
-
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
 msgstr ""
@@ -82,28 +86,32 @@ msgstr ""
 msgid "history_last_event_has_comment.gif_icon_title"
 msgstr ""
 
-#: ./browser/views.py:582
+#: ./configure.zcml:32
+msgid "imio.actionspanel"
+msgstr ""
+
+#: ./browser/views.py:589
 msgid "object_deleted"
 msgstr ""
 
-#. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
-#: ./browser/views.py:511
-msgid "redirected_after_transition_not_viewable"
+#. Default: "You have been redirect here because the action you just made have made thelement no more viewable to you."
+#: ./utils.py:34
+msgid "redirected_after_action_not_viewable"
 msgstr ""
 
 #: ./browser/actions_panel_arrows.pt:8
 msgid "title_move_item_bottom"
 msgstr ""
 
-#: ./browser/actions_panel_arrows.pt:15
+#: ./browser/actions_panel_arrows.pt:16
 msgid "title_move_item_down"
 msgstr ""
 
-#: ./browser/actions_panel_arrows.pt:29
+#: ./browser/actions_panel_arrows.pt:32
 msgid "title_move_item_top"
 msgstr ""
 
-#: ./browser/actions_panel_arrows.pt:22
+#: ./browser/actions_panel_arrows.pt:24
 msgid "title_move_item_up"
 msgstr ""
 
@@ -115,4 +123,3 @@ msgstr ""
 #: ./browser/transitions.pt:20
 msgid "workflow_confirm"
 msgstr ""
-
