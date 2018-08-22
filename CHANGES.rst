@@ -4,6 +4,9 @@ Changelog
 1.36 (unreleased)
 -----------------
 
+- Moved `views._redirectToViewableUrl` logic to `utils.findViewableURL` so it
+  can be used by external code.
+  [gbastien]
 - Don't nullify margin of actionspanel-no-style-table.
   [sgeulette]
 

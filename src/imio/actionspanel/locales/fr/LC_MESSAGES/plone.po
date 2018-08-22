@@ -14,4 +14,3 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: plone\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
-
