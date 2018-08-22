@@ -4,8 +4,8 @@ Changelog
 1.36 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Don't nullify margin of actionspanel-no-style-table.
+  [sgeulette]
 
 1.35 (2018-05-22)
 -----------------
