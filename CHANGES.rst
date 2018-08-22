@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.36 (unreleased)
+1.36 (2018-08-22)
 -----------------
 
 - Moved `views._redirectToViewableUrl` logic to `utils.findViewableURL` so it
