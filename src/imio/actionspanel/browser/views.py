@@ -14,6 +14,7 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.permissions import ManageProperties
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFPlone import PloneMessageFactory as _plone
+from Products.CMFPlone.utils import safe_unicode
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
@@ -312,7 +313,7 @@ class ActionsPanelView(BrowserView):
                     tInfo = {
                         'id': transition.id,
                         # if the transition.id is not translated, use translated transition.title...
-                        'title': translate(transition.title,
+                        'title': translate(safe_unicode(transition.title),
                                            domain="plone",
                                            context=self.request),
                         'description': transition.description,
@@ -423,7 +424,7 @@ class ActionsPanelView(BrowserView):
         if self.appendTypeNameToTransitionLabel:
             typesTool = api.portal.get_tool('portal_types')
             type_info = typesTool.getTypeInfo(self.context)
-            transition_title = u"{0} {1}".format(transition_title,
+            transition_title = u"{0} {1}".format(safe_unicode(transition_title),
                                                  translate(type_info.title,
                                                            domain=type_info.i18n_domain,
                                                            context=self.request))
@@ -521,7 +522,7 @@ class ActionsPanelView(BrowserView):
         transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[transition].title or \
             transition
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
-        msg = _('%s_done_descr' % transition_title,
+        msg = _(u'%s_done_descr' % safe_unicode(transition_title),
                 default=_plone("Item state changed."))
         plone_utils.addPortalMessage(msg)
 

@@ -4,8 +4,8 @@ Changelog
 1.37 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use safely unicoded transition title.
+  [sgeulette]
 
 1.36 (2018-08-22)
 -----------------
