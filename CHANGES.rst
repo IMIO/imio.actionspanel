@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.37 (unreleased)
+1.37 (2018-11-06)
 -----------------
 
 - Use safely unicoded transition title.
