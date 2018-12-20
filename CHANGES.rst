@@ -4,8 +4,8 @@ Changelog
 1.38 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Install `collective.fingerpointing` as we rely on it.
+  [gbastien]
 
 1.37 (2018-11-06)
 -----------------
