@@ -9,7 +9,8 @@
   <include package=".browser" />
   <include package="Products.GenericSetup" file="meta.zcml" />
 
-  <include package="imio.history"/>
+  <include package="imio.history" />
+  <include package="collective.fingerpointing" />
 
   <include file="upgrades.zcml" />
 
