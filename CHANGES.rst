@@ -6,6 +6,8 @@ Changelog
 
 - Install `collective.fingerpointing` as we rely on it.
   [gbastien]
+- By default, do not render the viewlet in overlays.
+  [gbastien]
 
 1.37 (2018-11-06)
 -----------------
