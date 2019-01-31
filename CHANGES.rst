@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.38 (unreleased)
+1.38 (2019-01-31)
 -----------------
 
 - Install `collective.fingerpointing` as we rely on it.
