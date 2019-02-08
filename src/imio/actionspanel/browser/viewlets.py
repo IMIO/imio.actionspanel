@@ -5,6 +5,8 @@ from zope.component import getMultiAdapter
 class ActionsPanelViewlet(ViewletBase):
     '''This viewlet displays the available actions on the context.'''
 
+    async = False
+
     def show(self):
         """Will we show the viewlet on context?"""
         context_state = getMultiAdapter(

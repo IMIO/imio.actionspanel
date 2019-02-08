@@ -4,8 +4,10 @@ Changelog
 1.39 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter ActionsPanelViewlet.async (set to False by default) to be
+  able to render the actions panel viewlet asynchronously using a JS Ajax
+  request.
+  [gbastien]
 
 1.38 (2019-01-31)
 -----------------

@@ -25,6 +25,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.i18n import translate
 
+import json
 import transaction
 
 
@@ -626,3 +627,18 @@ class DeleteGivenUidView(BrowserView):
         while (not member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
             parent = parent.aq_inner.aq_parent
         return parent.absolute_url()
+
+
+class AsyncActionsPanelView(BrowserView):
+    """ """
+
+    def _convert_form_values(self):
+        """As values are sent by JS, we need to change 'false' to False, 'true' to True, ..."""
+        values = {key: json.loads(value) for key, value in self.request.form.items()}
+        return values
+
+    def __call__(self, **kwargs):
+        """ """
+        kwargs.update(self._convert_form_values())
+        rendered_actions_panel = self.context.restrictedTraverse('@@actions_panel')(**kwargs)
+        return rendered_actions_panel

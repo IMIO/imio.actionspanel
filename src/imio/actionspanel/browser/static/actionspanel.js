@@ -125,3 +125,27 @@ function deleteElement(baseUrl, object_uid, tag) {
       }
     });
 }
+
+function load_actions_panel(tag){
+  var url = $("link[rel='canonical']").attr('href') + '/@@async_actions_panel';
+    $.ajax({
+      url: url,
+      dataType: 'html',
+      data: tag.dataset,
+      cache: false,
+      async: true,
+      success: function(data) {
+        tag.innerHTML = data;
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        /*console.log(textStatus);*/
+        window.location.href = window.location.href;
+        }
+      });
+}
+
+$(document).ready(function () {
+  $('div[id^="async_actions_panel"]').each(function() {
+    load_actions_panel(this);
+  });
+});

@@ -26,6 +26,13 @@
         template="actions_panel.pt"
         permission="zope2.View" />
 
+    <browser:view
+        for="*"
+        name="async_actions_panel"
+        class=".views.AsyncActionsPanelView"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        permission="zope2.View" />
+
     <browser:page
         for="*"
         name="triggertransition"
