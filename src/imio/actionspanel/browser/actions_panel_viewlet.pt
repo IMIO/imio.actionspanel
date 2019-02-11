@@ -1,4 +1,5 @@
 <div tal:condition="view/async" id="async_actions_panel" data-use-Icons="false">
-    <img tal:attributes="src string:${view/site_url}/spinner_small.gif" /></div>
+    <img tal:attributes="src string:${view/site_url}/spinner_small.gif" />
+</div>
 
 <tal:renderViewlet condition="not:view/async" replace='structure view/renderViewlet' />

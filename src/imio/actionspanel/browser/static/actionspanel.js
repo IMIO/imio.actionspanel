@@ -133,7 +133,8 @@ function load_actions_panel(tag){
       dataType: 'html',
       data: tag.dataset,
       cache: false,
-      async: true,
+      // keep async: false so overlays are correctly initialized
+      async: false,
       success: function(data) {
         tag.innerHTML = data;
       },
@@ -147,5 +148,6 @@ function load_actions_panel(tag){
 $(document).ready(function () {
   $('div[id^="async_actions_panel"]').each(function() {
     load_actions_panel(this);
+    initializeOverlays();
   });
 });
