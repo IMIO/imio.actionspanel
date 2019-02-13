@@ -65,7 +65,8 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
            'form.submitted': '1',
            'redirect': redirect},
     cache: false,
-    async: true,
+    // keep async: false so overlays are correctly initialized
+    async: false,
     type: "POST",
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
@@ -99,7 +100,8 @@ function deleteElement(baseUrl, object_uid, tag) {
     data: {'object_uid': object_uid,
            'redirect': redirect},
     cache: false,
-    async: true,
+    // keep async: false so overlays are correctly initialized
+    async: false,
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === '0') && !(data)) {

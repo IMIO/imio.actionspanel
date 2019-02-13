@@ -6,7 +6,8 @@ Changelog
 
 - Added parameter ActionsPanelViewlet.async (set to False by default) to be
   able to render the actions panel viewlet asynchronously using a JS Ajax
-  request.
+  request.  Set every JS ajax request with async:false to be sure that screen
+  is refreshed when state changed.
   [gbastien]
 
 1.38 (2019-01-31)
