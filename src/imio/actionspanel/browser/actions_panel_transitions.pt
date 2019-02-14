@@ -16,8 +16,7 @@
                            title transition/title;"/>
       <tal:comment replace="nothing">Display a input button if useIcons is False.  Moreover, a <form> is necessary
                                      around an <input /> for IE...</tal:comment>
-      <form action="#"
-            tal:condition="python: not(useIcons and icon_url)">
+      <form tal:condition="python: not(useIcons and icon_url)">
       <input type="submit"
              tal:attributes="class string: apButton apButtonWF apButtonWF_${transition/id};
                              value python: view.getTransitionTitle(transition);
