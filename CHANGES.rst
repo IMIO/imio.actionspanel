@@ -9,6 +9,8 @@ Changelog
   request.  Set every JS ajax request with async:false to be sure that screen
   is refreshed when state changed.
   [gbastien]
+- Disabled showOwnDelete when 'delete' is in acceptable actions
+  [sgeulette]
 
 1.38 (2019-01-31)
 -----------------
