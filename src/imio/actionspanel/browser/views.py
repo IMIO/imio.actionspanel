@@ -11,6 +11,7 @@ from imio.history.interfaces import IImioHistory
 from operator import itemgetter
 from plone import api
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.ActionInformation import ActionInfo
 from Products.CMFCore.permissions import ManageProperties
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFPlone import PloneMessageFactory as _plone
@@ -475,15 +476,23 @@ class ActionsPanelView(BrowserView):
         actionsTool = api.portal.get_tool('portal_actions')
         # we only want object_buttons, so ignore other categories and providers
         IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
-                                'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder']
-        IGNORABLE_PROVIDERS = ['portal_workflow', ]
-        allActions = actionsTool.listFilteredActionsFor(self.context,
-                                                        ignore_providers=IGNORABLE_PROVIDERS,
-                                                        ignore_categories=IGNORABLE_CATEGORIES)
+                                'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder',
+                                'jqueryui_panels']
+        IGNORABLE_PROVIDERS = ['portal_workflow', ]  # 'portal_types' ?
 
-        objectButtonActions = []
-        if 'object_buttons' in allActions:
-            objectButtonActions = allActions['object_buttons']
+        if self.ACCEPTABLE_ACTIONS:  # we know the set of actions. Only work with them. Faster !
+            actions = [act for act in actionsTool.listActions(categories='object_buttons')
+                       if act.id in self.ACCEPTABLE_ACTIONS]
+            ec = actionsTool._getExprContext(self.context)
+            actions = [ActionInfo(action, ec) for action in actions]
+            objectButtonActions = [act for act in actions if act['visible'] and act['allowed'] and act['available']]
+        else:
+            allActions = actionsTool.listFilteredActionsFor(self.context,
+                                                            ignore_providers=IGNORABLE_PROVIDERS,
+                                                            ignore_categories=IGNORABLE_CATEGORIES)
+            objectButtonActions = []
+            if 'object_buttons' in allActions:
+                objectButtonActions = allActions['object_buttons']
 
         res = []
         for action in objectButtonActions:

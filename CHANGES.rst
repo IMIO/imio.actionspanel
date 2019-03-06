@@ -4,6 +4,9 @@ Changelog
 1.39 (unreleased)
 -----------------
 
+- When showing actions and ACCEPTABLE_ACTIONS is defined, directly worked
+  with those restricted set. Faster method.
+  [sgeulette]
 - Added parameter ActionsPanelViewlet.async (set to False by default) to be
   able to render the actions panel viewlet asynchronously using a JS Ajax
   request.  Set every JS ajax request with async:false to be sure that screen
