@@ -474,6 +474,7 @@ class ActionsPanelView(BrowserView):
           Return a list of object_buttons actions coming from portal_actions.
         """
         actionsTool = api.portal.get_tool('portal_actions')
+        typesTool = api.portal.get_tool('portal_types')
         # we only want object_buttons, so ignore other categories and providers
         IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
                                 'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder',
@@ -481,7 +482,8 @@ class ActionsPanelView(BrowserView):
         IGNORABLE_PROVIDERS = ['portal_workflow', ]  # 'portal_types' ?
 
         if self.ACCEPTABLE_ACTIONS:  # we know the set of actions. Only work with them. Faster !
-            actions = [act for act in actionsTool.listActions(categories='object_buttons')
+            actions = [act for act in (actionsTool.listActions(categories='object_buttons') +
+                                       tuple(typesTool.listActions(object=self.context, category='object_buttons')))
                        if act.id in self.ACCEPTABLE_ACTIONS]
             ec = actionsTool._getExprContext(self.context)
             actions = [ActionInfo(action, ec) for action in actions]
