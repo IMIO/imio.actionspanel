@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.39 (unreleased)
+1.39 (2019-03-27)
 -----------------
 
 - When showing actions and ACCEPTABLE_ACTIONS is defined, directly worked
