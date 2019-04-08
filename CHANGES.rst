@@ -4,8 +4,11 @@ Changelog
 1.40 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed message `KeyError: 'confirm'` in Zope log when a transition is
+  triggered on an element for which it is not available anymore
+  (already triggered in another browser tab for example).  In this case,
+  we just refresh the page.
+  [gbastien]
 
 1.39 (2019-03-27)
 -----------------

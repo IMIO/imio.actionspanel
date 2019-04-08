@@ -446,6 +446,11 @@ class ActionsPanelView(BrowserView):
 
     def computeTriggerTransitionOnClick(self, transition):
         """ """
+        transition_ids = [tr['id'] for tr in self.getTransitions()]
+        # if transition is no more available, this means that element's transition
+        # was already triggered by another user or in another tab, we just refresh the page
+        if not transition or transition['id'] not in transition_ids:
+            return 'window.location.href=window.location.href;'
         if not transition['confirm']:
             return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', transition='{1}', this);".format(
                 self.context.absolute_url(),
