@@ -1,8 +1,8 @@
 <tal:defines define="useIcons view/useIcons;">
 <td tal:repeat="transition view/getTransitions"
-    tal:define="dummy view/saveHasActions;"
     class="noPadding" align="left">
-  <tal:transition condition="transition/may_trigger">
+  <tal:transition tal:define="dummy view/saveHasActions;"
+                  condition="transition/may_trigger">
 
     <a class="#"
        href="@@triggertransition"
