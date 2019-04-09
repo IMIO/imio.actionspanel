@@ -1,5 +1,6 @@
 <tal:defines define="useIcons view/useIcons;">
 <td tal:repeat="transition view/getTransitions"
+    tal:define="dummy view/saveHasActions;"
     class="noPadding" align="left">
   <tal:transition condition="transition/may_trigger">
 
@@ -8,8 +9,7 @@
        tal:attributes="href python: view.computeTriggerTransitionLink(transition);
                        class python: transition['confirm'] and 'link-overlay-actionspanel transition-overlay' or 'trigger-transition-prevent-default';
                        onClick python: view.computeTriggerTransitionOnClick(transition);"
-       tal:define="icon_url transition/icon;
-                   dummy view/saveHasActions;">
+       tal:define="icon_url transition/icon;">
       <tal:comment replace="nothing">Icon</tal:comment>
       <img tal:condition="python: useIcons and icon_url"
            tal:attributes="src string: ${icon_url};

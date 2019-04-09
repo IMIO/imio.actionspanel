@@ -9,6 +9,8 @@ Changelog
   (already triggered in another browser tab for example).  In this case,
   we just refresh the page.
   [gbastien]
+- Fix `saveHasActions` is not called when only untriggerable transitions.
+  [gbastien]
 
 1.39 (2019-03-27)
 -----------------
