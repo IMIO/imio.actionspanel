@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.40 (unreleased)
+1.40 (2019-05-16)
 -----------------
 
 - Fixed message `KeyError: 'confirm'` in Zope log when a transition is
