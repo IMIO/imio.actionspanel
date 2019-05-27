@@ -141,8 +141,7 @@ function load_actions_panel(tag){
         tag.innerHTML = data;
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        /*console.log(textStatus);*/
-        window.location.href = window.location.href;
+        tag.innerHTML = "Error loading actions panel, error was : " + errorThrown;
         }
       });
 }

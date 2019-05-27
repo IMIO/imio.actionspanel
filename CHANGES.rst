@@ -4,8 +4,9 @@ Changelog
 1.41 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `load_actions_panel JS function`, do not reload in case of error or the
+  page is reloaded ad vitam.  Display an error message instead.
+  [gbastien]
 
 1.40 (2019-05-16)
 -----------------
