@@ -12,13 +12,13 @@
        tal:define="icon_url transition/icon;">
       <tal:comment replace="nothing">Icon</tal:comment>
       <img tal:condition="python: useIcons and icon_url"
-           tal:attributes="src string: ${icon_url};
+           tal:attributes="src string:${icon_url};
                            title transition/title;"/>
       <tal:comment replace="nothing">Display a input button if useIcons is False.  Moreover, a <form> is necessary
                                      around an <input /> for IE...</tal:comment>
       <form tal:condition="python: not(useIcons and icon_url)">
       <input type="submit"
-             tal:attributes="class string: apButton apButtonWF apButtonWF_${transition/id};
+             tal:attributes="class string:apButton apButtonWF apButtonWF_${transition/id};
                              value python: view.getTransitionTitle(transition);
                              size python: int(len(transition['title'])/1.2);" />
       </form>
@@ -37,7 +37,7 @@
                i18n:attributes="value" />
         <img class="notTriggerableTransitionImage"
              tal:condition="python: useIcons and icon_url"
-             tal:attributes="src string: ${icon_url};
+             tal:attributes="src string:${icon_url};
                              title string:${transition_title} 🡒 ${transition/reason};"/>
     </tal:defines>
   </tal:notTriggerableTransition>
