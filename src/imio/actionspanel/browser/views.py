@@ -476,7 +476,7 @@ class ActionsPanelView(BrowserView):
 
     def listObjectButtonsActions(self):
         """
-          Return a list of object_buttons actions coming from portal_actions.
+          Return a list of object_buttons actions coming from portal_actions/portal_types.
         """
         actionsTool = api.portal.get_tool('portal_actions')
         typesTool = api.portal.get_tool('portal_types')
