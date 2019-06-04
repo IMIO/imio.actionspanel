@@ -10,6 +10,11 @@ Changelog
 - When using `string:` expressions, do not insert a blank space like
   `string: `` or it is kept once rendered.
   [gbastien]
+- Manage `IGNORABLE_ACTIONS` the same way `ACCEPTABLE_ACTIONS` so we filter out
+  first every non relevant actions then we evaluate it.
+  Removed management of `IGNORABLE_CATEGORIES` and `IGNORABLE_PROVIDERS`, we
+  only keep `object_buttons` and providers `portal_actions/portal_types`.
+  [gbastien]
 
 1.40 (2019-05-16)
 -----------------

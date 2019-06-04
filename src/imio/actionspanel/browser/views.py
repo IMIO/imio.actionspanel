@@ -480,45 +480,31 @@ class ActionsPanelView(BrowserView):
         """
         actionsTool = api.portal.get_tool('portal_actions')
         typesTool = api.portal.get_tool('portal_types')
-        # we only want object_buttons, so ignore other categories and providers
-        IGNORABLE_CATEGORIES = ['site_actions', 'object', 'controlpanel/controlpanel_addons', 'workflow',
-                                'portal_tabs', 'global', 'document_actions', 'user', 'folder_buttons', 'folder',
-                                'jqueryui_panels']
-        IGNORABLE_PROVIDERS = ['portal_workflow', ]  # 'portal_types' ?
-
-        if self.ACCEPTABLE_ACTIONS:  # we know the set of actions. Only work with them. Faster !
-            actions = [act for act in (actionsTool.listActions(categories='object_buttons') +
-                                       tuple(typesTool.listActions(object=self.context, category='object_buttons')))
-                       if act.id in self.ACCEPTABLE_ACTIONS]
-            ec = actionsTool._getExprContext(self.context)
-            actions = [ActionInfo(action, ec) for action in actions]
-            objectButtonActions = [act for act in actions if act['visible'] and act['allowed'] and act['available']]
-        else:
-            allActions = actionsTool.listFilteredActionsFor(self.context,
-                                                            ignore_providers=IGNORABLE_PROVIDERS,
-                                                            ignore_categories=IGNORABLE_CATEGORIES)
-            objectButtonActions = []
-            if 'object_buttons' in allActions:
-                objectButtonActions = allActions['object_buttons']
+        # filter acceptable/ignorable actions before evaluating the TAL expression
+        actions = [act for act in (actionsTool.listActions(categories=['object_buttons']) +
+                                   tuple(typesTool.listActions(object=self.context, category='object_buttons')))
+                   if (self.ACCEPTABLE_ACTIONS and act.id in self.ACCEPTABLE_ACTIONS) or
+                      (not self.ACCEPTABLE_ACTIONS and act.id not in self.IGNORABLE_ACTIONS)]
+        ec = actionsTool._getExprContext(self.context)
+        actions = [ActionInfo(action, ec) for action in actions]
+        objectButtonActions = [act for act in actions if act['visible'] and act['allowed'] and act['available']]
 
         res = []
         for action in objectButtonActions:
-            if (self.ACCEPTABLE_ACTIONS and action['id'] in self.ACCEPTABLE_ACTIONS) or \
-               (not self.ACCEPTABLE_ACTIONS and not action['id'] in self.IGNORABLE_ACTIONS):
-                act = action.copy()
-                # We try to append the url of the icon of the action
-                # look on the action itself
-                if act['icon']:
-                    # make sure we only have the action icon name not a complete
-                    # path including portal_url or so, just take care that we do not have
-                    # an image in a static resource folder
-                    splittedIconPath = act['icon'].split('/')
-                    if len(splittedIconPath) > 1 and '++resource++' in splittedIconPath[-2]:
-                        # keep last 2 parts of the path
-                        act['icon'] = '/'.join((splittedIconPath[-2], splittedIconPath[-1], ))
-                    else:
-                        act['icon'] = splittedIconPath[-1]
-                res.append(act)
+            act = action.copy()
+            # We try to append the url of the icon of the action
+            # look on the action itself
+            if act['icon']:
+                # make sure we only have the action icon name not a complete
+                # path including portal_url or so, just take care that we do not have
+                # an image in a static resource folder
+                splittedIconPath = act['icon'].split('/')
+                if len(splittedIconPath) > 1 and '++resource++' in splittedIconPath[-2]:
+                    # keep last 2 parts of the path
+                    act['icon'] = '/'.join((splittedIconPath[-2], splittedIconPath[-1], ))
+                else:
+                    act['icon'] = splittedIconPath[-1]
+            res.append(act)
         return res
 
     def triggerTransition(self, transition, comment, redirect=True):
