@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.41 (unreleased)
+1.41 (2019-06-07)
 -----------------
 
 - In `load_actions_panel JS function`, do not reload in case of error or the
