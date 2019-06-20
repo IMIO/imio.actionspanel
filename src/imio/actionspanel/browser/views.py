@@ -270,15 +270,20 @@ class ActionsPanelView(BrowserView):
         """ Sort the list of transitions by title """
         lst.sort(key=itemgetter('title'))
 
-    def getTransitions(self):
+    def getTransitions(self, caching=True):
         """
           This method is similar to portal_workflow.getTransitionsFor, but
           with some improvements:
           - we retrieve transitions that the user can't trigger, but for
             which he needs to know for what reason he can't trigger it;
           - for every transition, we know if we need to display a confirm
-            popup or not.
+            popup or not;
+          If caching=True, we will stored result in _transitions and use it
+          if method is called again.
         """
+        if caching:
+            if getattr(self, '_transitions', None):
+                return self._transitions
         res = []
         # Get the workflow definition for p_obj.
         workflow = self.request.get('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, None)
@@ -341,6 +346,9 @@ class ActionsPanelView(BrowserView):
                     res.append(tInfo)
 
         self.sortTransitions(res)
+        if caching:
+            # store transitions in case getTransitions is called several times
+            setattr(self, '_transitions', res)
         return res
 
     def _transitionsToConfirmInfos(self):

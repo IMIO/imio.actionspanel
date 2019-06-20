@@ -21,7 +21,7 @@ class ConfirmTransitionView(BrowserView):
         # the confirmation popup
         submitted = form.get('form.buttons.save', False) or form.get('form.submitted') == '1'
         cancelled = form.get('form.buttons.cancel', False)
-        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        actionspanel_view = self._get_actions_panel_view()
         if cancelled:
             # the only way to enter here is the popup overlay not to be shown
             # because while using the popup overlay, the jQ function take care of hidding it
@@ -33,11 +33,19 @@ class ConfirmTransitionView(BrowserView):
                                                        redirect=bool(self.request.get('redirect') == '1'))
         return self.index()
 
+    def _get_actions_panel_view(self):
+        '''Get and store the actionspanel view.'''
+        if getattr(self, '_actions_panel_view', None):
+            return self._actions_panel_view
+        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        setattr(self, '_actions_panel_view', actionspanel_view)
+        return actionspanel_view
+
     @memoize
     def initTransition(self):
         '''Initialize values for the 'transition' form field.'''
         res = {}
-        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        actionspanel_view = self._get_actions_panel_view()
         availableTransitions = actionspanel_view.getTransitions()
         for availableTransition in availableTransitions:
             if self.request.get('transition') == availableTransition['id'] and \
@@ -48,7 +56,7 @@ class ConfirmTransitionView(BrowserView):
 
     def transition_title(self):
         '''Returns transition title.'''
-        actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        actionspanel_view = self._get_actions_panel_view()
         availableTransitions = actionspanel_view.getTransitions()
         for availableTransition in availableTransitions:
             if self.request.get('transition') == availableTransition['id']:

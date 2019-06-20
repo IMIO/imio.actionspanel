@@ -4,8 +4,13 @@ Changelog
 1.42 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Store result of `ActionsPanelView.getTransitions` in `self._transitions` as
+  it is called several times to make sure transitions are computed only one time.
+  [gbastien]
+- In `ConfirmTransitionView`, store the actionspanel view instead instanciating
+  it several times as call to `actionspanel.getTransitions` is cached on the
+  actionspanel view.
+  [gbastien]
 
 1.41 (2019-06-07)
 -----------------
