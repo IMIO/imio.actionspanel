@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.42 (unreleased)
+1.42 (2019-06-28)
 -----------------
 
 - Store result of `ActionsPanelView.getTransitions` in `self._transitions` as
