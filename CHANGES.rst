@@ -4,8 +4,8 @@ Changelog
 1.43 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Disabled first option of add content button list.
+  [sgeulette]
 
 1.42 (2019-06-28)
 -----------------

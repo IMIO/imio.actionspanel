@@ -3,7 +3,7 @@
     tal:condition="addable_contents">
     <form action=''>
       <select class="apButton" name="Add element" onchange="javascript:window.location=this.value;">
-        <option value=# i18n:translate="">Add an element</option>
+        <option style="display:none" value=# i18n:translate="">Add an element</option>
         <option tal:repeat="addable_content addable_contents"
                 tal:attributes="value addable_content/action;"
                 tal:content="addable_content/title">
