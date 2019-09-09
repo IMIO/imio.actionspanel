@@ -6,6 +6,8 @@ Changelog
 
 - Disabled first option of add content button list.
   [sgeulette]
+- Added apButtonSelect class on select button
+  [sgeulette]
 
 1.42 (2019-06-28)
 -----------------
