@@ -6,6 +6,10 @@ class ActionsPanelViewlet(ViewletBase):
     '''This viewlet displays the available actions on the context.'''
 
     async = False
+    params = {
+        'useIcons': False,
+        'showEdit': False
+    }
 
     def show(self):
         """Will we show the viewlet on context?"""
@@ -18,4 +22,4 @@ class ActionsPanelViewlet(ViewletBase):
            Here we want to display elements with full space, so not as icons."""
         if self.show():
             return self.context.restrictedTraverse(
-                "@@actions_panel")(useIcons=False)
+                "@@actions_panel")(**self.params)

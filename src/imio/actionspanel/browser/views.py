@@ -172,7 +172,7 @@ class ActionsPanelView(BrowserView):
           as icons because when it is not the case, we already have a 'edit' tab and that would
           be redundant.
         """
-        if self.showEdit and self.useIcons and self.mayEdit():
+        if self.showEdit and self.mayEdit():
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
         return ''
 

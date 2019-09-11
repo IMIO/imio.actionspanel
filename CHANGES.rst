@@ -8,6 +8,10 @@ Changelog
   [sgeulette]
 - Added apButtonSelect class on select button
   [sgeulette]
+- Do not link anymore showEdit to showIcons.
+  Disabled by default showEdit in viewlet.
+  Render edit as button too.
+  [sgeulette]
 
 1.42 (2019-06-28)
 -----------------
