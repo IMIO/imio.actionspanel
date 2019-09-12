@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.43 (unreleased)
+1.43 (2019-09-12)
 -----------------
 
 - Disabled first option of add content button list.
