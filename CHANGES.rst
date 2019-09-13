@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.44 (unreleased)
+1.44 (2019-09-13)
 -----------------
 
 - By default, do not display the `Edit` action when calling
