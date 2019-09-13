@@ -1,4 +1,4 @@
-<div tal:condition="view/async" id="async_actions_panel" data-use-Icons="false">
+<div tal:condition="view/async" id="async_actions_panel" data-use-icons="false" data-show-edit="false">
     <img tal:attributes="src string:${view/site_url}/spinner_small.gif" />
 </div>
 

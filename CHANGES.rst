@@ -4,8 +4,9 @@ Changelog
 1.44 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- By default, do not display the `Edit` action when calling
+  `@@async_actions_panel`.
+  [gbastien]
 
 1.43 (2019-09-12)
 -----------------
