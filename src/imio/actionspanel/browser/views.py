@@ -53,11 +53,11 @@ class ActionsPanelView(BrowserView):
             self.portal_url = self.portal.absolute_url()
             self.request.set('imio.actionspanel_portal_url_cachekey', self.portal_url)
             self.request.set('imio.actionspanel_portal_cachekey', self.portal)
-        self.SECTIONS_TO_RENDER = ('renderTransitions',
-                                   'renderEdit',
+        self.SECTIONS_TO_RENDER = ('renderEdit',
                                    'renderExtEdit',
-                                   'renderOwnDelete',
+                                   'renderTransitions',
                                    'renderArrows',
+                                   'renderOwnDelete',
                                    'renderActions',
                                    'renderAddContent',
                                    'renderHistory')

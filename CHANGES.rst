@@ -4,8 +4,8 @@ Changelog
 1.45 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Changed sections order.
+  [sgeulette]
 
 1.44 (2019-09-13)
 -----------------
