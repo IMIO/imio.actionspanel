@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.45 (unreleased)
+1.45 (2019-11-25)
 -----------------
 
 - Changed sections order.
