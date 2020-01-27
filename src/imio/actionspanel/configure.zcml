@@ -16,6 +16,9 @@
 
   <i18n:registerTranslations directory="locales" />
 
+  <!-- Marker interface definition = showed in zmi -->
+  <interface interface="imio.actionspanel.interfaces.IFolderContentsShowableMarker" />
+
   <adapter for="OFS.interfaces.IItem"
            factory=".adapters.ContentDeletableAdapter"
            provides=".interfaces.IContentDeletable"

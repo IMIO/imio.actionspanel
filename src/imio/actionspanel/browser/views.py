@@ -24,6 +24,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.dottedname.resolve import resolve
 from zope.i18n import translate
 
 import json
@@ -53,7 +54,8 @@ class ActionsPanelView(BrowserView):
             self.portal_url = self.portal.absolute_url()
             self.request.set('imio.actionspanel_portal_url_cachekey', self.portal_url)
             self.request.set('imio.actionspanel_portal_cachekey', self.portal)
-        self.SECTIONS_TO_RENDER = ('renderEdit',
+        self.SECTIONS_TO_RENDER = ('renderFolderContents',
+                                   'renderEdit',
                                    'renderExtEdit',
                                    'renderTransitions',
                                    'renderArrows',
@@ -81,7 +83,9 @@ class ActionsPanelView(BrowserView):
                  showHistory=False,
                  showHistoryLastEventHasComments=True,
                  showArrows=False,
+                 showFolderContents=False,
                  arrowsPortalTypeAware=False,
+                 markingInterface=None,
                  **kwargs):
         """
           Master method that will render the content.
@@ -104,11 +108,13 @@ class ActionsPanelView(BrowserView):
         self.showHistory = showHistory
         self.showHistoryLastEventHasComments = showHistoryLastEventHasComments
         self.showArrows = showArrows
+        self.showFolderContents = showFolderContents
         # arrowsPortalTypeAware will change the script used to
         # change object position.  It is used when several elements of
         # various portal_type are in the same container but we want to
         # order the elements of same portal_type together
         self.arrowsPortalTypeAware = arrowsPortalTypeAware
+        self.markingInterface = markingInterface
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -164,6 +170,16 @@ class ActionsPanelView(BrowserView):
         """
         if self.showTransitions:
             return ViewPageTemplateFile("actions_panel_transitions.pt")(self)
+        return ''
+
+    def renderFolderContents(self):
+        """
+          Render a 'folder_contents' action.
+        """
+        if self.showFolderContents and \
+           (not self.markingInterface or self.isMarked(self.markingInterface, self.getCurrentFolder())) and \
+           self.mayFolderContents():
+            return ViewPageTemplateFile("actions_panel_folder_contents.pt")(self)
         return ''
 
     def renderEdit(self):
@@ -230,6 +246,15 @@ class ActionsPanelView(BrowserView):
         """
         adapter = getAdapter(self.context, IImioHistory, 'workflow')
         return adapter.historyLastEventHasComments()
+
+    def mayFolderContents(self):
+        """
+          Method that check if folder_contents action has to be displayed.
+        """
+        if self.member.has_permission('List folder contents', self.context):
+            plone_view = getMultiAdapter((self.context, self.request), name='plone')
+            return bool(plone_view.displayContentsTab())
+        return False
 
     def mayEdit(self):
         """
@@ -561,6 +586,21 @@ class ActionsPanelView(BrowserView):
           to HTTP_REFERER, but if it is, we check parents until we find a viewable parent.
         """
         return findViewableURL(self.context, self.request, self.member)
+
+    def getCurrentFolder(self):
+        plone_view = getMultiAdapter((self.context, self.request), name='plone')
+        return plone_view.getCurrentFolder()
+
+    def isMarked(self, interface_name, context=None):
+        if interface_name is None:
+            return True
+        if context is None:
+            context = self.context
+        try:
+            interface_class = resolve(interface_name)
+        except Exception:
+            return False
+        return interface_class.providedBy(context)
 
 
 class DeleteGivenUidView(BrowserView):

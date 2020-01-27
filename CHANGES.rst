@@ -4,8 +4,8 @@ Changelog
 1.46 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added renderFolderContents section, rendered following flag and/or interface).
+  [sgeulette]
 
 1.45 (2019-11-25)
 -----------------

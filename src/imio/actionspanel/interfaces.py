@@ -20,3 +20,9 @@ class IContentDeletable(Interface):
           The default implementation does the work for checking 'Delete objects' on the
           object we want to delete, not that permission on the parent.
         """
+
+
+class IFolderContentsShowableMarker(Interface):
+    """
+        Marker that can be used to show folder_contents action
+    """
