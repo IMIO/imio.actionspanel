@@ -4,8 +4,12 @@ Changelog
 1.46 (unreleased)
 -----------------
 
-- Added renderFolderContents section, rendered following flag and/or interface).
+- Added renderFolderContents section, rendered following flag and/or interface.
   [sgeulette]
+- In `views.AsyncActionsPanelView.__call__`, remove random value `'_' (ajax_load)`
+  from `**kwargs` before calling the `@@actions_panel` or `ram_cached`
+  `@@actions_panel.__call__` never work as kwargs are always different.
+  [gbastien]
 
 1.45 (2019-11-25)
 -----------------

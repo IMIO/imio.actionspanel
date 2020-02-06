@@ -693,5 +693,9 @@ class AsyncActionsPanelView(BrowserView):
     def __call__(self, **kwargs):
         """ """
         kwargs.update(self._convert_form_values())
+        # remove '_' from kwargs, it is the ajax_load id
+        # if we leave it, ram.cached __call__ is never cached as this value is always different
+        if '_' in kwargs:
+            kwargs.pop('_')
         rendered_actions_panel = self.context.restrictedTraverse('@@actions_panel')(**kwargs)
         return rendered_actions_panel
