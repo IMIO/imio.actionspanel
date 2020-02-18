@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.46 (unreleased)
+1.46 (2020-02-18)
 -----------------
 
 - Added renderFolderContents section, rendered following flag and/or interface.
