@@ -4,7 +4,8 @@ Changelog
 1.47 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Add Spanish translation
+  [macagua]
 
 
 1.46 (2020-02-18)
