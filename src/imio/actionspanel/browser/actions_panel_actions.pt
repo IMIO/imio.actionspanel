@@ -2,7 +2,8 @@
     <a href="#"
        tal:define="dummy view/saveHasActions;
                    useOnClick python: action['url'].startswith('javascript');"
-       tal:attributes="onClick python: useOnClick and action['url'] or '';
+       tal:attributes="class python: 'apButtonAction_form_%s' % action['id'];
+                       onClick python: useOnClick and action['url'] or '';
                        href python: not useOnClick and action['url'];"
        target="_parent"
        tal:condition="python: view.useIcons and action['icon']">
@@ -10,10 +11,14 @@
                            title python: action['title'];" i18n:attributes="title" />
     </a>
   <tal:comment replace="nothing">Button</tal:comment>
-  <input class="#"
-         tal:condition="python: not (view.useIcons and action['icon'])" type="button" i18n:attributes="value;title"
-         tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action['id'];
-                         title python: action['description'];
-                         onClick python: action['url'].startswith('javascript') and action['url'] or 'window.open(\'%s\', \'_parent\')' % action['url'];
-                         value python: action['title'];"/>
+  <form tal:condition="python: not (view.useIcons and action['icon'])"
+        tal:attributes="class python: 'apButtonAction_form_%s' % action['id'];
+                        action action/url;">
+    <input class="#"
+           type="submit"
+           i18n:attributes="value;title"
+           tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action['id'];
+                           title python: action['description'];
+                           value python: action['title'];"/>
+  </form>
 </td>
