@@ -26,8 +26,7 @@ msgstr "Estado del elemento cambiado."
 
 #: ./browser/registry.py:16
 msgid "Define for each object transition the optional corresponding view"
-msgstr ""
-"Definir para cada transición de objeto la vista correspondiente opcional"
+msgstr "Definir para cada transición de objeto la vista correspondiente opcional"
 
 #: ./browser/registry.py:20
 msgid "Formatted like \"portal_type\" \".\" \"transition name\" \"|\" \"view\", like \"Document.publish|\" . The view can be empty"
@@ -75,9 +74,7 @@ msgstr "Añadir un elemento"
 
 #: ./browser/jsvariables.py:15
 msgid "delete_confirm_message"
-msgstr ""
-"¿Estás seguro de que deseas eliminar permanentemente este elemento de la "
-"aplicación?"
+msgstr "¿Estás seguro de que deseas eliminar permanentemente este elemento de la aplicación?"
 
 #: ./browser/actions_panel_history.pt
 msgid "history.gif_icon_title"
@@ -85,8 +82,7 @@ msgstr "Historial del elemento"
 
 #: ./browser/actions_panel_history.pt
 msgid "history_last_event_has_comment.gif_icon_title"
-msgstr ""
-"Historial de elemento (se ingresó un comentario durante el último evento)"
+msgstr "Historial de elemento (se ingresó un comentario durante el último evento)"
 
 #: ./browser/views.py:582
 msgid "object_deleted"
@@ -95,9 +91,7 @@ msgstr "El elemento ha sido eliminado."
 #. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
 #: ./browser/views.py:511
 msgid "redirected_after_transition_not_viewable"
-msgstr ""
-"Usted ha sido redirigido aquí porque ya no tiene acceso al elemento para el "
-"que acaba de cambiar el estado."
+msgstr "Usted ha sido redirigido aquí porque ya no tiene acceso al elemento para el que acaba de cambiar el estado."
 
 #: ./browser/actions_panel_arrows.pt:8
 msgid "title_move_item_bottom"
@@ -122,7 +116,4 @@ msgstr "Comentario"
 #. Default: "Confirm workflow transition ${transition_name}"
 #: ./browser/transitions.pt:20
 msgid "workflow_confirm"
-msgstr ""
-"¿Estás seguro de que deseas confirmar la transición del flujo de trabajo "
-"${transition_name} de este elemento? En caso afirmativo, puede ingresar un "
-"comentario a continuación (opcional) y hacer clic en el botón 'Guardar'."
+msgstr "¿Estás seguro de que deseas confirmar la transición del flujo de trabajo ${transition_name} de este elemento? En caso afirmativo, puede ingresar un comentario a continuación (opcional) y hacer clic en el botón 'Guardar'."
