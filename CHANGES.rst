@@ -8,7 +8,9 @@ Changelog
   [macagua]
 - Add Spanish translation
   [macagua]
-
+- In `actions_panel_actions.pt`, added `<form>` around `<input>`
+  to be able to use `overlays`.
+  [gbastien]
 
 1.46 (2020-02-18)
 -----------------
