@@ -4,6 +4,10 @@ Changelog
 1.47 (unreleased)
 -----------------
 
+- Add Transifex.net service integration to manage the translation process.
+  [macagua]
+- Add Spanish translation
+  [macagua]
 - In `actions_panel_actions.pt`, added `<form>` around `<input>`
   to be able to use `overlays`.
   [gbastien]

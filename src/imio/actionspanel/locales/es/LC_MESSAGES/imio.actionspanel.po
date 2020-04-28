@@ -1,0 +1,119 @@
+# Translation of imio.actionspanel.pot to Spanish
+# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: imio.actionspanel\n"
+"POT-Creation-Date: 2016-08-24 08:23+0000\n"
+"PO-Revision-Date: 2020-04-27 00:57-0400\n"
+"Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
+"Language-Team: ES <LL@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"Language-Code: es\n"
+"Language-Name: Spanish\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: imio.actionspanel\n"
+"X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
+
+#. Default: "Item state changed."
+#: ./browser/views.py:502
+msgid "%s_done_descr"
+msgstr "Estado del elemento cambiado."
+
+#: ./browser/registry.py:16
+msgid "Define for each object transition the optional corresponding view"
+msgstr "Definir para cada transición de objeto la vista correspondiente opcional"
+
+#: ./browser/registry.py:20
+msgid "Formatted like \"portal_type\" \".\" \"transition name\" \"|\" \"view\", like \"Document.publish|\" . The view can be empty"
+msgstr "Formateado como \"portal_type\" \".\" \"nombre transicion\" \"|\" \"view\", como \"Document.publish|\" . La vista puede estar vacia"
+
+#: ./browser/registry.py:32
+msgid "Internal validation error"
+msgstr "Error en validación Interna"
+
+#: ./skins/actionspanel_plone/folder_position_typeaware.cpy:54
+msgid "Item's position has changed."
+msgstr "La posición del elemento a cambiado."
+
+#: ./browser/registry.py:62
+msgid "The first part must contain one dot to separate the type and the transition: line ${i}, '${val}'"
+msgstr "La primera parte debe contener un punto para separar el tipo y la transición: linea ${i}, '${val}'"
+
+#: ./browser/registry.py:59
+msgid "The transition value '${val}' is set multiple times."
+msgstr "El valor de la transición '${val}' esta definido múltiples veces."
+
+#: ./browser/registry.py:53
+msgid "The value cannot contain space: line ${i}, '${val}'"
+msgstr "El valor no puede contener espacio: linea ${i}, '${val}'"
+
+#: ./browser/registry.py:70
+msgid "This portal_type doesn't exist: line ${i}, '${val}'"
+msgstr "Este portal_type no existe: linea ${i}, '${val}'"
+
+#: ./browser/registry.py:72
+msgid "This transition id isn't valid for the portal_type: line ${i}, '${val}'"
+msgstr "El ID de la transición no es valido para el portal_type: linea ${i}, '${val}'"
+
+#: ./browser/registry.py:19
+msgid "Transition value"
+msgstr "Valor de transición"
+
+#: ./browser/registry.py:15
+msgid "Transitions to confirm"
+msgstr "Transiciones a confirmar"
+
+#: ./browser/actions_panel_add_content.pt:6
+msgid "Add an element"
+msgstr "Añadir un elemento"
+
+#: ./browser/jsvariables.py:15
+msgid "delete_confirm_message"
+msgstr "¿Estás seguro de que deseas eliminar permanentemente este elemento de la aplicación?"
+
+#: ./browser/actions_panel_history.pt
+msgid "history.gif_icon_title"
+msgstr "Historial del elemento"
+
+#: ./browser/actions_panel_history.pt
+msgid "history_last_event_has_comment.gif_icon_title"
+msgstr "Historial de elemento (se ingresó un comentario durante el último evento)"
+
+#: ./browser/views.py:582
+msgid "object_deleted"
+msgstr "El elemento ha sido eliminado."
+
+#. Default: "You have been redirected here because you do not have access anymore to the element you just changed the state for."
+#: ./browser/views.py:511
+msgid "redirected_after_transition_not_viewable"
+msgstr "Usted ha sido redirigido aquí porque ya no tiene acceso al elemento para el que acaba de cambiar el estado."
+
+#: ./browser/actions_panel_arrows.pt:8
+msgid "title_move_item_bottom"
+msgstr "Descender el elemento hacia abajo a la última posición"
+
+#: ./browser/actions_panel_arrows.pt:15
+msgid "title_move_item_down"
+msgstr "Descender el elemento"
+
+#: ./browser/actions_panel_arrows.pt:29
+msgid "title_move_item_top"
+msgstr "Subir el elemento a la primera posición"
+
+#: ./browser/actions_panel_arrows.pt:22
+msgid "title_move_item_up"
+msgstr "Subir el elemento"
+
+#: ./browser/transitions.pt:21
+msgid "transition_comment"
+msgstr "Comentario"
+
+#. Default: "Confirm workflow transition ${transition_name}"
+#: ./browser/transitions.pt:20
+msgid "workflow_confirm"
+msgstr "¿Estás seguro de que deseas confirmar la transición del flujo de trabajo ${transition_name} de este elemento? En caso afirmativo, puede ingresar un comentario a continuación (opcional) y hacer clic en el botón 'Guardar'."

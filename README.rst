@@ -55,3 +55,16 @@ This will display a combo list that will display types that are addable in the o
 Object history :
 ----------------
 Add a link to the object's history and will be displayed in a popup.  It is managed by the section "renderHistory".
+
+
+Translations
+------------
+
+This product has been translated into
+
+- French.
+
+- Spanish.
+
+You can contribute for any message missing or other new languages, join us at `PloneGov iMiO Team <https://www.transifex.com/plone/plonegov-imio/>`_ into *Transifex.net* service with all world Plone translators community.
+

@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+
+[plonegov-imio.imio-actionspanel-pot]
+file_filter = src/imio/actionspanel/locales/<lang>/LC_MESSAGES/imio.actionspanel.po
+minimum_perc = 0
+source_file = src/imio/actionspanel/locales/imio.actionspanel.pot
+source_lang = en
+type = PO
+
