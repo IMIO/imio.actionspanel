@@ -1,5 +1,6 @@
 graft src/imio
 graft docs
+graft .tx
 include *.cfg *.rst *.in
 include *.py
 include Makefile
