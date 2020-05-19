@@ -4,8 +4,9 @@ Changelog
 1.48 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `DeleteGivenUidView.__call__`, query `UID` in every catalogs defined
+  in `config.CATALOG_IDS`.
+  [gbastien]
 
 1.47 (2020-04-29)
 -----------------
