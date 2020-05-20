@@ -4,8 +4,10 @@ Changelog
 1.48 (unreleased)
 -----------------
 
-- In `DeleteGivenUidView.__call__`, query `UID` in every catalogs defined
-  in `config.CATALOG_IDS`.
+- In `DeleteGivenUidView.__call__`, use `imio.helpers.content.uuidsToObjects`
+  with parameter `check_contained_uids=True` to get the object to delete,
+  so if not found querying with `UID` index, it will use the `contained_uids`
+  index if it exists in the `portal_catalog`.
   [gbastien]
 
 1.47 (2020-04-29)

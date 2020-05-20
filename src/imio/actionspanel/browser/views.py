@@ -4,10 +4,10 @@ from AccessControl import Unauthorized
 from Acquisition import aq_base
 from appy.gen import No
 from imio.actionspanel import ActionsPanelMessageFactory as _
-from imio.actionspanel.config import CATALOG_IDS
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
+from imio.helpers.content import uuidsToObjects
 from imio.history.interfaces import IImioHistory
 from operator import itemgetter
 from plone import api
@@ -627,19 +627,12 @@ class DeleteGivenUidView(BrowserView):
             redirect = False
         elif redirect == '1':
             redirect = True
-        # Get the object to delete
-        # try to get it from various catalogs
-        catalog_brains = []
-        for catalog_id in CATALOG_IDS:
-            catalog = api.portal.get_tool(catalog_id)
-            if catalog:
-                catalog_brains = catalog(UID=object_uid)
-                if catalog_brains:
-                    break
-        # if not found at all, raise
-        if not catalog_brains:
+        # Get the object to delete, if not found using UID index,
+        # try with contained_uids index
+        objs = uuidsToObjects(uuids=[object_uid], check_contained_uids=True)
+        if not objs:
             raise KeyError('The given uid could not be found!')
-        obj = catalog_brains[0].getObject()
+        obj = objs[0]
 
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
