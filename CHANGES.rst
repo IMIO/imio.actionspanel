@@ -1,11 +1,11 @@
 Changelog
 =========
 
-1.49 (unreleased)
------------------
+1.48.1 (unreleased)
+-------------------
 
-- Nothing changed yet.
-
+- Requires `imio.helpers`.
+  [gbastien]
 
 1.48 (2020-05-26)
 -----------------
