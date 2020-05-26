@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.48 (unreleased)
+1.48 (2020-05-26)
 -----------------
 
 - In `DeleteGivenUidView.__call__`, use `imio.helpers.content.uuidsToObjects`
