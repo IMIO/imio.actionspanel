@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.48.1 (unreleased)
+1.48.1 (2020-05-26)
 -------------------
 
 - Requires `imio.helpers`.
