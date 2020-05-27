@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.48.2 (unreleased)
--------------------
+1.49 (unreleased)
+-----------------
 
 - Nothing changed yet.
 
