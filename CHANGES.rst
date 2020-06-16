@@ -4,8 +4,10 @@ Changelog
 1.49 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed broken functionnality, when an action url was a `javascript` action,
+  it was not always taken into account because tag <a> `href` was not disabled
+  using `event.preventDefault()`.
+  [gbastien]
 
 1.48.1 (2020-05-26)
 -------------------

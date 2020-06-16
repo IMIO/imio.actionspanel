@@ -3,8 +3,8 @@
        tal:define="dummy view/saveHasActions;
                    useOnClick python: action['url'].startswith('javascript');"
        tal:attributes="class python: 'apButtonAction_form_%s' % action['id'];
-                       onClick python: useOnClick and action['url'] or '';
-                       href python: not useOnClick and action['url'];"
+                       onClick python: useOnClick and view.computeActionOnClick(action['url']) or '';
+                       href python: not useOnClick and action['url'] or '';"
        target="_parent"
        tal:condition="python: view.useIcons and action['icon']">
       <img tal:attributes="src string:${view/portal_url}/${action/icon};

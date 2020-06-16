@@ -498,6 +498,12 @@ class ActionsPanelView(BrowserView):
             self.context.absolute_url(),
             self.context.UID())
 
+    def computeActionOnClick(self, action):
+        """ """
+        if 'preventDefault' not in action:
+            action = action.replace('javascript:', 'javascript:event.preventDefault();')
+        return action
+
     def addableContents(self):
         """
           Return addable content types.
