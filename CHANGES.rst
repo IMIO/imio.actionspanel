@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.49 (unreleased)
+1.49 (2020-06-24)
 -----------------
 
 - Fixed broken functionnality, when an action url was a `javascript` action,
