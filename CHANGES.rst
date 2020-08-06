@@ -7,6 +7,9 @@ Changelog
 - Make CSS rule for `input[type="button"].notTriggerableTransitionButton` more
   specific so it is taken into account.
   [gbastien]
+- Fix message (tag title) displayed on a not triggerable WF transition when
+  displayed as a button, the transition title was not included in the message.
+  [gbastien]
 
 1.49 (2020-06-24)
 -----------------
