@@ -1,4 +1,4 @@
-input.notTriggerableTransitionButton {
+input[type="button"].notTriggerableTransitionButton {
     background: #ffd5c0 url("notTriggerableTransition.gif") no-repeat scroll 6px 4px;
     font-style: italic;
     cursor: help;
