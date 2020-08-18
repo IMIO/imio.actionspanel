@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.50 (unreleased)
+1.50 (2020-08-18)
 -----------------
 
 - Make CSS rule for `input[type="button"].notTriggerableTransitionButton` more

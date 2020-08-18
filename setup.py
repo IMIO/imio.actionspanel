@@ -10,7 +10,7 @@ long_description = (
 
 setup(
     name='imio.actionspanel',
-    version='1.50.dev0',
+    version='1.50',
     description="Actions panel",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
