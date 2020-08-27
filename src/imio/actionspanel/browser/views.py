@@ -284,6 +284,9 @@ class ActionsPanelView(BrowserView):
             return False
         # check portal type
         externaleditor_enabled_types = registry.get('externaleditor.externaleditor_enabled_types', [])
+        if hasattr(self.context, 'pod_template_to_use'):
+            if getattr(self.context, 'pod_template_to_use'):
+                return False
         return self.context.portal_type in externaleditor_enabled_types
 
     def saveHasActions(self):

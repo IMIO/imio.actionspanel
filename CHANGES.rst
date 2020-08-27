@@ -4,6 +4,8 @@ Changelog
 1.50 (unreleased)
 -----------------
 
+- Hide external edit if it's another template who is use as source
+  [fngaha]
 - Make CSS rule for `input[type="button"].notTriggerableTransitionButton` more
   specific so it is taken into account.
   [gbastien]
