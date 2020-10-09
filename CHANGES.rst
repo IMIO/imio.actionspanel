@@ -4,8 +4,10 @@ Changelog
 1.51 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `view_name="@@delete_givenuid"` to JS functions
+  `confirmDeleteObject` and `deleteElement` so it is possible to call another
+  view when deleting an element.
+  [gbastien]
 
 1.50 (2020-08-18)
 -----------------
