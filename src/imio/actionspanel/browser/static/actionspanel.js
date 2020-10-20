@@ -1,11 +1,11 @@
 // Function that shows a popup that asks the user if he really wants to delete
-function confirmDeleteObject(base_url, object_uid, tag, msgName, view_name="@@delete_givenuid"){
+function confirmDeleteObject(base_url, object_uid, tag, msgName, view_name="@@delete_givenuid", redirect=null){
     if (!msgName) {
         msgName = 'delete_confirm_message';
     }
     var msg = window.eval(msgName);
     if (confirm(msg)) {
-        deleteElement(base_url, object_uid, tag, view_name); }
+        deleteElement(base_url, object_uid, tag, view_name, redirect); }
 }
 
 initializeOverlays = function () {
@@ -89,9 +89,8 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
     });
 }
 
-function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid") {
-  redirect = '0';
-  if (!$('#faceted-form').has(tag).length) {
+function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", redirect=null) {
+  if (redirect == null && !has_faceted()) {
     redirect = '1';
   }
   $.ajax({
@@ -105,7 +104,9 @@ function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid") 
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === '0') && !(data)) {
-            Faceted.URLHandler.hash_changed();
+            if (has_faceted()) {
+              Faceted.URLHandler.hash_changed();
+            }
             $.event.trigger({
                 type: "ap_delete_givenuid",
                 tag: tag});

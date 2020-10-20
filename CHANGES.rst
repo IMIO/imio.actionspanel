@@ -7,6 +7,7 @@ Changelog
 - Added parameter `view_name="@@delete_givenuid"` to JS functions
   `confirmDeleteObject` and `deleteElement` so it is possible to call another
   view when deleting an element.
+  It is also possible to avoid refresh and manage it manually.
   [gbastien]
 
 1.50 (2020-08-18)
