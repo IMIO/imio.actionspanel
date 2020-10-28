@@ -17,7 +17,8 @@ input[type="button"].notTriggerableTransitionButton {
 }
 
 table.actionspanel-no-style-table,
-table.actionspanel-no-style-table td {
+table.actionspanel-no-style-table tr,
+table.actionspanel-no-style-table tr td {
     border: 0 !important;
     padding: 0 !important;
 }

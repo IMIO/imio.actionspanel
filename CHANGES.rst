@@ -9,6 +9,8 @@ Changelog
   view when deleting an element.
   It is also possible to avoid refresh and manage it manually.
   [gbastien]
+- Make sure table containing actions does not have any border especially on `<tr>`.
+  [gbastien]
 
 1.50 (2020-08-18)
 -----------------
