@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.51 (unreleased)
+1.51 (2020-12-07)
 -----------------
 
 - Added parameter `view_name="@@delete_givenuid"` to JS functions
