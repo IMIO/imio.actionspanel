@@ -103,7 +103,7 @@ function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", 
     async: false,
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
-        if ((redirect === '0') && !(data)) {
+        if ((redirect == null) && !(data)) {
             if (has_faceted()) {
               Faceted.URLHandler.hash_changed();
             }

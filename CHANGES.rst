@@ -4,8 +4,10 @@ Changelog
 1.52 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed behavior of just reloading the faceted when deleting an element,
+  this was broken because behavior between JS and python code changed and the
+  user was redirected to the default dashboard.
+  [gbastien]
 
 1.51 (2020-12-07)
 -----------------

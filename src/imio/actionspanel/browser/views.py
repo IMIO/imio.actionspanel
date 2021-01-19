@@ -629,7 +629,7 @@ class DeleteGivenUidView(BrowserView):
                  catch_before_delete_exception=True):
         """ """
         # redirect can by passed by jQuery, in this case, we receive '0' or '1'
-        if redirect == '0':
+        if redirect == '0' or redirect == 'null':
             redirect = False
         elif redirect == '1':
             redirect = True
@@ -669,6 +669,8 @@ class DeleteGivenUidView(BrowserView):
         self.portal.plone_utils.addPortalMessage(**msg)
         if redirect and not msg['type'] == 'error':
             return self._findViewablePlace(obj)
+        else:
+            self.request.RESPONSE.setStatus(204)
 
     def _findViewablePlace(self, obj):
         '''
