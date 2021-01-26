@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.52 (unreleased)
+1.52 (2021-01-26)
 -----------------
 
 - Fixed behavior of just reloading the faceted when deleting an element,
