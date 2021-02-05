@@ -65,8 +65,8 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
            'form.submitted': '1',
            'redirect': redirect},
     cache: false,
-    // keep async: false so overlays are correctly initialized
-    async: false,
+    // set to true for now so a spinner is displayed in Chrome
+    async: true,
     type: "POST",
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not

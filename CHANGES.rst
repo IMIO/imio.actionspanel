@@ -4,8 +4,11 @@ Changelog
 1.53 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed `ActionsPanelView.getTransitions` check on transitions to confirm
+  informations, do not consider that prefix of given transition to confirm is a
+  `meta_type` but consider it as a `class name` as with `dexterity`, the
+  `meta_type` is always the same an no more useable to discriminate content.
+  [gbastien]
 
 1.52 (2021-01-26)
 -----------------
