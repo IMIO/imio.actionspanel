@@ -342,10 +342,11 @@ class ActionsPanelView(BrowserView):
                 if mayTrigger or isinstance(mayTrigger, No):
                     # Information about this transition must be part of result.
                     # check if the transition have to be confirmed regarding
-                    # current object meta_type/portal_type and transition to trigger
-                    preNameMetaType = '%s.%s' % (self.context.meta_type, transition.id)
+                    # current object class_name/portal_type and transition to trigger
+                    preNameClassName = '%s.%s' % (self.context.__class__.__name__, transition.id)
                     preNamePortalType = '%s.%s' % (self.context.portal_type, transition.id)
-                    confirmation_view = toConfirm.get(preNameMetaType, '') or toConfirm.get(preNamePortalType, '')
+                    confirmation_view = toConfirm.get(preNameClassName, '') or \
+                        toConfirm.get(preNamePortalType, '')
                     tInfo = {
                         'id': transition.id,
                         # if the transition.id is not translated, use translated transition.title...
@@ -391,10 +392,10 @@ class ActionsPanelView(BrowserView):
         """
           Return the list of transitions the user will have to confirm, aka
           the user will be able to enter a comment for.
-          This is a per meta_type or portal_type list of transitions to confirm.
+          This is a per class_name or portal_type list of transitions to confirm.
           So for example, this could be :
           ('ATDocument.reject', 'Document.publish', 'Collection.publish', )
-          --> ATDocument is a meta_type and Document is a portal_type for example
+          --> ATDocument is a class_name and Document is a portal_type for example
           The list can also be a dict with the key being the transition name to
           confirm and the value being the name of the view to call to confirm
           the transition. eg:
