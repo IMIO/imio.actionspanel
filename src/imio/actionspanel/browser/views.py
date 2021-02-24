@@ -87,6 +87,7 @@ class ActionsPanelView(BrowserView):
                  showFolderContents=False,
                  arrowsPortalTypeAware=False,
                  markingInterface=None,
+                 forceRedirectOnOwnDelete=True,
                  **kwargs):
         """
           Master method that will render the content.
@@ -116,6 +117,11 @@ class ActionsPanelView(BrowserView):
         # order the elements of same portal_type together
         self.arrowsPortalTypeAware = arrowsPortalTypeAware
         self.markingInterface = markingInterface
+        # by default redirect is done only if not on a faceted
+        # but in some case, like when deleting an element that
+        # is the current faceted then it is necessary to redirect
+        # when displayed as icons, so as an element of a faceted, it does not apply
+        self.forceRedirectOnOwnDelete = forceRedirectOnOwnDelete
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()

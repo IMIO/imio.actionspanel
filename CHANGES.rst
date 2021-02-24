@@ -9,6 +9,11 @@ Changelog
   `meta_type` but consider it as a `class name` as with `dexterity`, the
   `meta_type` is always the same an no more useable to discriminate content.
   [gbastien]
+- Added parameter `forceRedirectOnOwnDelete=False` to `ActionsPanelView.__call__`,
+  when deleting an element, by default if current context is a faceted,
+  the user is not redirected but the page is reloaded, if we are removing the
+  page that holds the faceted then we need to redirect.
+  [gbastien]
 
 1.52 (2021-01-26)
 -----------------
