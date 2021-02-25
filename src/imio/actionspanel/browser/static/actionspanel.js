@@ -99,8 +99,7 @@ function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", 
     data: {'object_uid': object_uid,
            'redirect': redirect},
     cache: false,
-    // keep async: false so overlays are correctly initialized
-    async: false,
+    async: true,
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect == null) && !(data)) {

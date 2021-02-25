@@ -14,6 +14,8 @@ Changelog
   the user is not redirected but the page is reloaded, if we are removing the
   page that holds the faceted then we need to redirect.
   [gbastien]
+- In JS function `deleteElement`, set `async:true` for the XHR request.
+  [gbastien]
 
 1.52 (2021-01-26)
 -----------------
