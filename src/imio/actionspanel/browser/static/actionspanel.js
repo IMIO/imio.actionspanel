@@ -1,5 +1,5 @@
 // Function that shows a popup that asks the user if he really wants to delete
-function confirmDeleteObject(base_url, object_uid, tag, msgName, view_name="@@delete_givenuid", redirect=null){
+function confirmDeleteObject(base_url, object_uid, tag, msgName=null, view_name="@@delete_givenuid", redirect=null){
     if (!msgName) {
         msgName = 'delete_confirm_message';
     }
