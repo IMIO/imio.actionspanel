@@ -16,11 +16,12 @@ input[type="button"].notTriggerableTransitionButton {
     margin-left: 0.2em;
 }
 
-table.actionspanel-no-style-table,
-table.actionspanel-no-style-table tr,
-table.actionspanel-no-style-table tr td {
+#content table.actionspanel-no-style-table,
+#content table.actionspanel-no-style-table tr,
+#content table.actionspanel-no-style-table tr td {
     border: 0 !important;
     padding: 0 !important;
+    margin: 0 !important;
 }
 
 span#content-history.highlight-history-link a {
