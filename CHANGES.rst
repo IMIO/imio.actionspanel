@@ -16,6 +16,11 @@ Changelog
   [gbastien]
 - In JS function `deleteElement`, set `async:true` for the XHR request.
   [gbastien]
+- Fixed bug in Firefox not executing the JS `triggerTransition` XHR request when
+  `async:true`, this was due to `preventDefaultClickTransition` not applied when
+  using the `@@async_actions_panel` in the viewlet displaying actions,
+  it was producing a `NS_BINDING_ERROR` because 2 click events were triggered.
+  [gbastien]
 
 1.52 (2021-01-26)
 -----------------

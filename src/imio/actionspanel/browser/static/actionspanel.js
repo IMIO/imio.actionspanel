@@ -33,9 +33,6 @@ preventDefaultClickTransition = function() {
 $("a.trigger-transition-prevent-default").click(function(event) {
   event.preventDefault();
 });
-$("input.trigger-transition-prevent-default").click(function(event){
-  event.preventDefault();
-});
 };
 jQuery(document).ready(preventDefaultClickTransition);
 
@@ -150,5 +147,6 @@ $(document).ready(function () {
   $('div[id^="async_actions_panel"]').each(function() {
     load_actions_panel(this);
     initializeOverlays();
+    preventDefaultClickTransition();
   });
 });
