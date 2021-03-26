@@ -21,6 +21,10 @@ Changelog
   using the `@@async_actions_panel` in the viewlet displaying actions,
   it was producing a `NS_BINDING_ERROR` because 2 click events were triggered.
   [gbastien]
+- When not using the `useIcons` mode (so when using viewlet displaying buttons),
+  if no action at all, do not return an empty HTML table, just return nothing.
+  This let's hide the entire viewlet when using the `@@async_actions_panel`.
+  [gbastien]
 
 1.52 (2021-01-26)
 -----------------

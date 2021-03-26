@@ -136,6 +136,10 @@ function load_actions_panel(tag){
       async: false,
       success: function(data) {
         tag.innerHTML = data;
+        // if not data, hide the viewlet
+        if (!data) {
+          tag.parentElement.style.display = "none";
+        }
       },
       error: function(jqXHR, textStatus, errorThrown) {
         tag.innerHTML = "Error loading actions panel, error was : " + errorThrown;

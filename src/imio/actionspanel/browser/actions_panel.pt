@@ -1,6 +1,9 @@
-<table class="actionspanel-no-style-table nosort" tal:attributes="align python: view.useIcons and 'right' or 'left'">
+<table class="actionspanel-no-style-table nosort"
+       tal:define="renderedSections view/_renderSections"
+       tal:condition="python: view.hasActions or view.useIcons"
+       tal:attributes="align python: view.useIcons and 'right' or 'left'">
   <tr>
-    <tal:sections replace="structure view/_renderSections" />
+    <tal:sections replace="structure renderedSections" />
   </tr>
   <tr tal:condition="python: view.useIcons and not view.hasActions"><td>-</td></tr>
 </table>
