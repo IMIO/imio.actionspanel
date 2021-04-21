@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.53 (unreleased)
+1.53 (2021-04-21)
 -----------------
 
 - Fixed `ActionsPanelView.getTransitions` check on transitions to confirm
