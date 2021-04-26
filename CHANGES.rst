@@ -4,8 +4,9 @@ Changelog
 1.54 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed broken JS event on comment popup `Confirm` button to prevent default behavior,
+  this probably leads to action not triggered from time to time on `Firefox`.
+  [gbastien]
 
 1.53 (2021-04-21)
 -----------------

@@ -33,6 +33,10 @@ preventDefaultClickTransition = function() {
 $("a.trigger-transition-prevent-default").click(function(event) {
   event.preventDefault();
 });
+// on the comment overlay
+$("input.trigger-transition-prevent-default").click(function(event) {
+  event.preventDefault();
+});
 };
 jQuery(document).ready(preventDefaultClickTransition);
 
