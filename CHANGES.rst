@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.54 (unreleased)
+1.54 (2021-04-26)
 -----------------
 
 - Fixed broken JS event on comment popup `Confirm` button to prevent default behavior,
