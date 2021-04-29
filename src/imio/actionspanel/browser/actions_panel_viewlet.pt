@@ -6,4 +6,4 @@
 </div>
 
 <tal:renderViewlet condition="python: not view.async and view.show()"
-                   replace='structure view/renderViewlet' />
+                   replace="structure python: view.renderViewlet()" />
