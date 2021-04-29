@@ -702,6 +702,10 @@ class AsyncActionsPanelView(BrowserView):
         values = {key: json.loads(value) for key, value in self.request.form.items()}
         return values
 
+    def show(self):
+        """Will we show the viewlet on context?"""
+        return 'ajax_load' not in self.request
+
     def __call__(self, **kwargs):
         """ """
         kwargs.update(self._convert_form_values())

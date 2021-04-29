@@ -4,8 +4,9 @@ Changelog
 1.55 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Implement method `show` when using async like it is already the case when not
+  using async to know if viewlet must be shown.
+  [gbastien]
 
 1.54 (2021-04-26)
 -----------------

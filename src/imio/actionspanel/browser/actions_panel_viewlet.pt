@@ -1,5 +1,9 @@
-<div tal:condition="view/async" id="async_actions_panel" data-use-icons="false" data-show-edit="false">
+<div tal:condition="python: view.async and view.show()"
+     id="async_actions_panel"
+     data-use-icons="false"
+     data-show-edit="false">
     <img tal:attributes="src string:${view/site_url}/spinner_small.gif" />
 </div>
 
-<tal:renderViewlet condition="not:view/async" replace='structure view/renderViewlet' />
+<tal:renderViewlet condition="python: not view.async and view.show()"
+                   replace='structure view/renderViewlet' />
