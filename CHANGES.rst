@@ -7,6 +7,8 @@ Changelog
 - Implement method `show` when using async like it is already the case when not
   using async to know if viewlet must be shown.
   [gbastien]
+- Added `saveHasActions` call in actions_panel_add_content.pt.
+  [sgeulette]
 
 1.54 (2021-04-26)
 -----------------
