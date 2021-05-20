@@ -9,6 +9,10 @@ Changelog
   [gbastien]
 - Added `saveHasActions` call in actions_panel_add_content.pt.
   [sgeulette]
+- Fixed `actions_panel_arrows.pt` to display the arrows in a table so we avoid
+  icons being one under others when there is not enough place to display it,
+  actions have to be always on the same line.
+  [gbastien]
 
 1.54 (2021-04-26)
 -----------------

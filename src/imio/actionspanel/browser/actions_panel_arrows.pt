@@ -1,38 +1,45 @@
 <td i18n:domain="imio.actionspanel"
     class="noPadding"
     tal:define="isLastId python: bool(context.getId() == view.parentObjectIds[-1]);
-                isFirstId python: bool(context.getId() == view.parentObjectIds[0]);
-                                  ">
-    <a tal:condition="not:isLastId"
-       tal:attributes="href python: view.moveUrl % ('bottom', view.objId);">
-        <img tal:define="dummy view/saveHasActions"
-             src="arrowBottom.png"
-             tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowBottom.png;"
-             title="title_move_item_bottom"
-             i18n:attributes="title" />
-    </a>
-    <a tal:condition="not:isLastId"
-       tal:attributes="href python: view.moveUrl % ('down', view.objId);">
-      <img tal:define="dummy view/saveHasActions"
-           src="arrowDown.png"
-           tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowDown.png;"
-           title="title_move_item_down"
-           i18n:attributes="title" />
-    </a>
-    <a tal:condition="not:isFirstId"
-       tal:attributes="href python: view.moveUrl % ('up', view.objId);">
-      <img tal:define="dummy view/saveHasActions"
-           src="arrowUp.png"
-           tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowUp.png;"
-           title="title_move_item_up"
-           i18n:attributes="title" />
-    </a>
-    <a tal:condition="not:isFirstId"
-       tal:attributes="href python: view.moveUrl % ('top', view.objId);">
-        <img tal:define="dummy view/saveHasActions"
-             src="arrowTop.png"
-             tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowTop.png;"
-             title="title_move_item_top"
-             i18n:attributes="title" />
-    </a>
+                isFirstId python: bool(context.getId() == view.parentObjectIds[0]);">
+    <table class="actionspanel-no-style-table nosort">
+        <tr>
+            <td class="noPadding" tal:condition="not:isLastId">
+                <a tal:attributes="href python: view.moveUrl % ('bottom', view.objId);">
+                    <img tal:define="dummy view/saveHasActions"
+                         src="arrowBottom.png"
+                         tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowBottom.png;"
+                         title="title_move_item_bottom"
+                         i18n:attributes="title" />
+                </a>
+            </td>
+            <td class="noPadding" tal:condition="not:isLastId">
+                <a tal:attributes="href python: view.moveUrl % ('down', view.objId);">
+                  <img tal:define="dummy view/saveHasActions"
+                       src="arrowDown.png"
+                       tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowDown.png;"
+                       title="title_move_item_down"
+                       i18n:attributes="title" />
+                </a>
+            </td>
+            <td class="noPadding" tal:condition="not:isFirstId">
+                <a tal:attributes="href python: view.moveUrl % ('up', view.objId);">
+                  <img tal:define="dummy view/saveHasActions"
+                       src="arrowUp.png"
+                       tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowUp.png;"
+                       title="title_move_item_up"
+                       i18n:attributes="title" />
+                </a>
+            </td>
+            <td class="noPadding" tal:condition="not:isFirstId">
+                <a tal:attributes="href python: view.moveUrl % ('top', view.objId);">
+                    <img tal:define="dummy view/saveHasActions"
+                         src="arrowTop.png"
+                         tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowTop.png;"
+                         title="title_move_item_top"
+                         i18n:attributes="title" />
+                </a>
+            </td>
+        </tr>
+    </table>
 </td>
