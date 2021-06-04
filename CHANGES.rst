@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.55 (unreleased)
+1.55 (2021-06-04)
 -----------------
 
 - Implement method `show` when using async like it is already the case when not
