@@ -4,8 +4,8 @@ Changelog
 1.56 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed arrow used in message explaining when a transition is not triggerable.
+  [gbastien]
 
 1.55 (2021-06-04)
 -----------------

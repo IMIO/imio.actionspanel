@@ -33,12 +33,12 @@
                tal:condition="python: not(useIcons and icon_url)"
                class="apButton notTriggerableTransitionButton"
                tal:attributes="value transition_title;
-                               title string:${transition_title} 🡒 ${transition/reason};"
+                               title string:${transition_title} &#10132; ${transition/reason};"
                i18n:attributes="value" />
         <img class="notTriggerableTransitionImage"
              tal:condition="python: useIcons and icon_url"
              tal:attributes="src string:${icon_url};
-                             title string:${transition_title} 🡒 ${transition/reason};"/>
+                             title string:${transition_title} &#10132; ${transition/reason};"/>
     </tal:defines>
   </tal:notTriggerableTransition>
 </td>
