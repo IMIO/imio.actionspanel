@@ -41,6 +41,13 @@ $("input.trigger-transition-prevent-default").click(function(event) {
 jQuery(document).ready(preventDefaultClickTransition);
 
 function triggerTransition(baseUrl, viewName, transition, tag) {
+
+  // avoid double clicks
+  tag.style = "pointer-events:none;";
+  setTimeout(function() {
+      tag.style = "";
+  }, 2000);
+
   // find comment in the page
   comment = '';
   if ($('form#confirmTransitionForm textarea').length) {

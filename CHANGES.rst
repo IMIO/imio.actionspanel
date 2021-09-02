@@ -6,6 +6,9 @@ Changelog
 
 - Fixed arrow used in message explaining when a transition is not triggerable.
   [gbastien]
+- Prevent double clicks when triggering a WF transition by disabling
+  the link for 2 seconds.
+  [gbastien]
 
 1.55 (2021-06-04)
 -----------------
