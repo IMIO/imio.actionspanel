@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.56 (unreleased)
+1.56 (2021-09-09)
 -----------------
 
 - Fixed arrow used in message explaining when a transition is not triggerable.
