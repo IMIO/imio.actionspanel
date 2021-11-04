@@ -4,6 +4,7 @@ from AccessControl import Unauthorized
 from Acquisition import aq_base
 from appy.gen import No
 from imio.actionspanel import ActionsPanelMessageFactory as _
+from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
@@ -567,7 +568,9 @@ class ActionsPanelView(BrowserView):
         except Exception, exc:
             # abort because element state was changed
             transaction.abort()
-            plone_utils.addPortalMessage(exc.message, type='warning')
+            import traceback
+            logger.error(traceback.format_exc())
+            plone_utils.addPortalMessage(repr(exc), type='warning')
             return
 
         # use transition title to translate so if several transitions have the same title,

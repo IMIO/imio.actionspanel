@@ -4,8 +4,10 @@ Changelog
 1.57 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Whenever an error occurs in `ActionsPanelView.triggerTransition`, make sure
+  we get the error in the returned portal message and log the full traceback
+  in the Zope log.
+  [gbastien]
 
 1.56 (2021-09-09)
 -----------------
