@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.57 (unreleased)
+1.57 (2021-11-08)
 -----------------
 
 - Whenever an error occurs in `ActionsPanelView.triggerTransition`, make sure
