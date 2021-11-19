@@ -4,7 +4,8 @@ Changelog
 1.58 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fix py3 SyntaxError
+  [fngaha]
 
 
 1.57 (2021-11-08)
