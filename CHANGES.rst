@@ -4,7 +4,7 @@ Changelog
 1.58 (unreleased)
 -----------------
 
-- Fix py3 SyntaxError
+- Fix py3 errors
   [fngaha]
 
 

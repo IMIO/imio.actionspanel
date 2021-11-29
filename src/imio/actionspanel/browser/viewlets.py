@@ -5,7 +5,7 @@ from zope.component import getMultiAdapter
 class ActionsPanelViewlet(ViewletBase):
     '''This viewlet displays the available actions on the context.'''
 
-    async = False
+    is_async = False
     params = {
         'useIcons': False,
         'showEdit': False
