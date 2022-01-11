@@ -45,10 +45,6 @@ class ActionsPanelView(BrowserView):
         self.context = context
         self.request = request
         self.parent = self.context.getParentNode()
-        self.member = self.request.get('imio.actionspanel_member_cachekey', None)
-        if not self.member:
-            self.member = api.user.get_current()
-            self.request.set('imio.actionspanel_member_cachekey', self.member)
         self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
         self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
         if not self.portal_url or not self.portal:
@@ -126,6 +122,15 @@ class ActionsPanelView(BrowserView):
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
+
+    @property
+    def member(self):
+        """Caching for member."""
+        member = self.request.get('imio.actionspanel_member_cachekey', None)
+        if not member:
+            member = api.user.get_current()
+            self.request.set('imio.actionspanel_member_cachekey', member)
+        return member
 
     def isInFacetedNavigation(self):
         """Is the actions panel displayed in a faceted navigation?"""

@@ -33,3 +33,9 @@ div.popupbuttons {
     text-align: center;
     padding-top: 1em;
 }
+
+/* setup img with/height necessary for tooltipster */
+table.actionspanel-no-style-table img {
+    width: 16px;
+    height: 16px;
+}

@@ -61,7 +61,7 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
 
   // refresh faceted if we are on it, else, let triggerTransition manage redirect
   redirect = '0';
-  if (!$('#faceted-form').has(tag).length) {
+  if (!has_faceted()) {
     redirect = '1';
   }
 

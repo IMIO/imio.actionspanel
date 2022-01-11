@@ -4,8 +4,14 @@ Changelog
 1.58 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Avoid init `member` in `__init__`, that can lead to member being `Anonymous`.
+  [gbastien]
+- Fixed detection if transition triggered from faceted, use `has_faceted`
+  from `imio.helpers`.
+  [gbastien]
+- Define a with/height in CSS for icons so it can be reused by
+  `collective.js.tooltipster` when it computes the size of the tooltipster.
+  [gbastien]
 
 1.57 (2021-11-08)
 -----------------
