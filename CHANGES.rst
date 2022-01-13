@@ -12,6 +12,8 @@ Changelog
 - Define a with/height in CSS for icons so it can be reused by
   `collective.js.tooltipster` when it computes the size of the tooltipster.
   [gbastien]
+- Added CSS id with context `UID` to the `actions_panel` table.
+  [gbastien]
 
 1.57 (2021-11-08)
 -----------------
