@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.58 (unreleased)
+1.58 (2022-01-14)
 -----------------
 
 - Avoid init `member` in `__init__`, that can lead to member being `Anonymous`.
