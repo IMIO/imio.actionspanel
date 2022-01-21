@@ -4,8 +4,8 @@
                    useOnClick python: action['url'].startswith('javascript');"
        tal:attributes="class python: 'apButtonAction_form_%s' % action['id'];
                        onClick python: useOnClick and view.computeActionOnClick(action['url']) or '';
-                       href python: not useOnClick and action['url'] or '';"
-       target="_parent"
+                       href python: not useOnClick and action['url'] or '';
+                       target python: action['link_target'] or '_parent'"
        tal:condition="python: view.useIcons and action['icon']">
       <img tal:attributes="src string:${view/portal_url}/${action/icon};
                            title python: action['title'];" i18n:attributes="title" />

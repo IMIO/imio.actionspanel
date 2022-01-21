@@ -4,8 +4,10 @@ Changelog
 1.59 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `actions_panel_actions` displaying `object_buttons`, use the link_target
+  defined on the action, only set it to `target="_parent"` if nothing defined
+  on the action.
+  [gbastien]
 
 1.58 (2022-01-14)
 -----------------
