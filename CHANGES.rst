@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.59 (unreleased)
+1.59 (2022-01-24)
 -----------------
 
 - In `actions_panel_actions` displaying `object_buttons`, use the link_target
