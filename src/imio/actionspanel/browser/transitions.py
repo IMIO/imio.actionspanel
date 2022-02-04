@@ -13,6 +13,8 @@ class ConfirmTransitionView(BrowserView):
         self.context = context
         self.request = request
         self.actionspanel_view_name = self.request.get('actionspanel_view_name', 'actions_panel')
+        self.force_redirect_after_transition = self.request.get(
+            'force_redirect_after_transition', False) == '1'
 
     def __call__(self):
         form = self.request.form
@@ -38,6 +40,7 @@ class ConfirmTransitionView(BrowserView):
         if getattr(self, '_actions_panel_view', None):
             return self._actions_panel_view
         actionspanel_view = self.context.restrictedTraverse('@@%s' % self.actionspanel_view_name)
+        actionspanel_view.forceRedirectAfterTransition = self.force_redirect_after_transition
         setattr(self, '_actions_panel_view', actionspanel_view)
         return actionspanel_view
 

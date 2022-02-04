@@ -40,7 +40,7 @@ $("input.trigger-transition-prevent-default").click(function(event) {
 };
 jQuery(document).ready(preventDefaultClickTransition);
 
-function triggerTransition(baseUrl, viewName, transition, tag) {
+function triggerTransition(baseUrl, viewName, transition, tag, force_redirect=0) {
 
   // avoid double clicks
   tag.style = "pointer-events:none;";
@@ -61,7 +61,7 @@ function triggerTransition(baseUrl, viewName, transition, tag) {
 
   // refresh faceted if we are on it, else, let triggerTransition manage redirect
   redirect = '0';
-  if (!has_faceted()) {
+  if (!has_faceted() || force_redirect) {
     redirect = '1';
   }
 

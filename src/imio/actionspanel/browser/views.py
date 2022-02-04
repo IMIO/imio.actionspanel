@@ -85,6 +85,7 @@ class ActionsPanelView(BrowserView):
                  arrowsPortalTypeAware=False,
                  markingInterface=None,
                  forceRedirectOnOwnDelete=True,
+                 forceRedirectAfterTransition=False,
                  **kwargs):
         """
           Master method that will render the content.
@@ -119,6 +120,10 @@ class ActionsPanelView(BrowserView):
         # is the current faceted then it is necessary to redirect
         # when displayed as icons, so as an element of a faceted, it does not apply
         self.forceRedirectOnOwnDelete = forceRedirectOnOwnDelete
+        # by default after a transition, if on a faceted, the faceted is refreshed
+        # if not, the page is refreshed (redirected to the page), this will
+        # force refresh the page even if on a faceted
+        self.forceRedirectAfterTransition = forceRedirectAfterTransition
         self.kwargs = kwargs
         self.hasActions = False
         return self.index()
@@ -484,12 +489,14 @@ class ActionsPanelView(BrowserView):
 
     def computeTriggerTransitionLink(self, transition):
         """ """
-        return "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}".format(
-            self.context.absolute_url(),
-            transition['confirmation_view'],
-            transition['id'],
-            self.__name__,
-            not transition['confirm'] and '&form.submitted=1' or '')
+        return "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}&" \
+            "force_redirect_after_transition={5}".format(
+                self.context.absolute_url(),
+                transition['confirmation_view'],
+                transition['id'],
+                self.__name__,
+                not transition['confirm'] and '&form.submitted=1' or '',
+                self.forceRedirectAfterTransition and '1' or '0')
 
     def computeTriggerTransitionOnClick(self, transition):
         """ """
@@ -499,9 +506,11 @@ class ActionsPanelView(BrowserView):
         if not transition or transition['id'] not in transition_ids:
             return 'window.location.href=window.location.href;'
         if not transition['confirm']:
-            return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', transition='{1}', this);".format(
-                self.context.absolute_url(),
-                transition['id'])
+            return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', " \
+                "transition='{1}', this, force_redirect={2});".format(
+                    self.context.absolute_url(),
+                    transition['id'],
+                    self.forceRedirectAfterTransition and '1' or '0')
         else:
             return ''
 
