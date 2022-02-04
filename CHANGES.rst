@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.60 (unreleased)
+1.60 (2022-02-04)
 -----------------
 
 - Added possibility to force refresh the page after a WF transition even if on a faceted.
