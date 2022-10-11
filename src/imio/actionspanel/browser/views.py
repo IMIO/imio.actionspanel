@@ -85,7 +85,7 @@ class ActionsPanelView(BrowserView):
                  arrowsPortalTypeAware=False,
                  markingInterface=None,
                  forceRedirectOnOwnDelete=True,
-                 forceRedirectAfterTransition=False,
+                 forceRedirectAfterTransition=True,
                  **kwargs):
         """
           Master method that will render the content.
