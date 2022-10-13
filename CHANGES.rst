@@ -10,6 +10,8 @@ Changelog
 1.60 (2022-02-04)
 -----------------
 
+- Force by default redirect after transition just when use icons
+  [fngaha]
 - Added possibility to force refresh the page after a WF transition even if on a faceted.
   [gbastien]
 

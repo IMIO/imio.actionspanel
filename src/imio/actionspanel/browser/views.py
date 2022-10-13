@@ -123,6 +123,8 @@ class ActionsPanelView(BrowserView):
         # by default after a transition, if on a faceted, the faceted is refreshed
         # if not, the page is refreshed (redirected to the page), this will
         # force refresh the page even if on a faceted
+        if not self.useIcons:
+            forceRedirectAfterTransition = True
         self.forceRedirectAfterTransition = forceRedirectAfterTransition
         self.kwargs = kwargs
         self.hasActions = False
