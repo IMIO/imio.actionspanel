@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.61 (unreleased)
+1.61 (2022-10-14)
 -----------------
 
 - Force by default redirect after transition just when use icons
