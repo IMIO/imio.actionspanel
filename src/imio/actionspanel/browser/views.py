@@ -586,7 +586,8 @@ class ActionsPanelView(BrowserView):
             transaction.abort()
             import traceback
             logger.error(traceback.format_exc())
-            plone_utils.addPortalMessage(repr(exc), type='warning')
+            msg = exc.message if hasattr(exc, "message") else repr(exc)
+            plone_utils.addPortalMessage(msg, type='warning')
             return
 
         # use transition title to translate so if several transitions have the same title,

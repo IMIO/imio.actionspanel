@@ -4,8 +4,8 @@ Changelog
 1.62 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Fixed rendering of error message when an exception occurs during a transition.
+  [gbastien]
 
 1.61 (2022-10-14)
 -----------------
