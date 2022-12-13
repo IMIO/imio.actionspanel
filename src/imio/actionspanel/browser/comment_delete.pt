@@ -1,0 +1,44 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="imio.actionspanel">
+
+  <body>
+  <metal:fill fill-slot="main">
+
+    <script type="text/javascript">
+      jQuery(document).ready(preventDefaultClickTransition);
+    </script>
+
+    <h1 class="documentFirstHeading" tal:content="view/element_title">Title</h1>
+    <form id="confirmTransitionForm">
+    <tal:comment replace="nothing">Explanation comment</tal:comment>
+    <p class="popups_field_descr" i18n:translate="delete_confirm">
+      Are you sure to want to delete this element?
+    </p>
+    <label for="comment" i18n:translate="transition_comment"></label>
+    <textarea name="comment" rows="8"></textarea>
+    <div class="popupbuttons">
+      <input tal:attributes="onClick string:;"
+             type="submit"
+             name="form.buttons.save"
+             class="trigger-transition-prevent-default apButton"
+             value="Save"
+             i18n:attributes="value"
+             i18n:domain="plone" />
+      <input type="submit"
+             name="form.buttons.cancel"
+             class="standalone apButton"
+             value="Cancel"
+             i18n:attributes="value"
+             i18n:domain="plone" />
+    </div>
+    </form>
+
+  </metal:fill>
+  </body>
+</html>

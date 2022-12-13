@@ -58,6 +58,7 @@ class ActionsPanelView(BrowserView):
                                    'renderTransitions',
                                    'renderArrows',
                                    'renderOwnDelete',
+                                   'renderOwnDeleteWithComments',
                                    'renderActions',
                                    'renderAddContent',
                                    'renderHistory')
@@ -76,6 +77,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showExtEdit=False,
                  showOwnDelete=True,
+                 showOwnDeleteWithComments=False,
                  showActions=True,
                  showAddContent=False,
                  showHistory=False,
@@ -97,6 +99,7 @@ class ActionsPanelView(BrowserView):
         self.showEdit = showEdit
         self.showExtEdit = showExtEdit
         self.showOwnDelete = showOwnDelete
+        self.showOwnDeleteWithComments = showOwnDeleteWithComments
         # if 'delete' is in acceptable actions, it takes precedence on showOwnDelete
         if showActions and 'delete' in self.ACCEPTABLE_ACTIONS:
             self.showOwnDelete = False
@@ -229,6 +232,15 @@ class ActionsPanelView(BrowserView):
         if self.showOwnDelete and \
            IContentDeletable(self.context).mayDelete():
             return ViewPageTemplateFile("actions_panel_own_delete.pt")(self)
+        return ''
+
+    def renderOwnDeleteWithComments(self):
+        """
+          Render our own version of the 'delete' action with possibility to provide comments.
+        """
+        if self.showOwnDeleteWithComments and \
+           IContentDeletable(self.context).mayDelete():
+            return ViewPageTemplateFile("actions_panel_own_delete_with_comments.pt")(self)
         return ''
 
     def renderActions(self):

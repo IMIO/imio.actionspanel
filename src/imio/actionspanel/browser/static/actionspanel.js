@@ -11,7 +11,7 @@ function confirmDeleteObject(base_url, object_uid, tag, msgName=null, view_name=
 initializeOverlays = function () {
     jQuery(function($) {
         // Add transition confirmation popup
-        $('a.link-overlay-actionspanel.transition-overlay').prepOverlay({
+        $('a.link-overlay-actionspanel').prepOverlay({
               subtype: 'ajax',
               closeselector: '[name="form.buttons.cancel"]',
         });
