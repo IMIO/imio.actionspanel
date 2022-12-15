@@ -10,8 +10,13 @@ function confirmDeleteObject(base_url, object_uid, tag, msgName=null, view_name=
 
 initializeOverlays = function () {
     jQuery(function($) {
-        // Add transition confirmation popup
-        $('a.link-overlay-actionspanel').prepOverlay({
+        // WF transition confirmation popup
+        $('a.link-overlay-actionspanel.transition-overlay').prepOverlay({
+              subtype: 'ajax',
+              closeselector: '[name="form.buttons.cancel"]',
+        });
+        // Delete comments popup
+        $('a.link-overlay-actionspanel.delete-comments-overlay').prepOverlay({
               subtype: 'ajax',
               closeselector: '[name="form.buttons.cancel"]',
         });
@@ -28,17 +33,17 @@ initializeOverlays = function () {
 
 jQuery(document).ready(initializeOverlays);
 
-// prevent
-preventDefaultClickTransition = function() {
-$("a.trigger-transition-prevent-default").click(function(event) {
+// prevent default transition icon
+preventDefaultClick = function() {
+$("a.prevent-default").click(function(event) {
   event.preventDefault();
 });
 // on the comment overlay
-$("input.trigger-transition-prevent-default").click(function(event) {
+$("input.prevent-default").click(function(event) {
   event.preventDefault();
 });
 };
-jQuery(document).ready(preventDefaultClickTransition);
+jQuery(document).ready(preventDefaultClick);
 
 function triggerTransition(baseUrl, viewName, transition, tag, force_redirect=0) {
 
@@ -85,6 +90,69 @@ function triggerTransition(baseUrl, viewName, transition, tag, force_redirect=0)
                 tag: tag,
                 transition: transition,
                 comment: comment});
+        }
+        else {
+            window.location.href = data;
+        }
+      },
+    error: function(jqXHR, textStatus, errorThrown) {
+      /*console.log(textStatus);*/
+      window.location.href = window.location.href;
+      }
+    });
+}
+
+function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, event_id=null) {
+
+  // avoid double clicks
+  tag.style = "pointer-events:none;";
+  setTimeout(function() {
+      tag.style = "";
+  }, 2000);
+
+  // find comment in the page
+  comment = '';
+  if ($('form#commentsForm textarea').length) {
+      comment = $('form#commentsForm textarea')[0].value;
+      // find the right tag because we are in an overlay and the tag will
+      // never be found like being in a faceted
+      // find the button that opened this overlay
+      overlay_id = $(tag).closest('div.overlay-ajax').attr('id');
+      tag = $('[rel="#' + overlay_id + '"]');
+  }
+
+  // refresh faceted if we are on it, else, let the view manage redirect
+  redirect = '0';
+  if (!has_faceted() || force_redirect) {
+    redirect = '1';
+  }
+
+  // create data that will be passed to view
+  data = {'comment': comment,
+          'form.submitted': '1',
+          'redirect': redirect};
+  // update data with extraData
+  data = Object.assign({}, data, extraData);
+
+  $.ajax({
+    url: baseUrl + "/" + viewName,
+    dataType: 'html',
+    data: data,
+    cache: false,
+    // set to true for now so a spinner is displayed in Chrome
+    async: true,
+    type: "POST",
+    success: function(data) {
+        // reload the faceted page if we are on it, refresh current if not
+        if ((redirect === '0') && !(data)) {
+            Faceted.URLHandler.hash_changed();
+            if (event_id != null) {
+                $.event.trigger({
+                    type: "ap_transition_triggered",
+                    tag: tag,
+                    transition: transition,
+                    comment: comment});
+            }
         }
         else {
             window.location.href = data;
@@ -162,6 +230,6 @@ $(document).ready(function () {
   $('div[id^="async_actions_panel"]').each(function() {
     load_actions_panel(this);
     initializeOverlays();
-    preventDefaultClickTransition();
+    preventDefaultClick();
   });
 });

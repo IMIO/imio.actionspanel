@@ -10,6 +10,7 @@ from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.helpers.content import uuidsToObjects
 from imio.history.interfaces import IImioHistory
+from imio.history.utils import add_event_to_history
 from operator import itemgetter
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -665,7 +666,8 @@ class DeleteGivenUidView(BrowserView):
     def __call__(self,
                  object_uid,
                  redirect=True,
-                 catch_before_delete_exception=True):
+                 catch_before_delete_exception=True,
+                 historize_in_parent=False):
         """ """
         # redirect can by passed by jQuery, in this case, we receive '0' or '1'
         if redirect == '0' or redirect == 'null':
@@ -703,6 +705,14 @@ class DeleteGivenUidView(BrowserView):
             # made in the 'if' here above, if we arrive here it is that user is doing
             # something wrong, we raise Unauthorized
             raise Unauthorized
+
+        # historize in parent if relevant
+        if historize_in_parent:
+            add_event_to_history(
+                obj.aq_inner.aq_parent,
+                "deleted_children_history",
+                "advice_deleted",
+                comments=self.request.form.get('comment'))
 
         # Redirect the user to the correct page and display the correct message.
         self.portal.plone_utils.addPortalMessage(**msg)

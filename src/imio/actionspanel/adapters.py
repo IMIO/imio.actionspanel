@@ -7,6 +7,7 @@
 # GNU General Public License (GPL)
 #
 
+from imio.history.adapters import BaseImioHistoryAdapter
 from Products.CMFCore.permissions import DeleteObjects
 from plone import api
 
@@ -23,3 +24,10 @@ class ContentDeletableAdapter(object):
         '''See docstring in interfaces.py'''
         member = api.user.get_current()
         return bool(member.has_permission(DeleteObjects, self.context))
+
+
+class DeletedChildrenHistoryAdapter(BaseImioHistoryAdapter):
+    """ """
+
+    history_type = 'deleted_children'
+    history_attr_name = 'deleted_children_history'

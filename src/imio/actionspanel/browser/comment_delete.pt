@@ -11,23 +11,23 @@
   <metal:fill fill-slot="main">
 
     <script type="text/javascript">
-      jQuery(document).ready(preventDefaultClickTransition);
+      jQuery(document).ready(preventDefaultClick);
     </script>
 
-    <h1 class="documentFirstHeading" tal:content="view/element_title">Title</h1>
-    <form id="confirmTransitionForm">
+    <h1 class="documentFirstHeading highlightValue" tal:content="view/element_title">Title</h1>
+    <form id="commentsForm">
     <tal:comment replace="nothing">Explanation comment</tal:comment>
-    <p class="popups_field_descr" i18n:translate="delete_confirm">
+    <p class="popups_field_descr highlightValue" i18n:translate="delete_confirm_message">
       Are you sure to want to delete this element?
     </p>
-    <label for="comment" i18n:translate="transition_comment"></label>
+    <label for="comment" i18n:translate="action_comments"></label>
     <textarea name="comment" rows="8"></textarea>
     <div class="popupbuttons">
-      <input tal:attributes="onClick string:;"
+      <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + context.UID() + '\'}, this);;' + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
              type="submit"
              name="form.buttons.save"
-             class="trigger-transition-prevent-default apButton"
-             value="Save"
+             class="prevent-default apButton apButtonAction apButtonAction_delete"
+             value="Delete"
              i18n:attributes="value"
              i18n:domain="plone" />
       <input type="submit"

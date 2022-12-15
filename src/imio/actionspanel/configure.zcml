@@ -21,8 +21,12 @@
 
   <adapter for="OFS.interfaces.IItem"
            factory=".adapters.ContentDeletableAdapter"
-           provides=".interfaces.IContentDeletable"
-            />
+           provides=".interfaces.IContentDeletable" />
+
+  <adapter for="OFS.interfaces.IItem"
+           factory=".adapters.DeletedChildrenHistoryAdapter"
+           name="deleted_children"
+           provides="imio.history.interfaces.IImioHistory" />
 
   <!-- File System Directory Views registration -->
   <cmf:registerDirectory name="actionspanel_plone"/>

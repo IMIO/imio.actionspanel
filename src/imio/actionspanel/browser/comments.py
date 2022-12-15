@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio.helpers.content import uuidToObject
+from plone import api
 from plone.memoize.instance import memoize
 from Products.Five.browser import BrowserView
 
@@ -87,6 +88,12 @@ class DeleteWithCommentsView(BaseCommentsView):
       This manage the overlay popup displayed when deleting an element
       and comments may be provided.
     '''
+
+    def apply(self, actionspanel_view):
+        """ """
+        return api.portal.get().restrictedTraverse('@@delete_givenuid')(
+            object_uid=self.request.get('uid'),
+            historize_in_parent=True)
 
     def element_title(self):
         '''Returns element title.'''
