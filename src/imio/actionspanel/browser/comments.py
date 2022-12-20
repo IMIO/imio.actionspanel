@@ -89,6 +89,11 @@ class DeleteWithCommentsView(BaseCommentsView):
       and comments may be provided.
     '''
 
+    def __call__(self):
+        """ """
+        self.obj = uuidToObject(self.request.get('uid'))
+        return super(DeleteWithCommentsView, self).__call__()
+
     def apply(self, actionspanel_view):
         """ """
         return api.portal.get().restrictedTraverse('@@delete_givenuid')(
@@ -97,4 +102,9 @@ class DeleteWithCommentsView(BaseCommentsView):
 
     def element_title(self):
         '''Returns element title.'''
-        return uuidToObject(self.request.get('uid')).Title()
+        return self.obj.Title()
+
+    def pre_comment(self):
+        """Possibility to insert computed pre comment before the manually encoded comments.
+           Here to be overrided."""
+        return self.element_title()

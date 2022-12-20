@@ -23,7 +23,7 @@
     <label for="comment" i18n:translate="action_comments"></label>
     <textarea name="comment" rows="8"></textarea>
     <div class="popupbuttons">
-      <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + context.UID() + '\'}, this);;' + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
+      <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + context.UID() + '\', \'preComment\': \'' + view.pre_comment() + '\'}, this);;' + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
              type="submit"
              name="form.buttons.save"
              class="prevent-default apButton apButtonAction apButtonAction_delete"
