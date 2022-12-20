@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-12-15 14:53+0000\n"
+"POT-Creation-Date: 2022-12-20 15:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: imio.actionspanel\n"
 
-#: ./browser/views.py:611
+#: ./browser/views.py:612
 msgid "%s_done_descr"
 msgstr ""
 
@@ -73,9 +73,14 @@ msgstr ""
 msgid "Transitions to confirm"
 msgstr ""
 
-#: ./browser/comment_delete.pt:23
+#: ./browser/comment_delete.pt:26
 #: ./browser/comment_transition.pt:21
 msgid "action_comments"
+msgstr ""
+
+#. Default: "This will be historized (including eventual comments)."
+#: ./browser/comment_delete.pt:23
+msgid "delete_comments_historized"
 msgstr ""
 
 #. Default: "Are you sure to want to delete this element?"
@@ -95,7 +100,7 @@ msgstr ""
 msgid "imio.actionspanel"
 msgstr ""
 
-#: ./browser/views.py:688
+#: ./browser/views.py:689
 msgid "object_deleted"
 msgstr ""
 

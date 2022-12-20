@@ -15,5 +15,5 @@ msgstr ""
 "Domain: plone\n"
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
-msgid "advice_deleted"
-msgstr "Avis supprimé"
+msgid "delete_advice"
+msgstr "Supprimer un avis"

@@ -107,4 +107,5 @@ class DeleteWithCommentsView(BaseCommentsView):
     def pre_comment(self):
         """Possibility to insert computed pre comment before the manually encoded comments.
            Here to be overrided."""
-        return self.element_title()
+        # avoid character ' in result, that breaks generated JS
+        return self.element_title().replace("'", "&#39;")

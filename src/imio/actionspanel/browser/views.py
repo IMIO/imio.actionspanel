@@ -712,7 +712,7 @@ class DeleteGivenUidView(BrowserView):
             add_event_to_history(
                 obj.aq_inner.aq_parent,
                 "deleted_children_history",
-                "advice_deleted",
+                "delete_advice",
                 comments=self.request.form.get('comment'))
 
         # Redirect the user to the correct page and display the correct message.

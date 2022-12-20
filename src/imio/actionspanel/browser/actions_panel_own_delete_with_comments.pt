@@ -10,14 +10,14 @@
         <tal:comment replace="nothing">Icon</tal:comment>
         <img tal:condition="useIcons"
              i18n:attributes="title"
-             title="Delete with comments"
+             title="Delete"
              tal:attributes="src string:${view/portal_url}/delete_icon.png;" />
 
         <tal:comment replace="nothing">Button</tal:comment>
         <form tal:condition="python: not useIcons">
           <input type="button"
                  i18n:attributes="value"
-                 value="Delete with comments"
+                 value="Delete"
                  class="apButton apButtonAction apButtonAction_delete"/>
         </form>
       </a>

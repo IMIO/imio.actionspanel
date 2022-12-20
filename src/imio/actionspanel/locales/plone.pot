@@ -17,5 +17,5 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: plone\n"
 
-msgid "advice_deleted"
+msgid "delete_advice"
 msgstr ""

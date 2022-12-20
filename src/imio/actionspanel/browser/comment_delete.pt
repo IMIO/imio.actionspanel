@@ -20,6 +20,9 @@
     <p class="popups_field_descr highlightValue" i18n:translate="delete_confirm_message">
       Are you sure to want to delete this element?
     </p>
+    <p class="popups_field_descr" i18n:translate="delete_comments_historized">
+      This will be historized (including eventual comments).
+    </p>
     <label for="comment" i18n:translate="action_comments"></label>
     <textarea name="comment" rows="8"></textarea>
     <div class="popupbuttons">

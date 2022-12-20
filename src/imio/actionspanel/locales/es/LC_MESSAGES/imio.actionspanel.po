@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: imio.actionspanel\n"
-"POT-Creation-Date: 2022-12-15 14:53+0000\n"
+"POT-Creation-Date: 2022-12-20 15:02+0000\n"
 "PO-Revision-Date: 2020-04-27 00:57-0400\n"
 "Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
 "Language-Team: ES <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
 
 #. Default: "Item state changed."
-#: ./browser/views.py:611
+#: ./browser/views.py:612
 msgid "%s_done_descr"
 msgstr "Estado del elemento cambiado."
 
@@ -76,9 +76,14 @@ msgstr "Valor de transición"
 msgid "Transitions to confirm"
 msgstr "Transiciones a confirmar"
 
-#: ./browser/comment_delete.pt:23
+#: ./browser/comment_delete.pt:26
 #: ./browser/comment_transition.pt:21
 msgid "action_comments"
+msgstr ""
+
+#. Default: "This will be historized (including eventual comments)."
+#: ./browser/comment_delete.pt:23
+msgid "delete_comments_historized"
 msgstr ""
 
 #. Default: "Are you sure to want to delete this element?"
@@ -98,7 +103,7 @@ msgstr "Historial de elemento (se ingresó un comentario durante el último even
 msgid "imio.actionspanel"
 msgstr ""
 
-#: ./browser/views.py:688
+#: ./browser/views.py:689
 msgid "object_deleted"
 msgstr "El elemento ha sido eliminado."
 
