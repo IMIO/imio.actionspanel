@@ -521,8 +521,9 @@ class ActionsPanelView(BrowserView):
         if not transition or transition['id'] not in transition_ids:
             return 'window.location.href=window.location.href;'
         if not transition['confirm']:
-            return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', " \
-                "transition='{1}', this, force_redirect={2});".format(
+            return "applyWithComments(baseUrl='{0}', viewName='@@triggertransition', " \
+                "{{'transition': '{1}'}}, this, force_redirect={2}, " \
+                "event_id='ap_transition_triggered');".format(
                     self.context.absolute_url(),
                     transition['id'],
                     self.forceRedirectAfterTransition and '1' or '0')

@@ -45,63 +45,6 @@ $("input.prevent-default").click(function(event) {
 };
 jQuery(document).ready(preventDefaultClick);
 
-function triggerTransition(baseUrl, viewName, transition, tag, force_redirect=0) {
-
-  // avoid double clicks
-  tag.style = "pointer-events:none;";
-  setTimeout(function() {
-      tag.style = "";
-  }, 2000);
-
-  // find comment in the page
-  comment = '';
-  if ($('form#confirmTransitionForm textarea').length) {
-      comment = $('form#confirmTransitionForm textarea')[0].value;
-      // find the right tag because we are in an overlay and the tag will
-      // never be found like being in a faceted
-      // find the button that opened this overlay
-      overlay_id = $(tag).closest('div.overlay-ajax').attr('id');
-      tag = $('[rel="#' + overlay_id + '"]');
-  }
-
-  // refresh faceted if we are on it, else, let triggerTransition manage redirect
-  redirect = '0';
-  if (!has_faceted() || force_redirect) {
-    redirect = '1';
-  }
-
-  $.ajax({
-    url: baseUrl + "/" + viewName,
-    dataType: 'html',
-    data: {'transition': transition,
-           'comment': comment,
-           'form.submitted': '1',
-           'redirect': redirect},
-    cache: false,
-    // set to true for now so a spinner is displayed in Chrome
-    async: true,
-    type: "POST",
-    success: function(data) {
-        // reload the faceted page if we are on it, refresh current if not
-        if ((redirect === '0') && !(data)) {
-            Faceted.URLHandler.hash_changed();
-            $.event.trigger({
-                type: "ap_transition_triggered",
-                tag: tag,
-                transition: transition,
-                comment: comment});
-        }
-        else {
-            window.location.href = data;
-        }
-      },
-    error: function(jqXHR, textStatus, errorThrown) {
-      /*console.log(textStatus);*/
-      window.location.href = window.location.href;
-      }
-    });
-}
-
 function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, event_id=null) {
 
   // avoid double clicks
@@ -128,7 +71,7 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
   }
 
   // create data that will be passed to view
-  data = {'comment': comment,
+  data = {'comment': comment + extraData.preComment || null,
           'form.submitted': '1',
           'redirect': redirect};
   // update data with extraData
@@ -148,9 +91,9 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
             Faceted.URLHandler.hash_changed();
             if (event_id != null) {
                 $.event.trigger({
-                    type: "ap_transition_triggered",
+                    type: event_id,
                     tag: tag,
-                    transition: transition,
+                    transition: extraData.transition,
                     comment: comment});
             }
         }
