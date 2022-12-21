@@ -96,7 +96,6 @@ class DeleteWithCommentsView(BaseCommentsView):
 
     def apply(self, actionspanel_view):
         """ """
-        import ipdb; ipdb.set_trace()
         return api.portal.get().restrictedTraverse('@@delete_givenuid')(
             object_uid=self.request.get('uid'),
             historize_in_parent=True)
