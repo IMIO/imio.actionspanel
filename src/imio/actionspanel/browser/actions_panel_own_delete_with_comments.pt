@@ -4,7 +4,6 @@
     <tal:comment replace="nothing">Delete icon/button</tal:comment>
     <td class="noPadding" i18n:domain="plone" tal:define="dummy view/saveHasActions;">
       <a class="link-overlay-actionspanel delete-comments-overlay"
-         onclick=""
          tal:attributes="href string:@@delete_with_comments?uid=${objectUID};">
 
         <tal:comment replace="nothing">Icon</tal:comment>

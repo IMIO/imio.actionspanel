@@ -127,4 +127,4 @@ msgstr "Remonter l'élément"
 #. Default: "Confirm workflow transition ${transition_name}"
 #: ./browser/comment_transition.pt:20
 msgid "workflow_confirm"
-msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
+msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton \"Enregistrer\"."

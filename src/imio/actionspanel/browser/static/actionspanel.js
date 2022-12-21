@@ -72,11 +72,12 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
 
   // create data that will be passed to view
   preComment = extraData.preComment;
-  if (preComment.length) {
+  if (preComment != undefined) {
       // we replaced ' by &#39; to avoid problems in generated JS, now back to '
       preComment = preComment.replaceAll("&#39;", "'") + "\n\n";
-  } else {preComment = "";}
-  data = {'comment': preComment + comment,
+      comment = preComment + comment;
+  }
+  data = {'comment': comment,
           'form.submitted': '1',
           'redirect': redirect};
   // update data with extraData
