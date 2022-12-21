@@ -6,6 +6,10 @@ Changelog
 
 - Fixed rendering of error message when an exception occurs during a transition.
   [gbastien]
+- Added new action `renderOwnDeleteWithComments=False` when deleting an element
+  a comment may be entered, the deletion including comment will appear in the
+  history of the parent of the element that was deleted.
+  [gbastien]
 
 1.61 (2022-10-14)
 -----------------
