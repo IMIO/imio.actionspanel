@@ -31,3 +31,4 @@ class DeletedChildrenHistoryAdapter(BaseImioHistoryAdapter):
 
     history_type = 'deleted_children'
     history_attr_name = 'deleted_children_history'
+    highlight_last_comment = True

@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: imio.actionspanel\n"
-"POT-Creation-Date: 2022-12-20 15:02+0000\n"
+"POT-Creation-Date: 2023-01-02 08:37+0000\n"
 "PO-Revision-Date: 2020-04-27 00:57-0400\n"
 "Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
 "Language-Team: ES <LL@li.org>\n"
@@ -76,18 +76,18 @@ msgstr "Valor de transición"
 msgid "Transitions to confirm"
 msgstr "Transiciones a confirmar"
 
-#: ./browser/comment_delete.pt:26
-#: ./browser/comment_transition.pt:21
+#: ./browser/comment_delete.pt:25
+#: ./browser/comment_transition.pt:20
 msgid "action_comments"
 msgstr ""
 
 #. Default: "This will be historized (including eventual comments)."
-#: ./browser/comment_delete.pt:23
+#: ./browser/comment_delete.pt:22
 msgid "delete_comments_historized"
 msgstr ""
 
 #. Default: "Are you sure to want to delete this element?"
-#: ./browser/comment_delete.pt:20
+#: ./browser/comment_delete.pt:19
 msgid "delete_confirm_message"
 msgstr "¿Estás seguro de que deseas eliminar permanentemente este elemento de la aplicación?"
 
@@ -129,6 +129,6 @@ msgid "title_move_item_up"
 msgstr "Subir el elemento"
 
 #. Default: "Confirm workflow transition ${transition_name}"
-#: ./browser/comment_transition.pt:20
+#: ./browser/comment_transition.pt:19
 msgid "workflow_confirm"
 msgstr "¿Estás seguro de que deseas confirmar la transición del flujo de trabajo ${transition_name} de este elemento? En caso afirmativo, puede ingresar un comentario a continuación (opcional) y hacer clic en el botón 'Guardar'."

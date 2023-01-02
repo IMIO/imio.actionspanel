@@ -8,6 +8,7 @@ from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
+from imio.history.browser.views import should_highlight_history_link
 from imio.helpers.content import uuidsToObjects
 from imio.history.interfaces import IImioHistory
 from imio.history.utils import add_event_to_history
@@ -270,15 +271,14 @@ class ActionsPanelView(BrowserView):
           Method to control access to the @@historyview view and so to the action icon.
           We rely on view 'contenthistory' overrided in imio.history.
         """
-        contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
-        return contenthistory.show_history()
+        self.contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
+        return self.contenthistory.show_history()
 
     def historyLastEventHasComments(self):
         """
           Returns True if the last event of the object's history has a comment.
         """
-        adapter = getAdapter(self.context, IImioHistory, 'workflow')
-        return adapter.historyLastEventHasComments()
+        return should_highlight_history_link(self.context, self.contenthistory)
 
     def mayFolderContents(self):
         """
@@ -712,7 +712,7 @@ class DeleteGivenUidView(BrowserView):
             add_event_to_history(
                 obj.aq_inner.aq_parent,
                 "deleted_children_history",
-                "delete_advice",
+                "delete_element",
                 comments=self.request.form.get('comment'))
 
         # Redirect the user to the correct page and display the correct message.

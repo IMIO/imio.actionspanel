@@ -33,7 +33,7 @@ initializeOverlays = function () {
 
 jQuery(document).ready(initializeOverlays);
 
-// prevent default transition icon
+// prevent default click action
 preventDefaultClick = function() {
 $("a.prevent-default").click(function(event) {
   event.preventDefault();

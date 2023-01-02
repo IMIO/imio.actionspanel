@@ -20,7 +20,7 @@
       <label for="comment" i18n:translate="action_comments"></label>
       <textarea name="comment" rows="8"></textarea>
       <div class="popupbuttons">
-        <input tal:attributes="onClick python: view._get_actions_panel_view().computeTriggerTransitionOnClick(view.initTransition()) + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
+        <input tal:attributes="onClick python: view._get_actions_panel_view().computeTriggerTransitionOnClick(view.init_transition()) + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
                type="submit"
                name="form.buttons.save"
                class="prevent-default apButton"

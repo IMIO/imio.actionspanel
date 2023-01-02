@@ -19,8 +19,8 @@ class BaseCommentsView(BrowserView):
 
     def __call__(self):
         form = self.request.form
-        # either we received form.submitted in the request because we are triggering
-        # a transition that does not need a confirmation or we clicked on the save button of
+        # either we received form.submitted in the request because we are applying
+        # an action that does not need a confirmation or we clicked on the save button of
         # the confirmation popup
         submitted = form.get('form.buttons.save', False) or form.get('form.submitted') == '1'
         cancelled = form.get('form.buttons.cancel', False)
@@ -62,7 +62,7 @@ class ConfirmTransitionView(BaseCommentsView):
             redirect=bool(self.request.get('redirect') == '1'))
 
     @memoize
-    def initTransition(self):
+    def init_transition(self):
         '''Initialize values for the 'transition' form field.'''
         res = {}
         actionspanel_view = self._get_actions_panel_view()
