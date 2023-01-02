@@ -8,8 +8,8 @@ from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
-from imio.history.browser.views import should_highlight_history_link
 from imio.helpers.content import uuidsToObjects
+from imio.history.browser.views import should_highlight_history_link
 from imio.history.interfaces import IImioHistory
 from imio.history.utils import add_event_to_history
 from operator import itemgetter

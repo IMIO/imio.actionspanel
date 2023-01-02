@@ -8,8 +8,8 @@
 #
 
 from imio.history.adapters import BaseImioHistoryAdapter
-from Products.CMFCore.permissions import DeleteObjects
 from plone import api
+from Products.CMFCore.permissions import DeleteObjects
 
 
 class ContentDeletableAdapter(object):
