@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-08-09 13:42+0000\n"
+"POT-Creation-Date: 2023-01-02 08:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-is-fallback-for: fr-fr fr-be fr-ca\n"
 
 #. Default: "Item state changed."
-#: ./browser/views.py:524
+#: ./browser/views.py:612
 msgid "%s_done_descr"
 msgstr ""
 
@@ -28,7 +28,7 @@ msgstr "Ajout d'un élément"
 msgid "Define for each object transition the optional corresponding view"
 msgstr "Définissez pour chacune des transition le nom de la vue correspondante"
 
-#: ./configure.zcml:32
+#: ./configure.zcml:40
 msgid "Extension profile for imio.actionspanel."
 msgstr ""
 
@@ -72,9 +72,20 @@ msgstr ""
 msgid "Transitions to confirm"
 msgstr ""
 
-#: ./browser/jsvariables.py:15
+#: ./browser/comment_delete.pt:25
+#: ./browser/comment_transition.pt:20
+msgid "action_comments"
+msgstr "Commentaire"
+
+#. Default: "This will be historized (including eventual comments)."
+#: ./browser/comment_delete.pt:22
+msgid "delete_comments_historized"
+msgstr "Cette action sera historisée (y compris le commentaire)."
+
+#. Default: "Are you sure to want to delete this element?"
+#: ./browser/comment_delete.pt:19
 msgid "delete_confirm_message"
-msgstr "Etes-vous certain de vouloir supprimer définitivement cet élément de l'application?"
+msgstr "Êtes-vous certain de vouloir supprimer définitivement cet élément de l'application?"
 
 #: ./browser/actions_panel_history.pt
 msgid "history.gif_icon_title"
@@ -84,11 +95,11 @@ msgstr "Historique de l'élément"
 msgid "history_last_event_has_comment.gif_icon_title"
 msgstr "Historique de l'élément (un commentaire a été renseigné lors du dernier événement)"
 
-#: ./configure.zcml:32
+#: ./configure.zcml:40
 msgid "imio.actionspanel"
 msgstr ""
 
-#: ./browser/views.py:589
+#: ./browser/views.py:689
 msgid "object_deleted"
 msgstr "L'élément a été supprimé."
 
@@ -97,27 +108,23 @@ msgstr "L'élément a été supprimé."
 msgid "redirected_after_action_not_viewable"
 msgstr "Vous avez été redirigé ici car l'action que vous venez d'effectuer vous a rendu l'élément inaccessible."
 
-#: ./browser/actions_panel_arrows.pt:8
+#: ./browser/actions_panel_arrows.pt:9
 msgid "title_move_item_bottom"
 msgstr "Descendre l'élément en dernière position"
 
-#: ./browser/actions_panel_arrows.pt:16
+#: ./browser/actions_panel_arrows.pt:18
 msgid "title_move_item_down"
 msgstr "Descendre l'élément"
 
-#: ./browser/actions_panel_arrows.pt:32
+#: ./browser/actions_panel_arrows.pt:36
 msgid "title_move_item_top"
 msgstr "Remonter l'élément en première position"
 
-#: ./browser/actions_panel_arrows.pt:24
+#: ./browser/actions_panel_arrows.pt:27
 msgid "title_move_item_up"
 msgstr "Remonter l'élément"
 
-#: ./browser/transitions.pt:21
-msgid "transition_comment"
-msgstr "Commentaire"
-
 #. Default: "Confirm workflow transition ${transition_name}"
-#: ./browser/transitions.pt:20
+#: ./browser/comment_transition.pt:19
 msgid "workflow_confirm"
-msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton 'Enregistrer'."
+msgstr "Êtes-vous certain de vouloir ${transition_name} cet élément? Si oui, vous pouvez entrer un commentaire ci-dessous (facultatif) et cliquer sur le bouton \"Enregistrer\"."

@@ -9,7 +9,9 @@ from imio.actionspanel.interfaces import IContentDeletable
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.helpers.content import uuidsToObjects
+from imio.history.browser.views import should_highlight_history_link
 from imio.history.interfaces import IImioHistory
+from imio.history.utils import add_event_to_history
 from operator import itemgetter
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -58,6 +60,7 @@ class ActionsPanelView(BrowserView):
                                    'renderTransitions',
                                    'renderArrows',
                                    'renderOwnDelete',
+                                   'renderOwnDeleteWithComments',
                                    'renderActions',
                                    'renderAddContent',
                                    'renderHistory')
@@ -76,6 +79,7 @@ class ActionsPanelView(BrowserView):
                  showEdit=True,
                  showExtEdit=False,
                  showOwnDelete=True,
+                 showOwnDeleteWithComments=False,
                  showActions=True,
                  showAddContent=False,
                  showHistory=False,
@@ -97,6 +101,7 @@ class ActionsPanelView(BrowserView):
         self.showEdit = showEdit
         self.showExtEdit = showExtEdit
         self.showOwnDelete = showOwnDelete
+        self.showOwnDeleteWithComments = showOwnDeleteWithComments
         # if 'delete' is in acceptable actions, it takes precedence on showOwnDelete
         if showActions and 'delete' in self.ACCEPTABLE_ACTIONS:
             self.showOwnDelete = False
@@ -231,6 +236,15 @@ class ActionsPanelView(BrowserView):
             return ViewPageTemplateFile("actions_panel_own_delete.pt")(self)
         return ''
 
+    def renderOwnDeleteWithComments(self):
+        """
+          Render our own version of the 'delete' action with possibility to provide comments.
+        """
+        if self.showOwnDeleteWithComments and \
+           IContentDeletable(self.context).mayDelete():
+            return ViewPageTemplateFile("actions_panel_own_delete_with_comments.pt")(self)
+        return ''
+
     def renderActions(self):
         """
           Render actions coming from portal_actions.object_buttons and available on the context.
@@ -257,15 +271,14 @@ class ActionsPanelView(BrowserView):
           Method to control access to the @@historyview view and so to the action icon.
           We rely on view 'contenthistory' overrided in imio.history.
         """
-        contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
-        return contenthistory.show_history()
+        self.contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
+        return self.contenthistory.show_history()
 
     def historyLastEventHasComments(self):
         """
           Returns True if the last event of the object's history has a comment.
         """
-        adapter = getAdapter(self.context, IImioHistory, 'workflow')
-        return adapter.historyLastEventHasComments()
+        return should_highlight_history_link(self.context, self.contenthistory)
 
     def mayFolderContents(self):
         """
@@ -508,8 +521,9 @@ class ActionsPanelView(BrowserView):
         if not transition or transition['id'] not in transition_ids:
             return 'window.location.href=window.location.href;'
         if not transition['confirm']:
-            return "triggerTransition(baseUrl='{0}', viewName='@@triggertransition', " \
-                "transition='{1}', this, force_redirect={2});".format(
+            return "applyWithComments(baseUrl='{0}', viewName='@@triggertransition', " \
+                "{{'transition': '{1}'}}, this, force_redirect={2}, " \
+                "event_id='ap_transition_triggered');".format(
                     self.context.absolute_url(),
                     transition['id'],
                     self.forceRedirectAfterTransition and '1' or '0')
@@ -653,7 +667,8 @@ class DeleteGivenUidView(BrowserView):
     def __call__(self,
                  object_uid,
                  redirect=True,
-                 catch_before_delete_exception=True):
+                 catch_before_delete_exception=True,
+                 historize_in_parent=False):
         """ """
         # redirect can by passed by jQuery, in this case, we receive '0' or '1'
         if redirect == '0' or redirect == 'null':
@@ -691,6 +706,14 @@ class DeleteGivenUidView(BrowserView):
             # made in the 'if' here above, if we arrive here it is that user is doing
             # something wrong, we raise Unauthorized
             raise Unauthorized
+
+        # historize in parent if relevant
+        if historize_in_parent:
+            add_event_to_history(
+                obj.aq_inner.aq_parent,
+                "deleted_children_history",
+                "delete_element",
+                comments=self.request.form.get('comment'))
 
         # Redirect the user to the correct page and display the correct message.
         self.portal.plone_utils.addPortalMessage(**msg)

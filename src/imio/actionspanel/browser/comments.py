@@ -1,13 +1,14 @@
-from plone.memoize.instance import memoize
+# -*- coding: utf-8 -*-
 
+from imio.helpers.content import uuidToObject
+from plone import api
+from plone.memoize.instance import memoize
 from Products.Five.browser import BrowserView
 
 
-class ConfirmTransitionView(BrowserView):
-    '''
-      This manage the overlay popup displayed when a transition needs to be confirmed.
-      For other transitions, this views is also used but the confirmation popup is not shown.
-    '''
+class BaseCommentsView(BrowserView):
+    """ """
+
     def __init__(self, context, request):
         super(BrowserView, self).__init__(context, request)
         self.context = context
@@ -18,8 +19,8 @@ class ConfirmTransitionView(BrowserView):
 
     def __call__(self):
         form = self.request.form
-        # either we received form.submitted in the request because we are triggering
-        # a transition that does not need a confirmation or we clicked on the save button of
+        # either we received form.submitted in the request because we are applying
+        # an action that does not need a confirmation or we clicked on the save button of
         # the confirmation popup
         submitted = form.get('form.buttons.save', False) or form.get('form.submitted') == '1'
         cancelled = form.get('form.buttons.cancel', False)
@@ -30,10 +31,12 @@ class ConfirmTransitionView(BrowserView):
             # while the Cancel button is hit
             return self.request.response.redirect(self.context.absolute_url())
         elif submitted:
-            return actionspanel_view.triggerTransition(transition=self.request.get('transition'),
-                                                       comment=self.request.get('comment'),
-                                                       redirect=bool(self.request.get('redirect') == '1'))
+            return self.apply(actionspanel_view)
         return self.index()
+
+    def apply(self, actionspanel_view):
+        """ """
+        raise NotImplementedError
 
     def _get_actions_panel_view(self):
         '''Get and store the actionspanel view.'''
@@ -44,8 +47,22 @@ class ConfirmTransitionView(BrowserView):
         setattr(self, '_actions_panel_view', actionspanel_view)
         return actionspanel_view
 
+
+class ConfirmTransitionView(BaseCommentsView):
+    '''
+      This manage the overlay popup displayed when a transition needs to be confirmed.
+      For other transitions, this views is also used but the confirmation popup is not shown.
+    '''
+
+    def apply(self, actionspanel_view):
+        """ """
+        return actionspanel_view.triggerTransition(
+            transition=self.request.get('transition'),
+            comment=self.request.get('comment'),
+            redirect=bool(self.request.get('redirect') == '1'))
+
     @memoize
-    def initTransition(self):
+    def init_transition(self):
         '''Initialize values for the 'transition' form field.'''
         res = {}
         actionspanel_view = self._get_actions_panel_view()
@@ -64,3 +81,31 @@ class ConfirmTransitionView(BrowserView):
         for availableTransition in availableTransitions:
             if self.request.get('transition') == availableTransition['id']:
                 return availableTransition['title']
+
+
+class DeleteWithCommentsView(BaseCommentsView):
+    '''
+      This manage the overlay popup displayed when deleting an element
+      and comments may be provided.
+    '''
+
+    def __call__(self):
+        """ """
+        self.obj = uuidToObject(self.request.get('uid'))
+        return super(DeleteWithCommentsView, self).__call__()
+
+    def apply(self, actionspanel_view):
+        """ """
+        return api.portal.get().restrictedTraverse('@@delete_givenuid')(
+            object_uid=self.request.get('uid'),
+            historize_in_parent=True)
+
+    def element_title(self):
+        '''Returns element title.'''
+        return self.obj.Title()
+
+    def pre_comment(self):
+        """Possibility to insert computed pre comment before the manually encoded comments.
+           Here to be overrided."""
+        # avoid character ' in result, that breaks generated JS
+        return self.element_title().replace("'", "&#39;")

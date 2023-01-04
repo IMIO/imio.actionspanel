@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="imio.actionspanel">
+
+  <body>
+  <metal:fill fill-slot="main">
+
+    <script type="text/javascript">
+      jQuery(document).ready(preventDefaultClick);
+    </script>
+
+    <h1 class="documentFirstHeading highlightValue" tal:content="view/element_title">Title</h1>
+    <form id="commentsForm">
+      <p class="popups_field_descr highlightValue" i18n:translate="delete_confirm_message">
+        Are you sure to want to delete this element?
+      </p>
+      <p class="popups_field_descr" i18n:translate="delete_comments_historized">
+        This will be historized (including eventual comments).
+      </p>
+      <label for="comment" i18n:translate="action_comments"></label>
+      <textarea name="comment" rows="8"></textarea>
+      <div class="popupbuttons">
+        <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + context.UID() + '\', \'preComment\': \'' + view.pre_comment() + '\'}, this);;' + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
+               type="submit"
+               name="form.buttons.save"
+               class="prevent-default apButton apButtonAction apButtonAction_delete"
+               value="Delete"
+               i18n:attributes="value"
+               i18n:domain="plone" />
+        <input type="submit"
+               name="form.buttons.cancel"
+               class="standalone apButton"
+               value="Cancel"
+               i18n:attributes="value"
+               i18n:domain="plone" />
+      </div>
+    </form>
+
+  </metal:fill>
+  </body>
+</html>

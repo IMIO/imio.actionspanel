@@ -36,10 +36,10 @@
     <browser:page
         for="*"
         name="triggertransition"
-        class=".transitions.ConfirmTransitionView"
+        class=".comments.ConfirmTransitionView"
         permission="zope2.View"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
-        template="transitions.pt" />
+        template="comment_transition.pt" />
 
     <browser:page
         for="*"
@@ -47,6 +47,14 @@
         class=".views.DeleteGivenUidView"
         layer="imio.actionspanel.interfaces.IActionsPanelLayer"
         permission="zope2.View" />
+
+    <browser:page
+        for="*"
+        name="delete_with_comments"
+        class=".comments.DeleteWithCommentsView"
+        permission="zope2.View"
+        layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+        template="comment_delete.pt" />
 
     <browser:page
         for="*"

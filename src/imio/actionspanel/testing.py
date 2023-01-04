@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from plone.testing import z2, zca
-from plone.app.testing import PloneWithPackageLayer
 from plone.app.testing import FunctionalTesting
+from plone.app.testing import PloneWithPackageLayer
+from plone.testing import z2
+from plone.testing import zca
+
 import imio.actionspanel
 
 

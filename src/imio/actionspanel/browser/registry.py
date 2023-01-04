@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from zope import schema
-from zope.interface import Interface, Invalid, invariant
-from plone import api
 from imio.actionspanel import ActionsPanelMessageFactory as _
+from plone import api
+from zope import schema
+from zope.interface import Interface
+from zope.interface import Invalid
+from zope.interface import invariant
 
 
 class IImioActionsPanelConfig(Interface):

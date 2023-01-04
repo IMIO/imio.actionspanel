@@ -1,5 +1,6 @@
-from zope.publisher.browser import BrowserView
 from zope.i18n import translate
+from zope.publisher.browser import BrowserView
+
 
 TEMPLATE = """\
 var delete_confirm_message = "%(delete_confirm_message)s";
