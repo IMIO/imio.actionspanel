@@ -670,11 +670,10 @@ class DeleteGivenUidView(BrowserView):
                  catch_before_delete_exception=True,
                  historize_in_parent=False):
         """ """
-        # redirect can by passed by jQuery, in this case, we receive '0' or '1'
-        if redirect == '0' or redirect == 'null':
+        # redirect can by passed by JS, in this case, we may receive '0' or '1'
+        redirect = self.request.form.get('redirect', redirect)
+        if redirect in ('0', 'null', 0):
             redirect = False
-        elif redirect == '1':
-            redirect = True
         # Get the object to delete, if not found using UID index,
         # try with contained_uids index
         objs = uuidsToObjects(uuids=[object_uid], check_contained_uids=True)

@@ -65,9 +65,9 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
   }
 
   // refresh faceted if we are on it, else, let the view manage redirect
-  redirect = '0';
+  redirect = 0;
   if (!has_faceted() || force_redirect) {
-    redirect = '1';
+    redirect = 1;
   }
 
   // create data that will be passed to view
@@ -79,7 +79,7 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
   }
   data = {'comment': comment,
           'form.submitted': '1',
-          'redirect': redirect};
+          'redirect:int': redirect};
   // update data with extraData
   data = Object.assign({}, data, extraData);
 
@@ -93,7 +93,7 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
     type: "POST",
     success: function(data) {
         // reload the faceted page if we are on it, refresh current if not
-        if ((redirect === '0') && !(data)) {
+        if ((redirect === 0) && !(data)) {
             Faceted.URLHandler.hash_changed();
             if (event_id != null) {
                 $.event.trigger({
@@ -116,13 +116,13 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
 
 function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", redirect=null) {
   if (redirect == null && !has_faceted()) {
-    redirect = '1';
+    redirect = 1;
   }
   $.ajax({
     url: baseUrl + "/"+ view_name,
     dataType: 'html',
     data: {'object_uid': object_uid,
-           'redirect': redirect},
+           'redirect:int': redirect||0},
     cache: false,
     async: true,
     success: function(data) {
