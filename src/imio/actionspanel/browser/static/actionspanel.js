@@ -131,20 +131,24 @@ function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", 
             if (has_faceted()) {
               Faceted.URLHandler.hash_changed();
             }
-            $.event.trigger({
-                type: "ap_delete_givenuid",
-                tag: tag});
         }
         else {
-            if (data.search('<!DOCTYPE') != -1) {
-                document.open();
-                document.write(data);
-                document.close();
-            }
-            else {
-                window.location.href = data;
+            if (redirect == 1) {
+                if (data.search('<!DOCTYPE') != -1) {
+                    document.open();
+                    document.write(data);
+                    document.close();
+                }
+                else {
+                    window.location.href = data;
+                    return;
+                }
             }
         }
+        // we will arrive here also when redirect=0
+        $.event.trigger({
+            type: "ap_delete_givenuid",
+            tag: tag});
     },
     error: function(jqXHR, textStatus, errorThrown) {
       /*console.log(textStatus);*/
