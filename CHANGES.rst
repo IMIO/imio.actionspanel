@@ -10,6 +10,9 @@ Changelog
   a comment may be entered, the deletion including comment will appear in the
   history of the parent of the element that was deleted.
   [gbastien]
+- In JS function `deleteElement`, call event `ap_delete_givenuid` also when
+  parameter `redirect=0`.
+  [gbastien]
 
 1.61 (2022-10-14)
 -----------------
