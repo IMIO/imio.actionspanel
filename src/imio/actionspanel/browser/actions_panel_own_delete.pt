@@ -11,7 +11,7 @@
 
       <tal:comment replace="nothing">Button</tal:comment>
       <input tal:condition="not: useIcons" type="button" i18n:attributes="value" value="Delete"
-           tal:define="redirect python: view.forceRedirectOnOwnDelete and 'true' or 'null';"
+           tal:define="redirect python: view.forceRedirectOnOwnDelete and '1' or 'null';"
              tal:attributes="onClick string:javascript:confirmDeleteObject(base_url='${context/absolute_url}', object_uid='${objectUID}', this, msgName=null, view_name='@@delete_givenuid', redirect=${redirect});;"
              class="apButton apButtonAction apButtonAction_delete"/>
     </td>
