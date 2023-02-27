@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.62 (unreleased)
+1.62 (2023-02-27)
 -----------------
 
 - Fixed rendering of error message when an exception occurs during a transition.
