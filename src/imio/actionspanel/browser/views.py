@@ -677,6 +677,8 @@ class DeleteGivenUidView(BrowserView):
         # Get the object to delete, if not found using UID index,
         # try with contained_uids index
         objs = uuidsToObjects(uuids=[object_uid], check_contained_uids=True)
+        if not objs and "uid_catalog" in self.portal:
+            objs = uuidsToObjects(uuids=[object_uid], catalog="uid_catalog")
         if not objs:
             raise KeyError('The given uid could not be found!')
         obj = objs[0]
