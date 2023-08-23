@@ -4,7 +4,8 @@ Changelog
 1.63 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Use `uid_catalog` if available for delete by uid view [SUP-31827]
+  [mpeeters]
 
 
 1.62 (2023-02-27)
