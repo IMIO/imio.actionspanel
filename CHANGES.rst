@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.63 (unreleased)
+1.63 (2023-08-24)
 -----------------
 
 - Use `uid_catalog` if available for delete by uid view [SUP-31827]
