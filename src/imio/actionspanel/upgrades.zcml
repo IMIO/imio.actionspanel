@@ -1,8 +1,11 @@
 <configure
-    xmlns="http://namespaces.zope.org/genericsetup"
-    i18n_domain="collective.ckeditor">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="imio.actionspanel">
 
-    <upgradeSteps
+    <include package="Products.GenericSetup" file="meta.zcml" />
+
+    <genericsetup:upgradeSteps
         source="*"
         destination="1.4"
         profile="imio.actionspanel:default" >
@@ -11,9 +14,9 @@
             description="Register skins"
             import_steps="skins"
         />
-    </upgradeSteps>
+    </genericsetup:upgradeSteps>
 
-    <upgradeSteps
+    <genericsetup:upgradeSteps
         source="*"
         destination="1000"
         profile="imio.actionspanel:default" >
@@ -22,12 +25,15 @@
             description="Add icon on object buttons"
             import_steps="actions"
         />
-    </upgradeSteps>
+    </genericsetup:upgradeSteps>
 
-    <upgradeSteps
+    <genericsetup:upgradeSteps
         source="1000"
         destination="2000"
         profile="imio.actionspanel:default" >
-    </upgradeSteps>
+        <upgradeDepends
+            title="Re-apply profile so collective.fingerpointing is installed"
+            description="" />
+    </genericsetup:upgradeSteps>
 
 </configure>
