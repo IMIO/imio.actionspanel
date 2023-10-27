@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.64 (unreleased)
+1.64 (2023-10-27)
 -----------------
 
 - Fixed profile version displayed in `portal_setup` by adding a step that
