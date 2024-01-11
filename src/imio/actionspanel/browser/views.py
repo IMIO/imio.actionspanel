@@ -10,7 +10,6 @@ from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from imio.helpers.content import uuidsToObjects
 from imio.history.browser.views import should_highlight_history_link
-from imio.history.interfaces import IImioHistory
 from imio.history.utils import add_event_to_history
 from operator import itemgetter
 from plone import api
@@ -25,7 +24,6 @@ from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.dottedname.resolve import resolve
