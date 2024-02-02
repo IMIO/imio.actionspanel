@@ -4,8 +4,9 @@ Changelog
 1.65 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Use `typeInfo.Title()` to get portal_type's title instead
+  translating the `typeInfo.title`.
+  [gbastien]
 
 1.64 (2023-10-27)
 -----------------
