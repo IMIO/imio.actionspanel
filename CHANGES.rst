@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.65 (unreleased)
+1.65 (2024-02-08)
 -----------------
 
 - Use `typeInfo.Title()` to get portal_type's title instead
