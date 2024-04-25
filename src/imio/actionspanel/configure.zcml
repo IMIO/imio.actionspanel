@@ -36,7 +36,9 @@
       title="imio.actionspanel"
       directory="profiles/default"
       description="Extension profile for imio.actionspanel."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+  <subscriber for="OFS.interfaces.IItem
+                   OFS.interfaces.IObjectWillBeRemovedEvent"
+              handler=".events.onObjWillBeRemoved" />
 </configure>

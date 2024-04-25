@@ -4,8 +4,9 @@ Changelog
 1.66 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `onObjWillBeRemoved` event handler that will check for an
+  `IContentDeletable.mayDelete` adapter upon any deletion.
+  [gbastien]
 
 1.65 (2024-02-08)
 -----------------
