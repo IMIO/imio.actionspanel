@@ -42,5 +42,5 @@
        not be checked by Plone upon default deletion (manage_deleteObjects) -->
   <!--subscriber for="OFS.interfaces.IItem
                    OFS.interfaces.IObjectWillBeRemovedEvent"
-              handler=".events.onObjWillBeRemoved" /-->
+              handler="imio.actionspanel.events.onObjWillBeRemoved" /-->
 </configure>
