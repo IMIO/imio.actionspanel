@@ -4,8 +4,10 @@ Changelog
 1.66 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added `onObjWillBeRemoved` event handler (ZCML disabled by default)
+  that will check for an `IContentDeletable.mayDelete` adapter upon
+  any deletion.  Enable it when using `IContentDeletable`.
+  [gbastien]
 
 1.65 (2024-02-08)
 -----------------

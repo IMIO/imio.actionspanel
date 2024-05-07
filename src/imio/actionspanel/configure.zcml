@@ -36,7 +36,11 @@
       title="imio.actionspanel"
       directory="profiles/default"
       description="Extension profile for imio.actionspanel."
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
 
+  <!-- Enable this if using IContentDeletable adapters or this will
+       not be checked by Plone upon default deletion (manage_deleteObjects) -->
+  <!--subscriber for="OFS.interfaces.IItem
+                   OFS.interfaces.IObjectWillBeRemovedEvent"
+              handler="imio.actionspanel.events.onObjWillBeRemoved" /-->
 </configure>

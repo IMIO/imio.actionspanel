@@ -19,6 +19,8 @@ class IContentDeletable(Interface):
           This method returns True if current context is deletable.
           The default implementation does the work for checking 'Delete objects' on the
           object we want to delete, not that permission on the parent.
+          You can return a appy.gen.No instance to be able to display a message
+          why element is not deletable.
         """
 
 
