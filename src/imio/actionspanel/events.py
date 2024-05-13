@@ -22,6 +22,5 @@ def onObjWillBeRemoved(obj, event):
 
     may_delete = IContentDeletable(obj).mayDelete()
     if not may_delete:
-        import ipdb; ipdb.set_trace()
         raise Unauthorized(
             may_delete.msg if isinstance(may_delete, No) else DEFAULT_MAY_NOT_DELETE_MSG)
