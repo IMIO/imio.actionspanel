@@ -4,8 +4,8 @@
 #
 
 from imio.history.adapters import BaseImioHistoryAdapter
-from plone import api
 from Products.CMFCore.permissions import DeleteObjects
+from Products.CMFCore.utils import _checkPermission
 
 
 class ContentDeletableAdapter(object):
@@ -18,8 +18,7 @@ class ContentDeletableAdapter(object):
 
     def mayDelete(self, **kwargs):
         '''See docstring in interfaces.py'''
-        member = api.user.get_current()
-        return bool(member.has_permission(DeleteObjects, self.context))
+        return _checkPermission(DeleteObjects, self.context)
 
 
 class DeletedChildrenHistoryAdapter(BaseImioHistoryAdapter):
