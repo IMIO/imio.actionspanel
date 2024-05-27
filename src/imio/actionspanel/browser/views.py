@@ -495,7 +495,9 @@ class ActionsPanelView(BrowserView):
             typesTool = api.portal.get_tool('portal_types')
             type_info = typesTool.getTypeInfo(self.context)
             transition_title = u"{0} {1}".format(safe_unicode(transition_title),
-                                                 safe_unicode(type_info.Title()))
+                                                 translate(type_info.title,
+                                                           domain=type_info.i18n_domain,
+                                                           context=self.request))
         return transition_title
 
     def computeTriggerTransitionLink(self, transition):
