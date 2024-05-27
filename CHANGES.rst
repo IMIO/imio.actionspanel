@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.66 (unreleased)
+1.66 (2024-05-27)
 -----------------
 
 - Added `onObjWillBeRemoved` event handler (ZCML disabled by default)
