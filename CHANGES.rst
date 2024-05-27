@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.67 (unreleased)
+1.67 (2024-05-27)
 -----------------
 
 - Reverted change introduced in version 1.65 for now:
