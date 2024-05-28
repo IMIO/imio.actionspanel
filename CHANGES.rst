@@ -4,8 +4,9 @@ Changelog
 1.68 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Moved JS code to avoid double click on transition link to `imio.helpers`
+  under name `tmp_disable_link` and use it.
+  [gbastien]
 
 1.67 (2024-05-27)
 -----------------

@@ -48,10 +48,7 @@ jQuery(document).ready(preventDefaultClick);
 function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, event_id=null) {
 
   // avoid double clicks
-  tag.style = "pointer-events:none;";
-  setTimeout(function() {
-      tag.style = "";
-  }, 2000);
+  temp_disable_link(tag);
 
   // find comment in the page
   comment = '';
