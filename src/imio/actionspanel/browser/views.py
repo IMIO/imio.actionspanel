@@ -414,7 +414,7 @@ class ActionsPanelView(BrowserView):
         if type(transitions) is not dict:
             transitions = dict([(t, DEFAULT_CONFIRM_VIEW) for t in transitions])
         else:
-            for name, confirm_view in transitions.iteritems():
+            for name, confirm_view in transitions.items():
                 if not confirm_view:
                     transitions[name] = DEFAULT_CONFIRM_VIEW
         return transitions
@@ -743,7 +743,7 @@ class AsyncActionsPanelView(BrowserView):
 
     def _convert_form_values(self):
         """As values are sent by JS, we need to change 'false' to False, 'true' to True, ..."""
-        values = {key: json.loads(value) for key, value in self.request.form.items()}
+        values = {key: json.loads(value) for key, value in list(self.request.form.items())}
         return values
 
     def show(self):
