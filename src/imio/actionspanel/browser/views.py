@@ -595,7 +595,7 @@ class ActionsPanelView(BrowserView):
             wfTool.doActionFor(self.context,
                                transition,
                                comment=comment)
-        except Exception, exc:
+        except Exception as exc:
             # abort because element state was changed
             transaction.abort()
             import traceback
@@ -694,7 +694,7 @@ class DeleteGivenUidView(BrowserView):
             from OFS.ObjectManager import BeforeDeleteException
             try:
                 unrestrictedRemoveGivenObject(obj)
-            except BeforeDeleteException, exc:
+            except BeforeDeleteException as exc:
                 # abort because element was removed
                 transaction.abort()
                 msg = {'message': u'{0} ({1})'.format(
