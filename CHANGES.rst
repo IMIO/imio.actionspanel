@@ -7,6 +7,8 @@ Changelog
 - Moved JS code to avoid double click on transition link to `imio.helpers`
   under name `tmp_disable_link` and use it.
   [gbastien]
+- Added back reverted code regarding `portal_type` title.
+  [gbastien]
 
 1.67 (2024-05-27)
 -----------------

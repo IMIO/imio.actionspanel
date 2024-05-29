@@ -28,6 +28,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.dottedname.resolve import resolve
 from zope.i18n import translate
+from zope.i18nmessageid import Message
 
 import json
 import transaction
@@ -494,10 +495,11 @@ class ActionsPanelView(BrowserView):
         if self.appendTypeNameToTransitionLabel:
             typesTool = api.portal.get_tool('portal_types')
             type_info = typesTool.getTypeInfo(self.context)
+            type_info_title = type_info.Title()
+            if isinstance(type_info_title, Message):
+                type_info_title = translate(type_info_title, context=self.request)
             transition_title = u"{0} {1}".format(safe_unicode(transition_title),
-                                                 translate(type_info.title,
-                                                           domain=type_info.i18n_domain,
-                                                           context=self.request))
+                                                 safe_unicode(type_info_title))
         return transition_title
 
     def computeTriggerTransitionLink(self, transition):
