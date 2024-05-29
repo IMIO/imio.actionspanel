@@ -4,7 +4,7 @@
 #
 
 from AccessControl import Unauthorized
-from appy.gen import No
+from appy.utils import No
 from imio.actionspanel.interfaces import IContentDeletable
 
 

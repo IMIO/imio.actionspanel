@@ -2,7 +2,7 @@
 
 from AccessControl import Unauthorized
 from Acquisition import aq_base
-from appy.gen import No
+from appy.utils import No
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
