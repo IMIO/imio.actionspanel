@@ -4,8 +4,15 @@
 #
 
 from AccessControl import Unauthorized
-from appy.gen import No
 from imio.actionspanel.interfaces import IContentDeletable
+
+import six
+
+
+if six.PY2:
+    from appy.gen import No
+else:
+    from appy.utils import No
 
 
 DEFAULT_MAY_NOT_DELETE_MSG = "You can not delete this element!"
