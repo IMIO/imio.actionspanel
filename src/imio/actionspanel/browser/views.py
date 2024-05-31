@@ -2,7 +2,8 @@
 
 from AccessControl import Unauthorized
 from Acquisition import aq_base
-from appy.gen import No
+
+import six
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
@@ -33,6 +34,10 @@ from zope.i18nmessageid import Message
 import json
 import transaction
 
+if six.PY2:
+    from appy.gen import No
+else:
+    from appy.utils import No
 
 DEFAULT_CONFIRM_VIEW = '@@triggertransition'
 
@@ -46,7 +51,7 @@ class ActionsPanelView(BrowserView):
         self.context = context
         self.request = request
         self.parent = self.context.getParentNode()
-        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
+        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', No@ne)
         self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
         if not self.portal_url or not self.portal:
             self.portal = api.portal.get()
@@ -595,7 +600,7 @@ class ActionsPanelView(BrowserView):
             wfTool.doActionFor(self.context,
                                transition,
                                comment=comment)
-        except Exception, exc:
+        except Exception as exc:
             # abort because element state was changed
             transaction.abort()
             import traceback
@@ -646,7 +651,7 @@ class ActionsPanelView(BrowserView):
             context = self.context
         try:
             interface_class = resolve(interface_name)
-        except Exception:
+        except Exception as exc:
             return False
         return interface_class.providedBy(context)
 
@@ -694,7 +699,7 @@ class DeleteGivenUidView(BrowserView):
             from OFS.ObjectManager import BeforeDeleteException
             try:
                 unrestrictedRemoveGivenObject(obj)
-            except BeforeDeleteException, exc:
+            except BeforeDeleteException as exc:
                 # abort because element was removed
                 transaction.abort()
                 msg = {'message': u'{0} ({1})'.format(
