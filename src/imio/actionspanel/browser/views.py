@@ -51,7 +51,7 @@ class ActionsPanelView(BrowserView):
         self.context = context
         self.request = request
         self.parent = self.context.getParentNode()
-        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', No@ne)
+        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
         self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
         if not self.portal_url or not self.portal:
             self.portal = api.portal.get()
@@ -651,7 +651,7 @@ class ActionsPanelView(BrowserView):
             context = self.context
         try:
             interface_class = resolve(interface_name)
-        except Exception as exc:
+        except Exception:
             return False
         return interface_class.providedBy(context)
 
