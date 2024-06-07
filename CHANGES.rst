@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.68 (unreleased)
+1.68 (2024-06-07)
 -----------------
 
 - Moved JS code to avoid double click on transition link to `imio.helpers`
