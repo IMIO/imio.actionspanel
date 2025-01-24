@@ -14,6 +14,12 @@ initializeOverlays = function () {
         $('a.link-overlay-actionspanel.transition-overlay').prepOverlay({
               subtype: 'ajax',
               closeselector: '[name="form.buttons.cancel"]',
+        config: {
+            onBeforeClose : function (e) {
+                // avoid closing overlay when click outside overlay
+                if (e.target.id == "exposeMask") {return false;}
+            },
+        },
         });
         // Delete comments popup
         $('a.link-overlay-actionspanel.delete-comments-overlay').prepOverlay({

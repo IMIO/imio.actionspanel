@@ -4,8 +4,9 @@ Changelog
 1.69 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Prevent closing the workflow transition comment overlay when clicking outside
+  it so we avoid losing comment in case user click outside by mistake.
+  [gbastien]
 
 1.68 (2024-06-07)
 -----------------
