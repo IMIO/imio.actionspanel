@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.69 (unreleased)
+1.69 (2025-02-03)
 -----------------
 
 - Prevent closing the workflow transition comment overlay when clicking outside
