@@ -17,7 +17,10 @@ initializeOverlays = function () {
         config: {
             onBeforeClose : function (e) {
                 // avoid closing overlay when click outside overlay
-                if (e.target.id == "exposeMask") {return false;}
+                // or when it is closed by WSC
+                if (e.target.id == "exposeMask" ||
+                    e.target.classList.contains("wsc-icon") ||
+                    e.target.classList.contains("wsc-button")) {return false;}
             },
         },
         });
