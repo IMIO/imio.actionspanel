@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.70 (unreleased)
+1.70 (2025-05-27)
 -----------------
 
 - Avoid WSC (`webspellchecker`) closing the workflow transition comment overlay
