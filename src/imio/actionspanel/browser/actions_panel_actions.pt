@@ -14,11 +14,11 @@
   <form tal:condition="python: not (view.useIcons and action['icon'])"
         tal:attributes="class python: 'apButtonAction_form_%s' % action['id'];
                         action action/url;">
-    <input class="#"
-           type="submit"
-           i18n:attributes="value;title"
+    <button class="#"
+           i18n:attributes="title"
+           i18n:translate=""
+           tal:content="python: action['title']"
            tal:attributes="class python: 'apButton apButtonAction apButtonAction_%s' % action['id'];
-                           title python: action['description'];
-                           value python: action['title'];"/>
+                           title python: action['description'];" />
   </form>
 </td>
