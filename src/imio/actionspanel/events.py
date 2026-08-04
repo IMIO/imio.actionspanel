@@ -20,7 +20,11 @@ def onObjWillBeRemoved(obj, event):
     if event.object.meta_type in ['Plone Site']:
         return
 
-    may_delete = IContentDeletable(obj).mayDelete()
+    # pass initial object that triggered the event under name "iniatiator"
+    # this way when deleting an element containing other elements, we can
+    # check what element was initially deleted
+    may_delete = IContentDeletable(obj).mayDelete(initiator=event.object)
+
     if not may_delete:
         raise Unauthorized(
             may_delete.msg if isinstance(may_delete, No) else DEFAULT_MAY_NOT_DELETE_MSG)

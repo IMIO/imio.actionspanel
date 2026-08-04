@@ -16,7 +16,7 @@ class ContentDeletableAdapter(object):
     def __init__(self, context):
         self.context = context
 
-    def mayDelete(self, **kwargs):
+    def mayDelete(self, initiator=None, **kwargs):
         '''See docstring in interfaces.py'''
         return _checkPermission(DeleteObjects, self.context)
 
