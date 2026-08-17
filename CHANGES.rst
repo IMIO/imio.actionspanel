@@ -4,8 +4,11 @@ Changelog
 1.71 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- Added parameter `initiator=None` to `ContentDeletableAdapter.mayDelete`
+  this parameter is managed by `events.onObjWillBeRemoved` and will contain
+  the originally deleted element in case we have subelements that trigger
+  themselves the `ContentDeletableAdapter.mayDelete` mechanism.
+  [gbastien]
 
 1.70 (2025-05-27)
 -----------------
