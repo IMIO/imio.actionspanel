@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.71 (unreleased)
+1.71 (2026-08-19)
 -----------------
 
 - Added parameter `initiator=None` to `ContentDeletableAdapter.mayDelete`
