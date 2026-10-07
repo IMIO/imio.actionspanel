@@ -44,6 +44,7 @@ setup(
         'imio.helpers>=0.74',
         'imio.history>=1.17',
         'plone.api',
+        'six',
     ],
     extras_require={
         'test': [

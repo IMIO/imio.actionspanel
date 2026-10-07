@@ -7,6 +7,8 @@ from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
 
+import six
+
 
 class IImioActionsPanelConfig(Interface):
     """
@@ -17,7 +19,8 @@ class IImioActionsPanelConfig(Interface):
         title=_(u'Transitions to confirm'),
         description=_(u'Define for each object transition the optional corresponding view'),
         required=False,
-        value_type=schema.BytesLine(
+        # bytes on Python 2 (as before), text on Python 3 (the values are split on '|')
+        value_type=(schema.BytesLine if six.PY2 else schema.TextLine)(
             title=_("Transition value"),
             description=_('Formatted like "portal_type" "." "transition name" "|" "view", '
                           'like "Document.publish|" . The view can be empty'),

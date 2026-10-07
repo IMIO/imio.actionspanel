@@ -702,11 +702,13 @@ class DeleteGivenUidView(BrowserView):
             except BeforeDeleteException as exc:
                 # abort because element was removed
                 transaction.abort()
+                # Python 3 exceptions have no 'message'
+                exc_msg = exc.message if six.PY2 else str(exc)
                 msg = {'message': u'{0} ({1})'.format(
-                    exc.message, exc.__class__.__name__),
+                    exc_msg, exc.__class__.__name__),
                     'type': 'error'}
                 if not catch_before_delete_exception:
-                    raise BeforeDeleteException(exc.message)
+                    raise BeforeDeleteException(exc_msg)
         else:
             # as the action calling delete_givenuid is already protected by the check
             # made in the 'if' here above, if we arrive here it is that user is doing
