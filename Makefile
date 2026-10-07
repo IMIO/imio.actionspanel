@@ -70,6 +70,22 @@ test: oneof-plone bin/buildout  ## run bin/test without robot
 	# can be run by example with: make test opt='-t "settings"'
 	bin/test -t \!robot ${opt}
 
+# robot tests: Firefox headless, Zope server on ZSERVER_PORT, robot listener (test isolation) on LISTENER_PORT
+ZSERVER_PORT ?= 55001
+LISTENER_PORT ?= 49999
+
+.PHONY: robot
+robot: oneof-plone bin/buildout  ## run robot tests in headless firefox
+	# one scenario: env MOZ_HEADLESS=1 ZSERVER_PORT=$(ZSERVER_PORT) bin/test --all -t "delete button" (regex on the
+	# scenario name; a -t in opt is ORed with -t robot)
+	env MOZ_HEADLESS=1 ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) bin/test --all -t robot ${opt}
+
+.PHONY: robot-server
+robot-server:  ## Starts robot server (layer=<layer name in testing.py>, default ROBOT_ACCEPTANCE)
+	# run a robot file against it with: env MOZ_HEADLESS=1 ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/robot -v PLONE_MAJOR:$(firstword $(subst ., ,$(plone))) src/imio/actionspanel/tests/robot/test_actions_panel.robot
+	# --no-reload: the reload watchdog restarts the server when a template is read
+	env ZSERVER_HOST=localhost ZSERVER_PORT=$(ZSERVER_PORT) LISTENER_PORT=$(LISTENER_PORT) bin/robot-server --no-reload -v imio.actionspanel.testing.$(or $(layer),ROBOT_ACCEPTANCE)
+
 .PHONY: cleanall
 cleanall:  ## Cleans all installed buildout files
 	rm -fr bin include lib local share develop-eggs downloads eggs parts .installed.cfg .mr.developer.cfg .python-version pyvenv.cfg
