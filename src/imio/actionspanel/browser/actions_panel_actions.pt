@@ -7,7 +7,7 @@
                        href python: not useOnClick and action['url'] or '';
                        target python: action['link_target'] or '_parent'"
        tal:condition="python: view.useIcons and action['icon']">
-      <img tal:attributes="src string:${view/portal_url}/${action/icon};
+      <img tal:attributes="src python: view.iconUrl(action['icon']);
                            title python: action['title'];" i18n:attributes="title" />
     </a>
   <tal:comment replace="nothing">Button</tal:comment>

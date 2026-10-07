@@ -2,6 +2,7 @@
 from imio.actionspanel.interfaces import IActionsPanelLayer
 from imio.actionspanel.testing import IntegrationTestCase
 from plone import api
+from plone.base.utils import get_installer
 from plone.browserlayer.utils import registered_layers
 from zope.i18n import translate
 
@@ -13,27 +14,44 @@ class TestSetup(IntegrationTestCase):
     def test_metadata(self):
         setup = self.portal.portal_setup
         self.assertEqual(
-            setup.getLastVersionForProfile("imio.actionspanel:default"), ("2000",)
+            setup.getLastVersionForProfile("imio.actionspanel:default"), ("3000",)
         )
-        # dependencies
-        self.assertNotEqual(
-            setup.getLastVersionForProfile("imio.history:default"), "unknown"
-        )
+        # dependencies, imio.helpers: helpers.js used by actionspanel.js
+        for profile in ("imio.helpers:default", "imio.history:default"):
+            self.assertNotEqual(setup.getLastVersionForProfile(profile), "unknown")
         self.assertNotEqual(
             setup.getLastVersionForProfile("collective.fingerpointing:default"),
             "unknown",
         )
 
-    def test_cssregistry(self):
-        self.assertIn(
-            "++resource++imio.actionspanel/actionspanel.css",
-            self.portal.portal_css.getResourceIds(),
+    def test_bundles(self):
+        for name, compiled in (
+            ("imio-actionspanel", "jscompilation"),
+            ("imio-actionspanel", "csscompilation"),
+            ("imio-actionspanel-variables", "jscompilation"),
+            # imio.helpers (dependency)
+            ("imio-helpers", "jscompilation"),
+        ):
+            prefix = "plone.bundles/{0}.".format(name)
+            self.assertTrue(api.portal.get_registry_record(prefix + "enabled"))
+            path = api.portal.get_registry_record(prefix + compiled)
+            # the resource is served
+            self.assertTrue(self.portal.restrictedTraverse(path))
+        self.assertEqual(
+            api.portal.get_registry_record("plone.bundles/imio-actionspanel.depends"),
+            "plone",
         )
-
-    def test_jsregistry(self):
-        resource_ids = self.portal.portal_javascripts.getResourceIds()
-        self.assertIn("++resource++imio.actionspanel/actionspanel.js", resource_ids)
-        self.assertIn("actions_panel_javascript_variables.js", resource_ids)
+        # loaded before the inline scripts of the page (preventDefaultClick)
+        for key in ("load_async", "load_defer"):
+            self.assertFalse(
+                api.portal.get_registry_record("plone.bundles/imio-actionspanel." + key)
+            )
+        self.assertEqual(
+            api.portal.get_registry_record(
+                "plone.bundles/imio-actionspanel.jscompilation"
+            ),
+            "++resource++imio.actionspanel/actionspanel.js",
+        )
 
     def test_registry(self):
         self.assertIsNone(
@@ -42,22 +60,19 @@ class TestSetup(IntegrationTestCase):
             )
         )
 
-    def test_skins(self):
-        skins = self.portal.portal_skins
-        self.assertIn("actionspanel_plone", skins.objectIds())
-        self.assertEqual(
-            skins.getSkinPath(skins.getDefaultSkin()).split(",")[:2],
-            ["custom", "actionspanel_plone"],
-        )
-        # skin elements relied on by dependents
+    def test_resources(self):
+        # former skin elements relied on by dependents (Plone 4 skin layer actionspanel_plone)
         for name in (
+            "folder_position",
             "folder_position_typeaware",
-            "rename_icon.gif",
-            "extedit_icon.png",
+            "++resource++imio.actionspanel/rename_icon.gif",
+            "++resource++imio.actionspanel/extedit_icon.png",
         ):
             self.assertTrue(self.portal.restrictedTraverse(name))
+        self.assertNotIn("actionspanel_plone", self.portal.portal_skins.objectIds())
 
     def test_actions(self):
+        # Plone's action icons are not overridden anymore (Plone 6 icon names)
         actions = self.portal.portal_actions
         icons = dict(
             (action_id, actions.object_buttons[action_id].icon_expr)
@@ -66,36 +81,45 @@ class TestSetup(IntegrationTestCase):
         self.assertEqual(
             icons,
             {
-                "cut": "string:$portal_url/cut_icon.png",
-                "copy": "string:$portal_url/copy_icon.png",
-                "paste": "string:$portal_url/paste_icon.png",
-                "delete": "string:$portal_url/delete_icon.png",
-                "rename": "string:$portal_url/rename_icon.gif",
+                "cut": "string:plone-cut",
+                "copy": "string:plone-copy",
+                "paste": "string:plone-paste",
+                "delete": "string:plone-delete",
+                "rename": "string:plone-rename",
             },
         )
-        self.assertEqual(
-            actions.document_actions.extedit.icon_expr,
-            "string:$portal_url/extedit_icon.png",
-        )
+
+    def test_uninstall(self):
+        installer = get_installer(self.portal, self.request)
+        installer.uninstall_product("imio.actionspanel")
+        self.assertFalse(installer.is_product_installed("imio.actionspanel"))
+        self.assertNotIn(IActionsPanelLayer, registered_layers())
+        records = api.portal.get_tool("portal_registry").records
+        for name in (
+            "plone.bundles/imio-actionspanel.jscompilation",
+            "plone.bundles/imio-actionspanel-variables.jscompilation",
+            "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions",
+        ):
+            self.assertNotIn(name, records)
 
     def test_locales(self):
         self.assertEqual(
             translate(
-                u"delete_confirm_message",
+                "delete_confirm_message",
                 domain="imio.actionspanel",
                 target_language="fr",
             ),
-            u"\xcates-vous certain de vouloir supprimer d\xe9finitivement cet \xe9l\xe9ment de l'application?",
+            "\xcates-vous certain de vouloir supprimer d\xe9finitivement cet \xe9l\xe9ment de l'application?",
         )
         self.assertEqual(
             translate(
-                u"delete_confirm_message",
+                "delete_confirm_message",
                 domain="imio.actionspanel",
                 target_language="es",
             ),
-            u"\xbfEst\xe1s seguro de que deseas eliminar permanentemente este elemento de la aplicaci\xf3n?",
+            "\xbfEst\xe1s seguro de que deseas eliminar permanentemente este elemento de la aplicaci\xf3n?",
         )
         self.assertEqual(
-            translate(u"delete_element", domain="plone", target_language="fr"),
-            u"Supprimer un \xe9l\xe9ment",
+            translate("delete_element", domain="plone", target_language="fr"),
+            "Supprimer un \xe9l\xe9ment",
         )

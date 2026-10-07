@@ -1,10 +1,26 @@
 Changelog
 =========
 
-1.72 (unreleased)
------------------
+2.0 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Plone 6.2 / Python 3.10-3.13 compatibility, drop Plone 4 and Python 2: CSS/JS in bundles
+  `imio-actionspanel` and `imio-actionspanel-variables`, skin layer removed (`folder_position_typeaware` and
+  `folder_position` are browser views, `rename_icon.gif`/`extedit_icon.png` are in `++resource++imio.actionspanel`),
+  Plone's action icons not overridden anymore, uninstall profile, no upgrade step (profile version 3000).
+  [chris-adam]
+- Plone 6 UI: transition confirmation, delete with comments and history in `pat-plone-modal` modals, icons from `@@iconresolver`.
+  [chris-adam]
+- Send the CSRF token (`_authenticator`) with the AJAX writes, the move arrows and the object_buttons links.
+  [chris-adam]
+- Fixed delete with comments deleting the folder of a document: the form is the element's and deletes the `uid` element.
+  [chris-adam]
+- Fixed the invalid jQuery selector closing the comment forms (`input.[name=...]`).
+  [chris-adam]
+- Depend on `imio.helpers` (ZCML and `imio.helpers:default` profile): `actionspanel.js` uses its `helpers.js`.
+  [chris-adam]
+- Renamed `ActionsPanelViewlet.async` to `is_async` (`async` is a Python 3 keyword).
+  [aduchene]
 
 
 1.71 (2026-08-19)

@@ -7,8 +7,8 @@
             <td class="noPadding" tal:condition="not:isLastId">
                 <a tal:attributes="href python: view.moveUrl % ('bottom', view.objId);">
                     <img tal:define="dummy view/saveHasActions"
-                         src="arrowBottom.png"
-                         tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowBottom.png;"
+                         src="arrow-bar-down.svg"
+                         tal:attributes="src python: view.iconUrl('arrow-bar-down');"
                          title="title_move_item_bottom"
                          i18n:attributes="title" />
                 </a>
@@ -16,8 +16,8 @@
             <td class="noPadding" tal:condition="not:isLastId">
                 <a tal:attributes="href python: view.moveUrl % ('down', view.objId);">
                   <img tal:define="dummy view/saveHasActions"
-                       src="arrowDown.png"
-                       tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowDown.png;"
+                       src="arrow-down.svg"
+                       tal:attributes="src python: view.iconUrl('arrow-down');"
                        title="title_move_item_down"
                        i18n:attributes="title" />
                 </a>
@@ -25,8 +25,8 @@
             <td class="noPadding" tal:condition="not:isFirstId">
                 <a tal:attributes="href python: view.moveUrl % ('up', view.objId);">
                   <img tal:define="dummy view/saveHasActions"
-                       src="arrowUp.png"
-                       tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowUp.png;"
+                       src="arrow-up.svg"
+                       tal:attributes="src python: view.iconUrl('arrow-up');"
                        title="title_move_item_up"
                        i18n:attributes="title" />
                 </a>
@@ -34,8 +34,8 @@
             <td class="noPadding" tal:condition="not:isFirstId">
                 <a tal:attributes="href python: view.moveUrl % ('top', view.objId);">
                     <img tal:define="dummy view/saveHasActions"
-                         src="arrowTop.png"
-                         tal:attributes="src string:${view/portal_url}/++resource++imio.actionspanel/arrowTop.png;"
+                         src="arrow-bar-up.svg"
+                         tal:attributes="src python: view.iconUrl('arrow-bar-up');"
                          title="title_move_item_top"
                          i18n:attributes="title" />
                 </a>

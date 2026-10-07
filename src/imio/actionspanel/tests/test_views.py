@@ -11,18 +11,25 @@ from plone import api
 from plone.app.testing import login
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.registry import field
+from plone.registry import Record
 from Products.CMFCore.ActionInformation import Action
 from Products.DCWorkflow.Guard import Guard
+from Products.GenericSetup import EXTENSION
+from Products.GenericSetup import profile_registry
 from zope.component import getGlobalSiteManager
 from zope.interface import alsoProvides
 from zope.interface import Interface
+
+import os
 
 
 TRANSITIONS_RECORD = (
     "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions"
 )
-SUBMIT_TITLE = u"Member submits content for publication"
-PUBLISH_TITLE = u"Reviewer publishes content"
+SUBMIT_TITLE = "Member submits content for publication"
+PUBLISH_TITLE = "Reviewer publishes content"
+ICONS_URL = "http://nohost/plone/++plone++bootstrap-icons/"
 
 
 class INotRemovable(Interface):
@@ -52,11 +59,38 @@ class TestActionsPanelView(BaseViewsTestCase):
         view(**kwargs)
         return view
 
+    def token(self):
+        """CSRF token of the URLs of this request (plone.protect's addTokenToUrl stores it)."""
+        return self.request.environ["_auth_token"]
+
     def login_member(self, roles=("Reader",)):
         """Log in as the member, with p_roles on the folder."""
         api.user.grant_roles(username=MEMBER_ID, obj=self.folder, roles=roles)
         login(self.portal, MEMBER_ID)
         self.clean_request_caches()
+
+    def install_externaleditor(self):
+        """Make collective.externaleditor installed (its profile is marked as applied),
+        enabled for Documents (its registry records)."""
+        profile_registry.registerProfile(
+            "default",
+            "collective.externaleditor",
+            "",
+            os.path.dirname(__file__),
+            product="collective.externaleditor",
+            profile_type=EXTENSION,
+        )
+        self.addCleanup(
+            profile_registry.unregisterProfile, "default", "collective.externaleditor"
+        )
+        self.portal.portal_setup.setLastVersionForProfile(
+            "collective.externaleditor:default", "1"
+        )
+        records = api.portal.get_tool("portal_registry").records
+        records["externaleditor.ext_editor"] = Record(field.Bool(), True)
+        records["externaleditor.externaleditor_enabled_types"] = Record(
+            field.List(value_type=field.TextLine()), ["Document"]
+        )
 
     def test___init__(self):
         view = self.doc.restrictedTraverse("@@actions_panel")
@@ -156,7 +190,7 @@ class TestActionsPanelView(BaseViewsTestCase):
             showActions=False,
         )
         view = self.doc.restrictedTraverse("@@actions_panel")
-        self.assertEqual(view(useIcons=False, **params).strip(), u"")
+        self.assertEqual(view(useIcons=False, **params).strip(), "")
         self.assertFalse(view.hasActions)
         rendered = view(useIcons=True, **params)
         self.assertIn("<td>-</td>", rendered)
@@ -209,9 +243,12 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertEqual(view.objId, "doc")
         self.assertIn(move_url.format("down", "doc"), rendered)
         self.assertIn(move_url.format("bottom", "doc"), rendered)
+        # with the CSRF token
+        self.assertIn('&amp;_authenticator={0}"'.format(self.token()), rendered)
         self.assertNotIn("position=up", rendered)
         self.assertNotIn("position=top", rendered)
-        self.assertIn("++resource++imio.actionspanel/arrowBottom.png", rendered)
+        self.assertIn('src="{0}arrow-bar-down.svg"'.format(ICONS_URL), rendered)
+        self.assertIn('src="{0}arrow-down.svg"'.format(ICONS_URL), rendered)
         self.assertTrue(view.hasActions)
         # middle element: all the arrows
         rendered = self.panel(doc2, showArrows=True).renderArrows()
@@ -221,6 +258,8 @@ class TestActionsPanelView(BaseViewsTestCase):
         rendered = self.panel(doc3, showArrows=True).renderArrows()
         self.assertIn(move_url.format("up", "doc3"), rendered)
         self.assertIn(move_url.format("top", "doc3"), rendered)
+        self.assertIn('src="{0}arrow-up.svg"'.format(ICONS_URL), rendered)
+        self.assertIn('src="{0}arrow-bar-up.svg"'.format(ICONS_URL), rendered)
         self.assertNotIn("position=down", rendered)
         # portal_type aware: only elements of the same portal_type are considered
         view = self.panel(doc3, showArrows=True, arrowsPortalTypeAware=True)
@@ -235,16 +274,19 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertEqual(self.panel(showArrows=True).renderArrows(), "")
 
     def test__moveUrl(self):
+        # with the CSRF token (plone.protect): the arrows are links
         view = self.panel()
         self.assertEqual(
             view._moveUrl(),
-            "http://nohost/plone/folder/folder_position?position=%s&id=%s&template_id=http://nohost",
+            "http://nohost/plone/folder/folder_position?position=%s&id=%s&template_id=http://nohost"
+            "&_authenticator=" + self.token(),
         )
         view.arrowsPortalTypeAware = True
         self.request["URL"] = "http://nohost/plone/folder"
         self.assertEqual(
             view._moveUrl(),
-            "http://nohost/plone/folder/folder_position_typeaware?position=%s&id=%s&template_id=http://nohost/plone/folder",
+            "http://nohost/plone/folder/folder_position_typeaware?position=%s&id=%s&template_id=http://nohost/plone/folder"
+            "&_authenticator=" + self.token(),
         )
 
     def test__returnTo(self):
@@ -272,10 +314,21 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertIn(
             "applyWithComments(baseUrl='http://nohost/plone/folder/doc'", rendered
         )
-        # transition to confirm: overlay
+        self.assertNotIn("data-pat-plone-modal", rendered)
+        # transition to confirm: modal, a click outside doesn't close it
         api.portal.set_registry_record(TRANSITIONS_RECORD, ["Document.submit|"])
         rendered = self.panel().renderTransitions()
-        self.assertIn('class="link-overlay-actionspanel transition-overlay"', rendered)
+        self.assertIn(
+            'class="pat-plone-modal link-overlay-actionspanel transition-overlay"',
+            rendered,
+        )
+        self.assertIn(
+            'data-pat-plone-modal="{&quot;automaticallyAddButtonActions&quot;: false, '
+            "&quot;loadLinksWithinModal&quot;: false, "
+            "&quot;onRender&quot;: &quot;actionsPanelModalRendered&quot;, "
+            '&quot;backdropOptions&quot;: {&quot;closeOnClick&quot;: false}}"',
+            rendered,
+        )
         self.assertIn(
             "http://nohost/plone/folder/doc/@@triggertransition?transition=submit&amp;"
             "actionspanel_view_name=actions_panel&amp;force_redirect_after_transition=0",
@@ -297,7 +350,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.request.set("ap_guard", No("Not ready yet"))
         rendered = self.panel(useIcons=False).renderTransitions()
         self.assertIn('class="apButton notTriggerableTransitionButton"', rendered)
-        self.assertIn(u"{0} ➔ Not ready yet".format(PUBLISH_TITLE), rendered)
+        self.assertIn("{0} ➔ Not ready yet".format(PUBLISH_TITLE), rendered)
         self.assertNotIn("transition=publish", rendered)
         self.wf.transitions.publish.actbox_icon = "%(portal_url)s/publish.png"
         rendered = self.panel().renderTransitions()
@@ -317,6 +370,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         rendered = view.renderFolderContents()
         self.assertIn('href="http://nohost/plone/folder/folder_contents"', rendered)
         self.assertIn('class="my-class"', rendered)
+        self.assertIn('src="{0}folder2-open.svg"'.format(ICONS_URL), rendered)
         self.assertIn('target="_parent"', rendered)
         # as button
         rendered = self.panel(
@@ -337,7 +391,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertEqual(self.panel(showEdit=False).renderEdit(), "")
         rendered = self.panel().renderEdit()
         self.assertIn('href="http://nohost/plone/folder/doc/edit"', rendered)
-        self.assertIn('src="http://nohost/plone/edit.png"', rendered)
+        self.assertIn('src="{0}pencil.svg"'.format(ICONS_URL), rendered)
         self.assertIn('target="_parent"', rendered)
         rendered = self.panel(useIcons=False).renderEdit()
         self.assertIn('action="http://nohost/plone/folder/doc/edit"', rendered)
@@ -353,6 +407,13 @@ class TestActionsPanelView(BaseViewsTestCase):
         )
         # collective.externaleditor is not installed
         self.assertEqual(self.panel(showExtEdit=True).renderExtEdit(), "")
+        self.install_externaleditor()
+        rendered = self.panel(
+            showExtEdit=True, ext_edit_action_class="my-class"
+        ).renderExtEdit()
+        self.assertIn('href="http://nohost/plone/folder/doc/external_edit"', rendered)
+        self.assertIn('class="my-class"', rendered)
+        self.assertIn('src="{0}pencil-square.svg"'.format(ICONS_URL), rendered)
 
     def test_renderOwnDelete(self):
         uid = self.doc.UID()
@@ -363,7 +424,7 @@ class TestActionsPanelView(BaseViewsTestCase):
             "msgName=null, view_name='@@delete_givenuid', redirect=null);".format(uid),
             rendered,
         )
-        self.assertIn('src="http://nohost/plone/delete_icon.png"', rendered)
+        self.assertIn('src="{0}trash.svg"'.format(ICONS_URL), rendered)
         # as button, forceRedirectOnOwnDelete is used
         rendered = self.panel(useIcons=False).renderOwnDelete()
         self.assertIn("apButtonAction_delete", rendered)
@@ -382,12 +443,23 @@ class TestActionsPanelView(BaseViewsTestCase):
             showOwnDeleteWithComments=True
         ).renderOwnDeleteWithComments()
         self.assertIn(
-            'class="link-overlay-actionspanel delete-comments-overlay"', rendered
+            'class="pat-plone-modal link-overlay-actionspanel delete-comments-overlay"',
+            rendered,
         )
         self.assertIn(
-            'href="@@delete_with_comments?uid={0}"'.format(self.doc.UID()), rendered
+            'data-pat-plone-modal="{&quot;automaticallyAddButtonActions&quot;: false, '
+            "&quot;loadLinksWithinModal&quot;: false, "
+            '&quot;onRender&quot;: &quot;actionsPanelModalRendered&quot;}"',
+            rendered,
         )
-        self.assertIn('src="http://nohost/plone/delete_icon.png"', rendered)
+        # the form of the element itself (was relative: the folder of a document, see Known issues)
+        self.assertIn(
+            'href="http://nohost/plone/folder/doc/@@delete_with_comments?uid={0}"'.format(
+                self.doc.UID()
+            ),
+            rendered,
+        )
+        self.assertIn('src="{0}trash.svg"'.format(ICONS_URL), rendered)
         rendered = self.panel(
             useIcons=False, showOwnDeleteWithComments=True
         ).renderOwnDeleteWithComments()
@@ -401,13 +473,22 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertIsNone(self.panel(showActions=False).renderActions())
         # as icons
         rendered = self.panel().renderActions()
-        self.assertIn('href="http://nohost/plone/folder/doc/object_cut"', rendered)
+        self.assertIn(
+            'href="http://nohost/plone/folder/doc/object_cut?_authenticator={0}"'.format(
+                self.token()
+            ),
+            rendered,
+        )
         self.assertIn('class="apButtonAction_form_cut"', rendered)
-        self.assertIn('src="http://nohost/plone/cut_icon.png"', rendered)
+        # Plone 6 icon name
+        self.assertIn('src="{0}scissors.svg"'.format(ICONS_URL), rendered)
         self.assertIn('target="_parent"', rendered)
         # as buttons
         rendered = self.panel(useIcons=False).renderActions()
-        self.assertIn('action="http://nohost/plone/folder/doc/object_cut"', rendered)
+        self.assertIn(
+            'action="http://nohost/plone/folder/doc/object_cut?_authenticator=',
+            rendered,
+        )
         self.assertIn('class="apButton apButtonAction apButtonAction_cut"', rendered)
         # a javascript action uses onclick, link_target is used
         self.portal.portal_actions.object_buttons._setObject(
@@ -424,10 +505,12 @@ class TestActionsPanelView(BaseViewsTestCase):
         )
         rendered = self.panel().renderActions()
         self.assertIn(
-            'onclick="javascript:event.preventDefault();doSomething()"', rendered
+            'onClick="javascript:event.preventDefault();doSomething()"', rendered
         )
         self.assertIn('href=""', rendered)
         self.assertIn('target="_blank"', rendered)
+        # an icon file
+        self.assertIn('src="http://nohost/plone/js.png"', rendered)
         # an action without icon is a button, also as icons
         self.portal.portal_actions.object_buttons.js_action.manage_changeProperties(
             icon_expr=""
@@ -451,23 +534,32 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertIsNone(self.panel().renderHistory())
         self.assertIsNone(self.panel(useIcons=False, showHistory=True).renderHistory())
         rendered = self.panel(showHistory=True).renderHistory()
-        self.assertIn('href="http://nohost/plone/folder/doc/@@historyview"', rendered)
-        self.assertIn('class="overlay-history"', rendered)
+        # @@contenthistorypopup in a modal, its links navigate
         self.assertIn(
-            'src="http://nohost/plone/++resource++imio.actionspanel/history.gif"',
+            'href="http://nohost/plone/folder/doc/@@contenthistorypopup"', rendered
+        )
+        self.assertIn('class="pat-plone-modal overlay-history"', rendered)
+        self.assertIn(
+            'data-pat-plone-modal="{&quot;titleSelector&quot;: &quot;h3:first&quot;, '
+            "&quot;modalSizeClass&quot;: &quot;modal-xl&quot;, "
+            "&quot;loadLinksWithinModal&quot;: false, "
+            "&quot;templateOptions&quot;: {&quot;className&quot;: "
+            '&quot;modal fade overlay-history&quot;}}"',
             rendered,
         )
+        self.assertIn('src="{0}clock.svg"'.format(ICONS_URL), rendered)
         self.assertIn('title="history.gif_icon_title"', rendered)
         # highlighted when the last event has a comment
         self.wft.doActionFor(self.doc, "submit", comment="My comment")
         rendered = self.panel(showHistory=True).renderHistory()
         self.assertIn(
-            "++resource++imio.actionspanel/history_last_event_has_comment.gif", rendered
+            'class="pat-plone-modal overlay-history highlight-history-link"', rendered
         )
+        self.assertIn('title="history_last_event_has_comment.gif_icon_title"', rendered)
         rendered = self.panel(
             showHistory=True, showHistoryLastEventHasComments=False
         ).renderHistory()
-        self.assertIn("++resource++imio.actionspanel/history.gif", rendered)
+        self.assertIn('class="pat-plone-modal overlay-history"', rendered)
 
     def test_showHistoryForContext(self):
         view = self.panel()
@@ -493,9 +585,24 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertTrue(self.panel(self.folder).mayFolderContents())
         # not folderish
         self.assertFalse(self.panel().mayFolderContents())
+        # default page of a folder: contents of the folder
+        page = api.content.create(
+            container=self.folder, type="Document", id="page", title="Page"
+        )
+        self.folder.setDefaultPage("page")
+        self.assertTrue(self.panel(page).mayFolderContents())
         # 'List folder contents' is required
         self.login_member()
         self.assertFalse(self.panel(self.folder).mayFolderContents())
+        # and a permission to add, modify, delete or review in the folder
+        self.folder.manage_permission(
+            "List folder contents", ["Manager", "Reader"], acquire=False
+        )
+        self.assertFalse(self.panel(self.folder).mayFolderContents())
+        self.folder.manage_permission(
+            "Add portal content", ["Manager", "Reader"], acquire=False
+        )
+        self.assertTrue(self.panel(self.folder).mayFolderContents())
 
     def test_mayEdit(self):
         self.assertTrue(self.panel().mayEdit())
@@ -505,8 +612,32 @@ class TestActionsPanelView(BaseViewsTestCase):
     def test_mayExtEdit(self):
         # collective.externaleditor is not installed
         self.assertFalse(self.panel().mayExtEdit())
+        self.install_externaleditor()
+        self.assertTrue(self.panel().mayExtEdit())
+        # enabled for the portal_type
+        self.assertFalse(self.panel(self.folder).mayExtEdit())
+        # enabled
+        records = api.portal.get_tool("portal_registry").records
+        records["externaleditor.ext_editor"] = Record(field.Bool(), False)
+        self.assertFalse(self.panel().mayExtEdit())
+        records["externaleditor.ext_editor"] = Record(field.Bool(), True)
+        # 'Modify portal content' is required
         self.login_member()
         self.assertFalse(self.panel().mayExtEdit())
+
+    def test_iconUrl(self):
+        view = self.panel()
+        # a Plone icon name
+        self.assertEqual(view.iconUrl("plone-delete"), ICONS_URL + "trash.svg")
+        self.assertEqual(
+            view.iconUrl("toolbar-action/history"), ICONS_URL + "clock.svg"
+        )
+        # a file
+        self.assertEqual(
+            view.iconUrl("++resource++imio.actionspanel/history.gif"),
+            "http://nohost/plone/++resource++imio.actionspanel/history.gif",
+        )
+        self.assertEqual(view.iconUrl("js.png"), "http://nohost/plone/js.png")
 
     def test_saveHasActions(self):
         view = self.panel()
@@ -517,9 +648,9 @@ class TestActionsPanelView(BaseViewsTestCase):
     def test_sortTransitions(self):
         view = self.panel()
         transitions = [
-            {"id": "b", "title": u"Zorro"},
-            {"id": "a", "title": u"Alpha"},
-            {"id": "c", "title": u"Mike"},
+            {"id": "b", "title": "Zorro"},
+            {"id": "a", "title": "Alpha"},
+            {"id": "c", "title": "Mike"},
         ]
         self.assertIsNone(view.sortTransitions(transitions))
         self.assertEqual([tr["id"] for tr in transitions], ["a", "c", "b"])
@@ -596,7 +727,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.request.set("ap_guard", No("Not ready yet"))
         transitions = self.panel().getTransitions()
         self.assertFalse(transitions[1]["may_trigger"])
-        self.assertEqual(transitions[1]["reason"], u"Not ready yet")
+        self.assertEqual(transitions[1]["reason"], "Not ready yet")
         self.assertNotIn("reason", transitions[0])
         # a guard returning False removes the transition
         self.request.set("ap_guard", False)
@@ -718,7 +849,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertEqual(view.getTransitionTitle(transition), SUBMIT_TITLE)
         view = self.panel(appendTypeNameToTransitionLabel=True)
         self.assertEqual(
-            view.getTransitionTitle(transition), u"{0} Page".format(SUBMIT_TITLE)
+            view.getTransitionTitle(transition), "{0} Page".format(SUBMIT_TITLE)
         )
         self.assertIn('value="{0} Page"'.format(SUBMIT_TITLE), view.renderTransitions())
 
@@ -811,16 +942,24 @@ class TestActionsPanelView(BaseViewsTestCase):
     def test_listObjectButtonsActions(self):
         view = self.panel()
         actions = view.listObjectButtonsActions()
-        self.assertEqual([act["id"] for act in actions], ["cut", "copy", "rename"])
+        # Plone 6: 'redirection' action, icons are icon names
+        self.assertEqual(
+            [act["id"] for act in actions], ["cut", "copy", "rename", "redirection"]
+        )
         self.assertEqual(
             [act["icon"] for act in actions],
-            ["cut_icon.png", "copy_icon.png", "rename_icon.gif"],
+            ["plone-cut", "plone-copy", "plone-rename", "plone-redirection"],
         )
-        self.assertEqual(actions[0]["url"], "http://nohost/plone/folder/doc/object_cut")
+        # with the CSRF token, as Plone's actions menu
+        self.assertEqual(
+            actions[0]["url"],
+            "http://nohost/plone/folder/doc/object_cut?_authenticator=" + self.token(),
+        )
         # IGNORABLE_ACTIONS
         view.IGNORABLE_ACTIONS = ("cut", "rename")
         self.assertEqual(
-            [act["id"] for act in view.listObjectButtonsActions()], ["copy", "delete"]
+            [act["id"] for act in view.listObjectButtonsActions()],
+            ["copy", "delete", "redirection"],
         )
         # ACCEPTABLE_ACTIONS take precedence
         view.ACCEPTABLE_ACTIONS = ("rename", "delete")
@@ -833,7 +972,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         )
         self.assertEqual(
             [act["icon"] for act in view.listObjectButtonsActions()],
-            ["delete_icon.png", "++resource++imio.actionspanel/history.gif"],
+            ["plone-delete", "++resource++imio.actionspanel/history.gif"],
         )
         # object_buttons actions of the portal_type
         self.portal.portal_types.Document.addAction(
@@ -847,7 +986,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         view = self.panel()
         self.assertEqual(
             [act["id"] for act in view.listObjectButtonsActions()],
-            ["cut", "copy", "rename", "my_action"],
+            ["cut", "copy", "rename", "redirection", "my_action"],
         )
         # actions available to the user only
         self.login_member()
@@ -865,7 +1004,7 @@ class TestActionsPanelView(BaseViewsTestCase):
             self.doc.workflow_history["simple_publication_workflow"][-1]["comments"],
             "My comment",
         )
-        self.assertEqual(self.status_messages(), [(u"Item state changed.", u"info")])
+        self.assertEqual(self.status_messages(), [("Item state changed.", "info")])
         # HTTP_REFERER is returned when redirecting
         self.request["HTTP_REFERER"] = "http://nohost/plone/folder"
         self.assertEqual(
@@ -884,9 +1023,9 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.assertEqual(
             self.status_messages()[-1],
             (
-                u"You have been redirect here because the action you just made have made thelement no more "
-                u"viewable to you.",
-                u"warning",
+                "You have been redirect here because the action you just made have made thelement no more "
+                "viewable to you.",
+                "warning",
             ),
         )
         # or to the first viewable parent
@@ -906,7 +1045,7 @@ class TestActionsPanelView(BaseViewsTestCase):
         self.status_messages()
         self.assertIsNone(view.triggerTransition("unknown", ""))
         self.assertEqual(
-            [msg_type for msg, msg_type in self.status_messages()], [u"warning"]
+            [msg_type for msg, msg_type in self.status_messages()], ["warning"]
         )
         self.assertNotIn("folder", self.portal.objectIds())
 
@@ -950,7 +1089,7 @@ class TestDeleteGivenUidView(BaseViewsTestCase):
         # deleted: redirect to HTTP_REFERER or a viewable place
         self.assertEqual(view(self.doc.UID()), "")
         self.assertNotIn("doc", self.folder.objectIds())
-        self.assertEqual(self.status_messages(), [(u"object_deleted", u"info")])
+        self.assertEqual(self.status_messages(), [("object_deleted", "info")])
         # without redirect: 204
         doc = api.content.create(
             container=self.folder, type="Document", id="doc", title="Doc"
@@ -988,17 +1127,13 @@ class TestDeleteGivenUidView(BaseViewsTestCase):
         self.assertEqual(event["action"], "delete_element")
         self.assertEqual(event["comments"], "My comment")
         self.assertEqual(event["actor"], TEST_USER_ID)
-        # element not in portal_catalog: found in uid_catalog when it exists (Archetypes)
+        # element not in portal_catalog (no Archetypes catalog fallback anymore)
         doc = api.content.create(
             container=self.folder, type="Document", id="doc", title="Doc"
         )
         self.portal.portal_catalog.unindexObject(doc)
-        if "uid_catalog" in self.portal:
-            view(doc.UID())
-            self.assertNotIn("doc", self.folder.objectIds())
-        else:
-            self.assertRaises(KeyError, view, doc.UID())
-            api.content.delete(doc)
+        self.assertRaises(KeyError, view, doc.UID())
+        api.content.delete(doc)
         # the user must be able to delete the element itself, not the parent
         api.user.grant_roles(username=MEMBER_ID, obj=self.folder, roles=["Reader"])
         doc = api.content.create(
@@ -1044,7 +1179,7 @@ class TestDeleteGivenUidView(BaseViewsTestCase):
         self.assertIsNone(view(doc.UID()))
         self.assertEqual(
             self.status_messages(),
-            [(u"Can not delete doc (BeforeDeleteException)", u"error")],
+            [("Can not delete doc (BeforeDeleteException)", "error")],
         )
         self.assertEqual(self.request.response.getStatus(), 204)
 
@@ -1098,3 +1233,88 @@ class TestAsyncActionsPanelView(BaseViewsTestCase):
         self.assertNotIn("apButtonAction_edit", view())
         # form values take precedence over kwargs
         self.assertEqual(view(showEdit=True), expected)
+
+
+class TestFolderPositionView(IntegrationTestCase):
+    """@@folder_position and @@folder_position_typeaware (Plone 4 skin scripts)."""
+
+    def setUp(self):
+        super(TestFolderPositionView, self).setUp()
+        self.folder = api.content.create(
+            container=self.portal, type="Folder", id="folder", title="Folder"
+        )
+        for obj_id, portal_type in (
+            ("n0", "News Item"),
+            ("d1", "Document"),
+            ("n2", "News Item"),
+            ("d3", "Document"),
+            ("n4", "News Item"),
+        ):
+            api.content.create(
+                container=self.folder, type=portal_type, id=obj_id, title=obj_id
+            )
+
+    def move(self, position, obj_id, name="folder_position_typeaware", **kwargs):
+        self.folder.restrictedTraverse(name)(position=position, id=obj_id, **kwargs)
+        return self.folder.objectIds()
+
+    def location(self):
+        return self.request.response.getHeader("location")
+
+    def test___call__(self):
+        # top and bottom are not portal_type aware
+        self.assertEqual(self.move("top", "d3"), ["d3", "n0", "d1", "n2", "n4"])
+        self.assertEqual(self.move("Bottom", "d3"), ["n0", "d1", "n2", "n4", "d3"])
+        # ordered: id is the field to order on (ValueError in Plone 4)
+        self.assertEqual(
+            self.move("ordered", "title", name="folder_position"),
+            ["d1", "d3", "n0", "n2", "n4"],
+        )
+        # portal message and redirect to the template_id of the request (arrows URL),
+        # folder_contents by default
+        self.assertEqual(
+            self.status_messages()[-1], ("Item's position has changed.", "info")
+        )
+        self.assertEqual(self.location(), "http://nohost/plone/folder/folder_contents")
+        self.set_form({"template_id": "http://nohost/plone/folder/view"})
+        self.move("up", "n2")
+        self.assertEqual(self.location(), "http://nohost/plone/folder/view")
+        # the template_id parameter, relative to the folder (ignored in Plone 4)
+        self.move("up", "n2", template_id="@@view")
+        self.assertEqual(self.location(), "http://nohost/plone/folder/@@view")
+        # an URL outside the portal: the folder
+        self.move("up", "n2", template_id="http://example.com/view")
+        self.assertEqual(self.location(), "http://nohost/plone/folder")
+        # 'Manage properties' on the folder is required
+        api.user.grant_roles(username=MEMBER_ID, obj=self.folder, roles=["Reader"])
+        login(self.portal, MEMBER_ID)
+        for name in ("folder_position", "folder_position_typeaware"):
+            self.assertRaises(Unauthorized, self.folder.restrictedTraverse, name)
+
+    def test__move(self):
+        # folder_position: one step
+        self.assertEqual(
+            self.move("up", "d3", name="folder_position"),
+            ["n0", "d1", "d3", "n2", "n4"],
+        )
+        self.assertEqual(
+            self.move("down", "d3", name="folder_position"),
+            ["n0", "d1", "n2", "d3", "n4"],
+        )
+        self.assertEqual(
+            self.move("up", "n0", name="folder_position"),
+            ["n0", "d1", "n2", "d3", "n4"],
+        )
+        self.assertEqual(
+            self.move("down", "n4", name="folder_position"),
+            ["n0", "d1", "n2", "d3", "n4"],
+        )
+        # folder_position_typeaware: up and down skip the elements of other portal_types
+        self.assertEqual(self.move("up", "d3"), ["n0", "d3", "d1", "n2", "n4"])
+        self.assertEqual(self.move("down", "d3"), ["n0", "d1", "d3", "n2", "n4"])
+        self.assertEqual(self.move("Down", "d1"), ["n0", "d3", "d1", "n2", "n4"])
+        # no element of the same portal_type after: not moved
+        self.assertEqual(self.move("down", "d1"), ["n0", "d3", "d1", "n2", "n4"])
+        self.assertEqual(self.move("down", "n4"), ["n0", "d3", "d1", "n2", "n4"])
+        # the element of the same portal_type is the first one (not moved in Plone 4)
+        self.assertEqual(self.move("up", "n2"), ["n2", "n0", "d3", "d1", "n4"])

@@ -7,6 +7,7 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
+from plone.testing.zope import WSGI_SERVER_FIXTURE
 from Products.statusmessages.interfaces import IStatusMessage
 from zope.event import notify
 from zope.globalrequest import setRequest
@@ -14,12 +15,6 @@ from zope.traversing.interfaces import BeforeTraverseEvent
 
 import imio.actionspanel
 import unittest
-
-
-try:  # Plone >= 5.2
-    from plone.testing.zope import WSGI_SERVER_FIXTURE as SERVER_FIXTURE
-except ImportError:  # Plone 4.3
-    from plone.testing.z2 import ZSERVER_FIXTURE as SERVER_FIXTURE
 
 
 MEMBER_ID = "member"
@@ -36,10 +31,11 @@ class ActionsPanelLayer(PloneSandboxLayer):
         self.loadZCML(package=imio.actionspanel, name="testing.zcml")
 
     def setUpPloneSite(self, portal):
+        # collective.fingerpointing logs the registry changes (bundles) and the user creation:
+        # it needs the global request
+        setRequest(portal.REQUEST)
         applyProfile(portal, "imio.actionspanel:default")
         portal.portal_workflow.setDefaultChain("simple_publication_workflow")
-        # collective.fingerpointing logs the user creation: it needs the global request
-        setRequest(portal.REQUEST)
         portal.acl_users.userFolderAddUser(MEMBER_ID, MEMBER_PASSWORD, ["Member"], [])
         setRequest(None)
 
@@ -51,7 +47,8 @@ INTEGRATION = IntegrationTesting(bases=(FIXTURE,), name="INTEGRATION")
 FUNCTIONAL = FunctionalTesting(bases=(FIXTURE,), name="FUNCTIONAL")
 
 ACCEPTANCE = FunctionalTesting(
-    bases=(FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, SERVER_FIXTURE), name="ACCEPTANCE"
+    bases=(FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, WSGI_SERVER_FIXTURE),
+    name="ACCEPTANCE",
 )
 
 
@@ -98,9 +95,9 @@ class FunctionalTestCase(IntegrationTestCase):
 
 
 # Robot: setup of the robot suites only (ROBOT_ACCEPTANCE), the unit tests don't use it.
-# As in dependents: imio.helpers is installed (actionspanel.js calls its helpers.js) and the panel
-# is shown with other params (testing.zcml): as icons above the content, besides the buttons
-# panel below it, and loaded by JS (?async_panel=1). Document.publish is a transition to confirm.
+# As in dependents, the panel is shown with other params (testing.zcml): as icons above the content,
+# besides the buttons panel below it, and loaded by JS (?async_panel=1).
+# Document.publish is a transition to confirm.
 from imio.actionspanel.browser.viewlets import (  # noqa: E402  isort:skip
     ActionsPanelViewlet,
 )
@@ -127,8 +124,8 @@ class RobotIconsViewlet(ActionsPanelViewlet):
     }
 
     def render(self):
-        return u'<div id="icons-actions-panel">{0}</div>'.format(
-            self.renderViewlet() or u""
+        return '<div id="icons-actions-panel">{0}</div>'.format(
+            self.renderViewlet() or ""
         )
 
 
@@ -147,19 +144,13 @@ class RobotLayer(PloneSandboxLayer):
 
     defaultBases = (FIXTURE,)
 
-    def setUpZope(self, app, configurationContext):
-        import imio.helpers
-
-        self.loadZCML(package=imio.helpers)
-
     def setUpPloneSite(self, portal):
         from plone import api
         from plone.browserlayer.utils import register_layer
 
-        applyProfile(portal, "imio.helpers:default")
-        register_layer(IRobotLayer, "imio.actionspanel.robot")
-        # collective.fingerpointing logs the registry change: it needs the global request
+        # collective.fingerpointing logs the registry changes: it needs the global request
         setRequest(portal.REQUEST)
+        register_layer(IRobotLayer, "imio.actionspanel.robot")
         api.portal.set_registry_record(
             "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions",
             ["Document.publish|"],
@@ -170,6 +161,6 @@ class RobotLayer(PloneSandboxLayer):
 ROBOT_FIXTURE = RobotLayer(name="ROBOT_FIXTURE")
 
 ROBOT_ACCEPTANCE = FunctionalTesting(
-    bases=(ROBOT_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, SERVER_FIXTURE),
+    bases=(ROBOT_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, WSGI_SERVER_FIXTURE),
     name="ROBOT_ACCEPTANCE",
 )

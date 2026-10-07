@@ -24,6 +24,13 @@ input[type="button"].notTriggerableTransitionButton {
     margin: 0 !important;
 }
 
+/* history icon of the panel when the last event has a comment */
+a.highlight-history-link img {
+    background-color: #ffd5c0;
+    border: 1px solid red;
+    border-radius: 3px;
+}
+
 span#content-history.highlight-history-link a {
     color: red;
     font-weight: bold;

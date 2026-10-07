@@ -2,7 +2,7 @@
      id="async_actions_panel"
      data-use-icons="false"
      data-show-edit="false">
-    <img tal:attributes="src string:${view/site_url}/spinner_small.gif" />
+    <span class="spinner-border spinner-border-sm" role="status"></span>
 </div>
 
 <tal:renderViewlet condition="python: not view.is_async and view.show()"

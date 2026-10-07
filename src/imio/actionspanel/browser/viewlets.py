@@ -11,7 +11,7 @@ class ActionsPanelViewlet(ViewletBase):
     def show(self):
         """Will we show the viewlet on context?"""
         context_state = getMultiAdapter(
-            (self.context, self.request), name=u"plone_context_state"
+            (self.context, self.request), name="plone_context_state"
         )
         return context_state.is_view_template() and "ajax_load" not in self.request
 

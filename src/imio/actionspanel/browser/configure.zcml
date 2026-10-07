@@ -62,4 +62,17 @@
         class=".jsvariables.JSVariables"
         permission="zope.Public" />
 
+    <!-- Arrows, were skin scripts in Plone 4; no layer: dependents' tests call them -->
+    <browser:page
+        for="*"
+        name="folder_position"
+        class=".views.FolderPositionView"
+        permission="cmf.ManageProperties" />
+
+    <browser:page
+        for="*"
+        name="folder_position_typeaware"
+        class=".views.FolderPositionTypeAwareView"
+        permission="cmf.ManageProperties" />
+
 </configure>

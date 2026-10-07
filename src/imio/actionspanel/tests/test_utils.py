@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from AccessControl import Unauthorized
 from imio.actionspanel.testing import IntegrationTestCase
 from imio.actionspanel.testing import MEMBER_ID
 from imio.actionspanel.utils import findViewableURL
 from imio.actionspanel.utils import unrestrictedRemoveGivenObject
 from plone import api
 from plone.app.testing import login
+from zExceptions import Unauthorized
 
 
 NOT_VIEWABLE_MSG = (
-    u"You have been redirect here because the action you just made have made thelement no more "
-    u"viewable to you.",
-    u"warning",
+    "You have been redirect here because the action you just made have made thelement no more "
+    "viewable to you.",
+    "warning",
 )
 
 
@@ -31,6 +31,7 @@ class TestUtils(IntegrationTestCase):
     def test_unrestrictedRemoveGivenObject(self):
         api.user.grant_roles(username=MEMBER_ID, obj=self.folder, roles=["Reader"])
         login(self.portal, MEMBER_ID)
+        # zExceptions.Unauthorized (AccessControl.Unauthorized is a subclass of it since Zope 4)
         self.assertRaises(Unauthorized, self.folder.manage_delObjects, ["doc2"])
         # removed as a Manager, the caller checks the permissions
         unrestrictedRemoveGivenObject(self.doc)

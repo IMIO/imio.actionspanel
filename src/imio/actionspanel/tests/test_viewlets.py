@@ -68,7 +68,7 @@ class TestActionsPanelViewlet(IntegrationTestCase):
         self.assertIn('id="async_actions_panel"', rendered)
         self.assertIn('data-use-icons="false"', rendered)
         self.assertIn('data-show-edit="false"', rendered)
-        self.assertIn('src="http://nohost/plone/spinner_small.gif"', rendered)
+        self.assertIn('class="spinner-border spinner-border-sm"', rendered)
         self.assertNotIn("apButtonWF_submit", rendered)
         # not shown
         self.assertEqual(self.viewlet(self.folder).render().strip(), "")

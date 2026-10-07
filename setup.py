@@ -9,7 +9,7 @@ long_description = open("README.rst").read() + "\n" + open("CHANGES.rst").read()
 
 setup(
     name="imio.actionspanel",
-    version="1.72.dev0",
+    version="2.0.dev0",
     description="Actions panel",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -17,12 +17,16 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Framework :: Plone",
-        "Framework :: Plone :: 4.3",
+        "Framework :: Plone :: 6.2",
+        "Framework :: Plone :: Addon",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
     keywords="actions panel buttons",
     author="IMIO",
@@ -31,21 +35,18 @@ setup(
     download_url="https://pypi.org/project/imio.actionspanel",
     license="GPL",
     packages=find_packages("src", exclude=["ez_setup"]),
-    namespace_packages=[
-        "imio",
-    ],
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
+    python_requires=">=3.10",
     install_requires=[
         "Plone",
         "setuptools",
         "appy",
         "collective.fingerpointing",
-        "imio.helpers>=0.74",
+        "imio.helpers>=1.3.0",
         "imio.history>=1.17",
         "plone.api",
-        "six",
     ],
     extras_require={
         "test": [

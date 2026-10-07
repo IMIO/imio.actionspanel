@@ -4,7 +4,7 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      metal:use-macro="here/main_template/macros/master"
+      metal:use-macro="context/main_template/macros/master"
       i18n:domain="imio.actionspanel">
 
   <body>
@@ -14,6 +14,7 @@
       jQuery(document).ready(preventDefaultClick);
     </script>
 
+    <tal:comment replace="nothing">In a modal (pat-plone-modal): the h1 is its title, the .formControls buttons its footer</tal:comment>
     <h1 class="documentFirstHeading highlightValue" tal:content="view/element_title">Title</h1>
     <form id="commentsForm">
       <p class="popups_field_descr highlightValue" i18n:translate="delete_confirm_message">
@@ -22,19 +23,21 @@
       <p class="popups_field_descr" i18n:translate="delete_comments_historized">
         This will be historized (including eventual comments).
       </p>
-      <label for="comment" i18n:translate="action_comments"></label>
-      <textarea name="comment" rows="8"></textarea>
-      <div class="popupbuttons">
-        <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + context.UID() + '\', \'preComment\': \'' + view.pre_comment() + '\'}, this);;' + '$(\'input.[name=\\\'form.buttons.cancel\\\']\').click();;';"
+      <div class="mb-3">
+        <label for="comment" class="form-label" i18n:translate="action_comments"></label>
+        <textarea id="comment" name="comment" class="form-control" rows="8"></textarea>
+      </div>
+      <div class="formControls">
+        <input tal:attributes="onClick python: 'applyWithComments(baseUrl=\'' + context.absolute_url() + '\', viewName=\'@@delete_with_comments\', extraData={\'uid\': \'' + view.obj.UID() + '\', \'preComment\': \'' + view.pre_comment() + '\'}, this);;' + '$(\'input[name=\\\'form.buttons.cancel\\\']\').click();;';"
                type="submit"
                name="form.buttons.save"
-               class="prevent-default apButton apButtonAction apButtonAction_delete"
+               class="prevent-default btn btn-danger apButton apButtonAction apButtonAction_delete"
                value="Delete"
                i18n:attributes="value"
                i18n:domain="plone" />
         <input type="submit"
                name="form.buttons.cancel"
-               class="standalone apButton"
+               class="standalone btn btn-secondary apButton"
                value="Cancel"
                i18n:attributes="value"
                i18n:domain="plone" />

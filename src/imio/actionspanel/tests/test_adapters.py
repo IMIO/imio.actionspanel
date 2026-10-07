@@ -49,13 +49,13 @@ class TestDeletedChildrenHistoryAdapter(IntegrationTestCase):
             self.folder,
             "deleted_children_history",
             "delete_element",
-            comments=u"My comment",
+            comments="My comment",
         )
         history = getAdapter(self.folder, IImioHistory, "deleted_children").getHistory()
         self.assertEqual(len(history), 1)
         self.assertEqual(history[0]["type"], "deleted_children")
         self.assertEqual(history[0]["action"], "delete_element")
-        self.assertEqual(history[0]["comments"], u"My comment")
+        self.assertEqual(history[0]["comments"], "My comment")
 
     def test_historyLastEventHasComments(self):
         self.assertFalse(
@@ -67,7 +67,7 @@ class TestDeletedChildrenHistoryAdapter(IntegrationTestCase):
             self.folder,
             "deleted_children_history",
             "delete_element",
-            comments=u"My comment",
+            comments="My comment",
         )
         self.assertTrue(
             getAdapter(

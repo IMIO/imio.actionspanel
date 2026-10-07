@@ -1,9 +1,8 @@
 *** Settings ***
 Documentation  Plone 6 Classic UI keywords. Same keyword names and arguments as ui_plone4.robot.
 ...            Robot Framework 3.0 syntax: shared with the Plone 4.3 (Python 2) environment.
-...            Selectors checked on Plone 6.1 (collective.contact.contactlist).
-...            The keywords added for imio.actionspanel (from "The content title is" on, and
-...            "Save the modal" / "Cancel the modal" by button name) are NOT CHECKED YET: phase 7.
+...            Selectors checked on Plone 6.1 (collective.contact.contactlist) and, for the keywords used by
+...            imio.actionspanel, on Plone 6.2 (phase 7).
 Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/robotframework/keywords.robot
 Library  Remote  ${PLONE_URL}/RobotRemote
@@ -88,13 +87,14 @@ The edit link is not available
     Page should not contain element  css=#contentview-edit
 
 The content title is
+    [Documentation]  Plone 6.2 views have no documentFirstHeading class on the title
     [Arguments]  ${title}
-    Element should contain  css=h1.documentFirstHeading  ${title}
+    Element should contain  css=#content h1  ${title}
 
 The workflow state is
     [Documentation]  State shown in the workflow menu, by state id
     [Arguments]  ${state}
-    Wait until page contains element  css=#plone-contentmenu-workflow .state-${state}
+    Wait until page contains element  css=#plone-contentmenu-workflow .label-state-${state}
 
 The folder lists
     [Documentation]  Link of the content in the folder view
@@ -176,11 +176,11 @@ Open the history of the panel
     Click element  css=#icons-actions-panel a.overlay-history
 
 The history icon is highlighted
-    [Documentation]  Icon of the history link when the last event has a comment
+    [Documentation]  Class of the history link when the last event has a comment (same icon)
     [Arguments]  ${expected}=${True}
     Run keyword if  ${expected}
-    ...  Page should contain element  css=#icons-actions-panel a.overlay-history img[src$="history_last_event_has_comment.gif"]
-    ...  ELSE  Page should contain element  css=#icons-actions-panel a.overlay-history img[src$="/history.gif"]
+    ...  Page should contain element  css=#icons-actions-panel a.overlay-history.highlight-history-link img
+    ...  ELSE  Page should contain element  css=#icons-actions-panel a.overlay-history:not(.highlight-history-link) img
 
 Click the move arrow
     [Documentation]  direction: top, up, down or bottom

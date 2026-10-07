@@ -32,7 +32,7 @@ class DependentDeletableAdapter(ContentDeletableAdapter):
     def mayDelete(self, initiator=None, **kwargs):
         self.calls.append((self.context.getId(), initiator.getId()))
         if INotDeletable.providedBy(self.context):
-            return No(u"{0} is used elsewhere".format(self.context.getId()))
+            return No("{0} is used elsewhere".format(self.context.getId()))
         return super(DependentDeletableAdapter, self).mayDelete(
             initiator=initiator, **kwargs
         )

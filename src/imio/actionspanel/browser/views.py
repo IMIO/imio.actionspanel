@@ -2,6 +2,7 @@
 
 from AccessControl import Unauthorized
 from Acquisition import aq_base
+from appy.utils import No
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
@@ -12,17 +13,24 @@ from imio.history.browser.views import should_highlight_history_link
 from imio.history.utils import add_event_to_history
 from operator import itemgetter
 from plone import api
+from plone.base import PloneMessageFactory as _plone
+from plone.base.utils import get_installer
+from plone.base.utils import safe_text
+from plone.protect.utils import addTokenToUrl
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.ActionInformation import ActionInfo
+from Products.CMFCore.permissions import AddPortalContent
+from Products.CMFCore.permissions import DeleteObjects
 from Products.CMFCore.permissions import ManageProperties
+from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.permissions import ReviewPortalContent
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFPlone import PloneMessageFactory as _plone
-from Products.CMFPlone.utils import safe_unicode
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from urllib.parse import urljoin
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.dottedname.resolve import resolve
@@ -30,22 +38,40 @@ from zope.i18n import translate
 from zope.i18nmessageid import Message
 
 import json
-import six
 import transaction
 
 
-if six.PY2:
-    from appy.gen import No
-else:
-    from appy.utils import No
-
 DEFAULT_CONFIRM_VIEW = "@@triggertransition"
+
+# data-pat-plone-modal of the links opening a form in a modal: the form buttons run their onclick
+# (applyWithComments), the modal doesn't submit the form; links in the modal navigate
+MODAL_FORM_OPTIONS = {
+    "automaticallyAddButtonActions": False,
+    "loadLinksWithinModal": False,
+    "onRender": "actionsPanelModalRendered",
+}
 
 
 class ActionsPanelView(BrowserView):
     """
     This manage the view displaying actions on context.
     """
+
+    # pat-plone-modal options (data-pat-plone-modal), a click outside the transition modal
+    # doesn't close it (comment being typed, spellchecker), as in Plone 4
+    TRANSITION_MODAL_OPTIONS = json.dumps(
+        dict(MODAL_FORM_OPTIONS, backdropOptions={"closeOnClick": False})
+    )
+    DELETE_MODAL_OPTIONS = json.dumps(MODAL_FORM_OPTIONS)
+    # the modal keeps the class of the Plone 4 overlay (overlay-history)
+    HISTORY_MODAL_OPTIONS = json.dumps(
+        {
+            "titleSelector": "h3:first",
+            "modalSizeClass": "modal-xl",
+            "loadLinksWithinModal": False,
+            "templateOptions": {"className": "modal fade overlay-history"},
+        }
+    )
 
     def __init__(self, context, request):
         super(ActionsPanelView, self).__init__(context, request)
@@ -100,7 +126,7 @@ class ActionsPanelView(BrowserView):
         markingInterface=None,
         forceRedirectOnOwnDelete=True,
         forceRedirectAfterTransition=False,
-        **kwargs
+        **kwargs,
     ):
         """
         Master method that will render the content.
@@ -200,8 +226,11 @@ class ActionsPanelView(BrowserView):
         if self.arrowsPortalTypeAware:
             script_name = "folder_position_typeaware"
 
-        return "{0}/{1}?position=%s&id=%s&template_id={2}".format(
-            self.parent.absolute_url(), script_name, self._returnTo()
+        return addTokenToUrl(
+            "{0}/{1}?position=%s&id=%s&template_id={2}".format(
+                self.parent.absolute_url(), script_name, self._returnTo()
+            ),
+            self.request,
         )
 
     def _returnTo(
@@ -314,11 +343,27 @@ class ActionsPanelView(BrowserView):
     def mayFolderContents(self):
         """
         Method that check if folder_contents action has to be displayed.
+        Same rules as Plone 4 '@@plone/displayContentsTab' (removed in Plone 5).
         """
-        if self.member.has_permission("List folder contents", self.context):
-            plone_view = getMultiAdapter((self.context, self.request), name="plone")
-            return bool(plone_view.displayContentsTab())
-        return False
+        if not self.member.has_permission("List folder contents", self.context):
+            return False
+        context_state = getMultiAdapter(
+            (self.context, self.request), name="plone_context_state"
+        )
+        if not (
+            context_state.is_structural_folder() or context_state.is_default_page()
+        ):
+            return False
+        folder = context_state.folder()
+        return self.member.has_permission("List folder contents", folder) and any(
+            self.member.has_permission(permission, folder)
+            for permission in (
+                ModifyPortalContent,
+                AddPortalContent,
+                DeleteObjects,
+                ReviewPortalContent,
+            )
+        )
 
     def mayEdit(self):
         """
@@ -332,11 +377,9 @@ class ActionsPanelView(BrowserView):
         """
         if not self.member.has_permission("Modify portal content", self.context):
             return False
-        portal_quickinstaller = api.portal.get_tool("portal_quickinstaller")
-        external_edit_installed = portal_quickinstaller.isProductInstalled(
+        if not get_installer(self.context, self.request).is_product_installed(
             "collective.externaleditor"
-        )
-        if not external_edit_installed:
+        ):
             return False
         # Can be to slow for a dashboard ?
         # view = getMultiAdapter((self.context, self.request), name='externalEditorEnabled')
@@ -352,6 +395,15 @@ class ActionsPanelView(BrowserView):
             "externaleditor.externaleditor_enabled_types", []
         )
         return self.context.portal_type in externaleditor_enabled_types
+
+    def iconUrl(self, icon):
+        """URL of p_icon: a Plone icon name (e.g. 'plone-cut') is resolved by the iconresolver,
+        a file (e.g. '++resource++my.package/icon.png') is relative to the portal."""
+        if "." in icon:
+            return "{0}/{1}".format(self.portal_url, icon)
+        return getMultiAdapter((self.portal, self.request), name="iconresolver").url(
+            icon
+        )
 
     def saveHasActions(self):
         """
@@ -432,7 +484,7 @@ class ActionsPanelView(BrowserView):
                         "id": transition.id,
                         # if the transition.id is not translated, use translated transition.title...
                         "title": translate(
-                            safe_unicode(transition.title),
+                            safe_text(transition.title),
                             domain="plone",
                             context=self.request,
                         ),
@@ -558,8 +610,8 @@ class ActionsPanelView(BrowserView):
             type_info_title = type_info.Title()
             if isinstance(type_info_title, Message):
                 type_info_title = translate(type_info_title, context=self.request)
-            transition_title = u"{0} {1}".format(
-                safe_unicode(transition_title), safe_unicode(type_info_title)
+            transition_title = "{0} {1}".format(
+                safe_text(transition_title), safe_text(type_info_title)
             )
         return transition_title
 
@@ -651,6 +703,8 @@ class ActionsPanelView(BrowserView):
         res = []
         for action in objectButtonActions:
             act = action.copy()
+            # CSRF token, as Plone's actions menu
+            act["url"] = addTokenToUrl(act["url"], self.request)
             # We try to append the url of the icon of the action
             # look on the action itself
             if act["icon"]:
@@ -697,7 +751,7 @@ class ActionsPanelView(BrowserView):
         )
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
         msg = _(
-            u"%s_done_descr" % safe_unicode(transition_title),
+            "%s_done_descr" % safe_text(transition_title),
             default=_plone("Item state changed."),
         )
         plone_utils.addPortalMessage(msg)
@@ -725,8 +779,9 @@ class ActionsPanelView(BrowserView):
         return findViewableURL(self.context, self.request, self.member)
 
     def getCurrentFolder(self):
-        plone_view = getMultiAdapter((self.context, self.request), name="plone")
-        return plone_view.getCurrentFolder()
+        return getMultiAdapter(
+            (self.context, self.request), name="plone_context_state"
+        ).folder()
 
     def isMarked(self, interface_name, context=None):
         if interface_name is None:
@@ -769,8 +824,6 @@ class DeleteGivenUidView(BrowserView):
         # Get the object to delete, if not found using UID index,
         # try with contained_uids index
         objs = uuidsToObjects(uuids=[object_uid], check_contained_uids=True)
-        if not objs and "uid_catalog" in self.portal:
-            objs = uuidsToObjects(uuids=[object_uid], catalog="uid_catalog")
         if not objs:
             raise KeyError("The given uid could not be found!")
         obj = objs[0]
@@ -789,10 +842,9 @@ class DeleteGivenUidView(BrowserView):
             except BeforeDeleteException as exc:
                 # abort because element was removed
                 transaction.abort()
-                # Python 3 exceptions have no 'message'
-                exc_msg = exc.message if six.PY2 else str(exc)
+                exc_msg = str(exc)
                 msg = {
-                    "message": u"{0} ({1})".format(exc_msg, exc.__class__.__name__),
+                    "message": "{0} ({1})".format(exc_msg, exc.__class__.__name__),
                     "type": "error",
                 }
                 if not catch_before_delete_exception:
@@ -862,3 +914,62 @@ class AsyncActionsPanelView(BrowserView):
             **kwargs
         )
         return rendered_actions_panel
+
+
+class FolderPositionView(BrowserView):
+    """
+    Move the element p_id of the context folder, used by the arrows.
+    Replaces the Plone 4 skin script 'folder_position' (removed in Plone 6),
+    same parameters, message and redirect (template_id, relative or absolute URL).
+    """
+
+    portal_type_aware = False
+
+    def __call__(self, position, id, template_id=None):
+        position = position.lower()
+        if position == "ordered":
+            # id is the field to order on
+            self.context.orderObjects(id)
+        elif position == "top":
+            self.context.moveObjectsToTop(id)
+        elif position == "bottom":
+            self.context.moveObjectsToBottom(id)
+        elif position in ("up", "down"):
+            self._move(position, id)
+        plone_utils = api.portal.get_tool("plone_utils")
+        plone_utils.reindexOnReorder(self.context)
+        plone_utils.addPortalMessage(_plone("Item's position has changed."))
+        url = urljoin(
+            self.context.absolute_url() + "/",
+            template_id or self.request.get("template_id", "folder_contents"),
+        )
+        if not api.portal.get_tool("portal_url").isURLInPortal(url):
+            url = self.context.absolute_url()
+        return self.request.response.redirect(url)
+
+    def _move(self, position, id):
+        """Move p_id one step up or down, over the elements of another portal_type
+        when portal_type_aware."""
+        ids = list(self.context.objectIds())
+        pos = ids.index(id)
+        neighbours = reversed(ids[:pos]) if position == "up" else ids[pos + 1 :]
+        portal_type = self.context[id].portal_type
+        for delta, neighbour_id in enumerate(neighbours, 1):
+            if (
+                not self.portal_type_aware
+                or self.context[neighbour_id].portal_type == portal_type
+            ):
+                if position == "up":
+                    self.context.moveObjectsUp(id, delta=delta)
+                else:
+                    self.context.moveObjectsDown(id, delta=delta)
+                return
+
+
+class FolderPositionTypeAwareView(FolderPositionView):
+    """
+    'folder_position' moving up and down over the elements of another portal_type.
+    Replaces the skin script 'folder_position_typeaware'.
+    """
+
+    portal_type_aware = True

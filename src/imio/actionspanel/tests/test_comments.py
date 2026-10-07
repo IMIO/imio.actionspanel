@@ -7,7 +7,7 @@ from plone import api
 TRANSITIONS_RECORD = (
     "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions"
 )
-SUBMIT_TITLE = u"Member submits content for publication"
+SUBMIT_TITLE = "Member submits content for publication"
 
 
 class BaseCommentsTestCase(IntegrationTestCase):
@@ -48,6 +48,10 @@ class TestBaseCommentsView(BaseCommentsTestCase):
         self.set_form({"transition": "submit"})
         rendered = self.doc.restrictedTraverse("@@triggertransition")()
         self.assertIn('id="commentsForm"', rendered)
+        # Plone 6 form: in the modal, the h1 is its title and the formControls buttons its footer
+        self.assertIn('<h1 class="documentFirstHeading">Doc</h1>', rendered)
+        self.assertIn('<div class="formControls">', rendered)
+        self.assertIn('class="prevent-default btn btn-primary apButton"', rendered)
         self.assertIn('name="form.buttons.save"', rendered)
         self.assertIn('name="form.buttons.cancel"', rendered)
         self.assertIn(SUBMIT_TITLE, rendered)
@@ -57,7 +61,9 @@ class TestBaseCommentsView(BaseCommentsTestCase):
         rendered = self.doc.restrictedTraverse("@@triggertransition")()
         self.assertIn(
             "applyWithComments(baseUrl='http://nohost/plone/folder/doc', viewName='@@triggertransition', "
-            "{'transition': 'submit'}, this, force_redirect=0, event_id='ap_transition_triggered');",
+            "{'transition': 'submit'}, this, force_redirect=0, event_id='ap_transition_triggered');"
+            # then closes the modal (the jQuery selector was invalid: input.[name=...])
+            "$('input[name=\\'form.buttons.cancel\\']').click();",
             rendered,
         )
         # cancelled: back to the element
@@ -172,10 +178,14 @@ class TestDeleteWithCommentsView(BaseCommentsTestCase):
             '<h1 class="documentFirstHeading highlightValue">Doc</h1>', rendered
         )
         self.assertIn('name="form.buttons.save"', rendered)
-        # the save button sends the UID of the context, not the uid parameter (see Known issues)
+        self.assertIn('class="prevent-default btn btn-danger apButton', rendered)
+        # the save button deletes the uid element (view.obj), also on another context
+        # (was context.UID(): from a document, its folder was deleted, see Known issues)
+        rendered = self.folder.restrictedTraverse("@@delete_with_comments")()
         self.assertIn(
-            "applyWithComments(baseUrl='http://nohost/plone/folder/doc', viewName='@@delete_with_comments', "
-            "extraData={{'uid': '{0}', 'preComment': 'Doc'}}, this);".format(uid),
+            "applyWithComments(baseUrl='http://nohost/plone/folder', viewName='@@delete_with_comments', "
+            "extraData={{'uid': '{0}', 'preComment': 'Doc'}}, this);"
+            "$('input[name=\\'form.buttons.cancel\\']').click();".format(uid),
             rendered,
         )
         # cancelled: back to the context
@@ -197,7 +207,7 @@ class TestDeleteWithCommentsView(BaseCommentsTestCase):
         view = self.doc.restrictedTraverse("@@delete_with_comments")
         self.assertEqual(view.apply(None), "")
         self.assertNotIn("doc", self.folder.objectIds())
-        self.assertEqual(self.status_messages(), [(u"object_deleted", u"info")])
+        self.assertEqual(self.status_messages(), [("object_deleted", "info")])
         event = self.folder.deleted_children_history[-1]
         self.assertEqual(event["action"], "delete_element")
         self.assertEqual(event["comments"], "Doc\n\nMy comment")
