@@ -9,19 +9,26 @@ from zope.viewlet.interfaces import IViewletManager
 
 
 class TestActionsPanelViewlet(IntegrationTestCase):
-
     def setUp(self):
         super(TestActionsPanelViewlet, self).setUp()
-        self.folder = api.content.create(container=self.portal, type="Folder", id="folder", title="Folder")
-        self.doc = api.content.create(container=self.folder, type="Document", id="doc", title="Doc")
+        self.folder = api.content.create(
+            container=self.portal, type="Folder", id="folder", title="Folder"
+        )
+        self.doc = api.content.create(
+            container=self.folder, type="Document", id="doc", title="Doc"
+        )
         # the element view is displayed
         self.request.set("ACTUAL_URL", self.doc.absolute_url())
 
     def viewlet(self, obj):
         """The viewlet registered in testing.zcml, as dependents register it."""
         view = BrowserView(obj, self.request)
-        manager = getMultiAdapter((obj, self.request, view), IViewletManager, name="plone.belowcontentbody")
-        viewlet = getMultiAdapter((obj, self.request, view, manager), IViewlet, name="imio.actionspanel")
+        manager = getMultiAdapter(
+            (obj, self.request, view), IViewletManager, name="plone.belowcontentbody"
+        )
+        viewlet = getMultiAdapter(
+            (obj, self.request, view, manager), IViewlet, name="imio.actionspanel"
+        )
         viewlet.update()
         return viewlet
 
@@ -38,7 +45,11 @@ class TestActionsPanelViewlet(IntegrationTestCase):
         self.assertIsInstance(viewlet, ActionsPanelViewlet)
         self.assertEqual(viewlet.params, {"useIcons": False, "showEdit": False})
         self.assertEqual(
-            viewlet.renderViewlet(), self.doc.restrictedTraverse("@@actions_panel")(useIcons=False, showEdit=False))
+            viewlet.renderViewlet(),
+            self.doc.restrictedTraverse("@@actions_panel")(
+                useIcons=False, showEdit=False
+            ),
+        )
         self.assertIn("apButtonWF_submit", viewlet.renderViewlet())
         self.assertNotIn("apButtonAction_edit", viewlet.renderViewlet())
         # params of a dependent

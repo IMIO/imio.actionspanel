@@ -12,16 +12,21 @@ from zope.component import getAdapter
 
 
 class TestContentDeletableAdapter(IntegrationTestCase):
-
     def test_mayDelete(self):
-        folder = api.content.create(container=self.portal, type="Folder", id="folder", title="Folder")
-        doc = api.content.create(container=folder, type="Document", id="doc", title="Doc")
+        folder = api.content.create(
+            container=self.portal, type="Folder", id="folder", title="Folder"
+        )
+        doc = api.content.create(
+            container=folder, type="Document", id="doc", title="Doc"
+        )
         adapter = IContentDeletable(doc)
         self.assertIsInstance(adapter, ContentDeletableAdapter)
         self.assertTrue(adapter.mayDelete())
         self.assertTrue(adapter.mayDelete(initiator=folder, other="value"))
         # 'Delete objects' on the element, not on its parent
-        doc2 = api.content.create(container=folder, type="Document", id="doc2", title="Doc 2")
+        doc2 = api.content.create(
+            container=folder, type="Document", id="doc2", title="Doc 2"
+        )
         api.user.grant_roles(username=MEMBER_ID, obj=doc2, roles=["Owner"])
         login(self.portal, MEMBER_ID)
         self.assertFalse(IContentDeletable(doc).mayDelete())
@@ -30,16 +35,22 @@ class TestContentDeletableAdapter(IntegrationTestCase):
 
 
 class TestDeletedChildrenHistoryAdapter(IntegrationTestCase):
-
     def setUp(self):
         super(TestDeletedChildrenHistoryAdapter, self).setUp()
-        self.folder = api.content.create(container=self.portal, type="Folder", id="folder", title="Folder")
+        self.folder = api.content.create(
+            container=self.portal, type="Folder", id="folder", title="Folder"
+        )
 
     def test_getHistory(self):
         adapter = getAdapter(self.folder, IImioHistory, "deleted_children")
         self.assertIsInstance(adapter, DeletedChildrenHistoryAdapter)
         self.assertEqual(adapter.getHistory(), [])
-        add_event_to_history(self.folder, "deleted_children_history", "delete_element", comments=u"My comment")
+        add_event_to_history(
+            self.folder,
+            "deleted_children_history",
+            "delete_element",
+            comments=u"My comment",
+        )
         history = getAdapter(self.folder, IImioHistory, "deleted_children").getHistory()
         self.assertEqual(len(history), 1)
         self.assertEqual(history[0]["type"], "deleted_children")
@@ -47,8 +58,25 @@ class TestDeletedChildrenHistoryAdapter(IntegrationTestCase):
         self.assertEqual(history[0]["comments"], u"My comment")
 
     def test_historyLastEventHasComments(self):
-        self.assertFalse(getAdapter(self.folder, IImioHistory, "deleted_children").historyLastEventHasComments())
-        add_event_to_history(self.folder, "deleted_children_history", "delete_element", comments=u"My comment")
-        self.assertTrue(getAdapter(self.folder, IImioHistory, "deleted_children").historyLastEventHasComments())
+        self.assertFalse(
+            getAdapter(
+                self.folder, IImioHistory, "deleted_children"
+            ).historyLastEventHasComments()
+        )
+        add_event_to_history(
+            self.folder,
+            "deleted_children_history",
+            "delete_element",
+            comments=u"My comment",
+        )
+        self.assertTrue(
+            getAdapter(
+                self.folder, IImioHistory, "deleted_children"
+            ).historyLastEventHasComments()
+        )
         add_event_to_history(self.folder, "deleted_children_history", "delete_element")
-        self.assertFalse(getAdapter(self.folder, IImioHistory, "deleted_children").historyLastEventHasComments())
+        self.assertFalse(
+            getAdapter(
+                self.folder, IImioHistory, "deleted_children"
+            ).historyLastEventHasComments()
+        )

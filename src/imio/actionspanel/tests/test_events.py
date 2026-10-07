@@ -33,19 +33,31 @@ class DependentDeletableAdapter(ContentDeletableAdapter):
         self.calls.append((self.context.getId(), initiator.getId()))
         if INotDeletable.providedBy(self.context):
             return No(u"{0} is used elsewhere".format(self.context.getId()))
-        return super(DependentDeletableAdapter, self).mayDelete(initiator=initiator, **kwargs)
+        return super(DependentDeletableAdapter, self).mayDelete(
+            initiator=initiator, **kwargs
+        )
 
 
 class TestEvents(IntegrationTestCase):
-
     def setUp(self):
         super(TestEvents, self).setUp()
         gsm = getGlobalSiteManager()
-        gsm.registerAdapter(DependentDeletableAdapter, (IDependentContent, ), IContentDeletable)
-        self.addCleanup(gsm.unregisterAdapter, DependentDeletableAdapter, (IDependentContent, ), IContentDeletable)
+        gsm.registerAdapter(
+            DependentDeletableAdapter, (IDependentContent,), IContentDeletable
+        )
+        self.addCleanup(
+            gsm.unregisterAdapter,
+            DependentDeletableAdapter,
+            (IDependentContent,),
+            IContentDeletable,
+        )
         DependentDeletableAdapter.calls = []
-        self.folder = api.content.create(container=self.portal, type="Folder", id="folder", title="Folder")
-        self.doc = api.content.create(container=self.folder, type="Document", id="doc", title="Doc")
+        self.folder = api.content.create(
+            container=self.portal, type="Folder", id="folder", title="Folder"
+        )
+        self.doc = api.content.create(
+            container=self.folder, type="Document", id="doc", title="Doc"
+        )
 
     def test_onObjWillBeRemoved(self):
         # the subscriber registered by dependents (testing.zcml) checks mayDelete
@@ -54,7 +66,10 @@ class TestEvents(IntegrationTestCase):
         # default message when mayDelete returns False
         login(self.portal, MEMBER_ID)
         with self.assertRaises(Unauthorized) as cm:
-            onObjWillBeRemoved(self.folder, ObjectWillBeRemovedEvent(self.folder, self.portal, "folder"))
+            onObjWillBeRemoved(
+                self.folder,
+                ObjectWillBeRemovedEvent(self.folder, self.portal, "folder"),
+            )
         self.assertEqual(str(cm.exception), "You can not delete this element!")
         # the Plone site is not checked
         event = ObjectWillBeRemovedEvent(self.portal, self.portal.aq_parent, "plone")
@@ -70,4 +85,7 @@ class TestEvents(IntegrationTestCase):
         DependentDeletableAdapter.calls = []
         api.content.delete(self.folder)
         self.assertNotIn("folder", self.portal.objectIds())
-        self.assertEqual(sorted(DependentDeletableAdapter.calls), [("doc", "folder"), ("folder", "folder")])
+        self.assertEqual(
+            sorted(DependentDeletableAdapter.calls),
+            [("doc", "folder"), ("folder", "folder")],
+        )

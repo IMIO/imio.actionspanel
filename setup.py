@@ -5,12 +5,11 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-long_description = (
-    open('README.rst').read() + '\n' + open('CHANGES.rst').read() + '\n')
+long_description = open("README.rst").read() + "\n" + open("CHANGES.rst").read() + "\n"
 
 setup(
-    name='imio.actionspanel',
-    version='1.72.dev0',
+    name="imio.actionspanel",
+    version="1.72.dev0",
     description="Actions panel",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -25,32 +24,34 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
     ],
-    keywords='actions panel buttons',
-    author='IMIO',
-    author_email='dev@imio.be',
-    url='https://github.com/imio/imio.actionspanel',
-    download_url='https://pypi.org/project/imio.actionspanel',
-    license='GPL',
-    packages=find_packages('src', exclude=['ez_setup']),
-    namespace_packages=['imio', ],
-    package_dir={'': 'src'},
+    keywords="actions panel buttons",
+    author="IMIO",
+    author_email="dev@imio.be",
+    url="https://github.com/imio/imio.actionspanel",
+    download_url="https://pypi.org/project/imio.actionspanel",
+    license="GPL",
+    packages=find_packages("src", exclude=["ez_setup"]),
+    namespace_packages=[
+        "imio",
+    ],
+    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'Plone',
-        'setuptools',
-        'appy',
-        'collective.fingerpointing',
-        'imio.helpers>=0.74',
-        'imio.history>=1.17',
-        'plone.api',
-        'six',
+        "Plone",
+        "setuptools",
+        "appy",
+        "collective.fingerpointing",
+        "imio.helpers>=0.74",
+        "imio.history>=1.17",
+        "plone.api",
+        "six",
     ],
     extras_require={
-        'test': [
-            'plone.app.robotframework',
-            'plone.app.testing',
-            'plone.testing',
+        "test": [
+            "plone.app.robotframework",
+            "plone.app.testing",
+            "plone.testing",
         ],
     },
     entry_points="""

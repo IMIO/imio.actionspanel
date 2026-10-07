@@ -78,7 +78,7 @@ class IntegrationTestCase(unittest.TestCase):
 
     def set_form(self, values):
         """Set p_values in the request form and, as the publisher does, in request.other,
-           read first by request.get.  A None value removes the key."""
+        read first by request.get.  A None value removes the key."""
         for key, value in values.items():
             for namespace in (self.request.form, self.request.other):
                 if value is None:
@@ -101,7 +101,9 @@ class FunctionalTestCase(IntegrationTestCase):
 # As in dependents: imio.helpers is installed (actionspanel.js calls its helpers.js) and the panel
 # is shown with other params (testing.zcml): as icons above the content, besides the buttons
 # panel below it, and loaded by JS (?async_panel=1). Document.publish is a transition to confirm.
-from imio.actionspanel.browser.viewlets import ActionsPanelViewlet  # noqa: E402  isort:skip
+from imio.actionspanel.browser.viewlets import (  # noqa: E402  isort:skip
+    ActionsPanelViewlet,
+)
 from zope.interface import Interface  # noqa: E402  isort:skip
 
 
@@ -125,7 +127,9 @@ class RobotIconsViewlet(ActionsPanelViewlet):
     }
 
     def render(self):
-        return u'<div id="icons-actions-panel">{0}</div>'.format(self.renderViewlet() or u"")
+        return u'<div id="icons-actions-panel">{0}</div>'.format(
+            self.renderViewlet() or u""
+        )
 
 
 class RobotAsyncViewlet(ActionsPanelViewlet):
@@ -134,7 +138,9 @@ class RobotAsyncViewlet(ActionsPanelViewlet):
     is_async = True
 
     def show(self):
-        return "async_panel" in self.request.form and super(RobotAsyncViewlet, self).show()
+        return (
+            "async_panel" in self.request.form and super(RobotAsyncViewlet, self).show()
+        )
 
 
 class RobotLayer(PloneSandboxLayer):
@@ -155,7 +161,8 @@ class RobotLayer(PloneSandboxLayer):
         # collective.fingerpointing logs the registry change: it needs the global request
         setRequest(portal.REQUEST)
         api.portal.set_registry_record(
-            "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions", ["Document.publish|"]
+            "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions",
+            ["Document.publish|"],
         )
         setRequest(None)
 
@@ -163,5 +170,6 @@ class RobotLayer(PloneSandboxLayer):
 ROBOT_FIXTURE = RobotLayer(name="ROBOT_FIXTURE")
 
 ROBOT_ACCEPTANCE = FunctionalTesting(
-    bases=(ROBOT_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, SERVER_FIXTURE), name="ROBOT_ACCEPTANCE"
+    bases=(ROBOT_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE, SERVER_FIXTURE),
+    name="ROBOT_ACCEPTANCE",
 )

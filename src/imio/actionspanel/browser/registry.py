@@ -12,19 +12,23 @@ import six
 
 class IImioActionsPanelConfig(Interface):
     """
-        Configuration schema
+    Configuration schema
     """
 
     transitions = schema.List(
-        title=_(u'Transitions to confirm'),
-        description=_(u'Define for each object transition the optional corresponding view'),
+        title=_(u"Transitions to confirm"),
+        description=_(
+            u"Define for each object transition the optional corresponding view"
+        ),
         required=False,
         # bytes on Python 2 (as before), text on Python 3 (the values are split on '|')
         value_type=(schema.BytesLine if six.PY2 else schema.TextLine)(
             title=_("Transition value"),
-            description=_('Formatted like "portal_type" "." "transition name" "|" "view", '
-                          'like "Document.publish|" . The view can be empty'),
-        )
+            description=_(
+                'Formatted like "portal_type" "." "transition name" "|" "view", '
+                'like "Document.publish|" . The view can be empty'
+            ),
+        ),
     )
 
     @invariant
@@ -33,9 +37,9 @@ class IImioActionsPanelConfig(Interface):
         states = {}
         if not data._Data_data___:
             return
-        if 'value' not in data._Data_data___:
+        if "value" not in data._Data_data___:
             raise Invalid(_(u"Internal validation error"))
-        values = data._Data_data___['value']
+        values = data._Data_data___["value"]
         if values is None:
             return
         i = 0
@@ -54,26 +58,55 @@ class IImioActionsPanelConfig(Interface):
         for value in values:
             i += 1
             val = value.strip()
-            if ' ' in val:
-                raise Invalid(_("The value cannot contain space: line ${i}, '${val}'", mapping={'i': i, 'val': value}))
-            if val.find('|') <= 0:
-                val += '|'
+            if " " in val:
+                raise Invalid(
+                    _(
+                        "The value cannot contain space: line ${i}, '${val}'",
+                        mapping={"i": i, "val": value},
+                    )
+                )
+            if val.find("|") <= 0:
+                val += "|"
             values[i - 1] = val
-            (typ_trans, view) = val.split('|')
+            (typ_trans, view) = val.split("|")
             if typ_trans in uniques:
-                raise Invalid(_("The transition value '${val}' is set multiple times.", mapping={'val': typ_trans}))
+                raise Invalid(
+                    _(
+                        "The transition value '${val}' is set multiple times.",
+                        mapping={"val": typ_trans},
+                    )
+                )
             uniques.append(typ_trans)
-            if typ_trans.find('.') <= 0:
-                raise Invalid(_("The first part must contain one dot to separate the type and the transition: "
-                                "line ${i}, '${val}'", mapping={'i': i, 'val': value}))
-            parts = typ_trans.split('.')
+            if typ_trans.find(".") <= 0:
+                raise Invalid(
+                    _(
+                        "The first part must contain one dot to separate the type and the transition: "
+                        "line ${i}, '${val}'",
+                        mapping={"i": i, "val": value},
+                    )
+                )
+            parts = typ_trans.split(".")
             if len(parts) != 2:
-                raise Invalid(_("The first part must contain one dot to separate the type and the transition: "
-                                "line ${i}, '${val}'", mapping={'i': i, 'val': value}))
-            (typ, transition) = typ_trans.split('.')
+                raise Invalid(
+                    _(
+                        "The first part must contain one dot to separate the type and the transition: "
+                        "line ${i}, '${val}'",
+                        mapping={"i": i, "val": value},
+                    )
+                )
+            (typ, transition) = typ_trans.split(".")
             if typ not in portal.portal_types.listContentTypes():
-                raise Invalid(_("This portal_type doesn't exist: line ${i}, '${val}'", mapping={'i': i, 'val': value}))
+                raise Invalid(
+                    _(
+                        "This portal_type doesn't exist: line ${i}, '${val}'",
+                        mapping={"i": i, "val": value},
+                    )
+                )
             if transition not in transitions_for(typ):
-                raise Invalid(_("This transition id isn't valid for the portal_type: line ${i}, '${val}'",
-                                mapping={'i': i, 'val': value}))
-        data._Data_data___['value'] = values
+                raise Invalid(
+                    _(
+                        "This transition id isn't valid for the portal_type: line ${i}, '${val}'",
+                        mapping={"i": i, "val": value},
+                    )
+                )
+        data._Data_data___["value"] = values

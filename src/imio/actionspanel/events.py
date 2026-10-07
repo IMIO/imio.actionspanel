@@ -20,11 +20,11 @@ DEFAULT_MAY_NOT_DELETE_MSG = "You can not delete this element!"
 
 def onObjWillBeRemoved(obj, event):
     """
-      Called when any object removed to check for ContentDeletable.mayDelete.
+    Called when any object removed to check for ContentDeletable.mayDelete.
     """
 
     # If we are trying to remove the whole Plone Site bypass
-    if event.object.meta_type in ['Plone Site']:
+    if event.object.meta_type in ["Plone Site"]:
         return
 
     # pass initial object that triggered the event under name "iniatiator"
@@ -34,4 +34,5 @@ def onObjWillBeRemoved(obj, event):
 
     if not may_delete:
         raise Unauthorized(
-            may_delete.msg if isinstance(may_delete, No) else DEFAULT_MAY_NOT_DELETE_MSG)
+            may_delete.msg if isinstance(may_delete, No) else DEFAULT_MAY_NOT_DELETE_MSG
+        )

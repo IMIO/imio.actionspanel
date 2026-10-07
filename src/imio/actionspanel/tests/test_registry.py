@@ -6,7 +6,6 @@ from zope.interface import Invalid
 
 
 class TestIImioActionsPanelConfig(IntegrationTestCase):
-
     def validate(self, data):
         """Validate the invariants as the registry record edit form does (field named 'value')."""
         data = Data(IImioActionsPanelConfig, data, self.portal)
@@ -28,22 +27,51 @@ class TestIImioActionsPanelConfig(IntegrationTestCase):
         self.assertEqual(cm.exception.args[0], u"Internal validation error")
         # values are stripped and completed with '|'
         self.assertEqual(
-            self.validate({"value": [" Document.publish ", "Document.submit|@@my_confirm", "Folder.publish|"]}),
-            {"value": ["Document.publish|", "Document.submit|@@my_confirm", "Folder.publish|"]})
+            self.validate(
+                {
+                    "value": [
+                        " Document.publish ",
+                        "Document.submit|@@my_confirm",
+                        "Folder.publish|",
+                    ]
+                }
+            ),
+            {
+                "value": [
+                    "Document.publish|",
+                    "Document.submit|@@my_confirm",
+                    "Folder.publish|",
+                ]
+            },
+        )
         # invalid values
         self.assertInvalid(
-            ["Document. publish"], u"The value cannot contain space: line ${i}, '${val}'",
-            {"i": 1, "val": "Document. publish"})
+            ["Document. publish"],
+            u"The value cannot contain space: line ${i}, '${val}'",
+            {"i": 1, "val": "Document. publish"},
+        )
         self.assertInvalid(
             ["Document.publish", "Document.publish|@@my_confirm"],
-            u"The transition value '${val}' is set multiple times.", {"val": "Document.publish"})
+            u"The transition value '${val}' is set multiple times.",
+            {"val": "Document.publish"},
+        )
         msgid = u"The first part must contain one dot to separate the type and the transition: line ${i}, '${val}'"
-        self.assertInvalid(["Document.publish", "Documentpublish"], msgid, {"i": 2, "val": "Documentpublish"})
+        self.assertInvalid(
+            ["Document.publish", "Documentpublish"],
+            msgid,
+            {"i": 2, "val": "Documentpublish"},
+        )
         self.assertInvalid([".publish"], msgid, {"i": 1, "val": ".publish"})
-        self.assertInvalid(["Document.publish.now"], msgid, {"i": 1, "val": "Document.publish.now"})
         self.assertInvalid(
-            ["Unknown.publish"], u"This portal_type doesn't exist: line ${i}, '${val}'",
-            {"i": 1, "val": "Unknown.publish"})
+            ["Document.publish.now"], msgid, {"i": 1, "val": "Document.publish.now"}
+        )
         self.assertInvalid(
-            ["Document.unknown"], u"This transition id isn't valid for the portal_type: line ${i}, '${val}'",
-            {"i": 1, "val": "Document.unknown"})
+            ["Unknown.publish"],
+            u"This portal_type doesn't exist: line ${i}, '${val}'",
+            {"i": 1, "val": "Unknown.publish"},
+        )
+        self.assertInvalid(
+            ["Document.unknown"],
+            u"This transition id isn't valid for the portal_type: line ${i}, '${val}'",
+            {"i": 1, "val": "Document.unknown"},
+        )
