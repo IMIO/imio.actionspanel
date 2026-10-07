@@ -2,8 +2,6 @@
 
 from AccessControl import Unauthorized
 from Acquisition import aq_base
-
-import six
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
@@ -32,7 +30,9 @@ from zope.i18n import translate
 from zope.i18nmessageid import Message
 
 import json
+import six
 import transaction
+
 
 if six.PY2:
     from appy.gen import No
