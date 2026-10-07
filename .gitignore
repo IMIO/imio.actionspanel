@@ -19,3 +19,8 @@ var/
 .coverage
 .idea
 pyvenv.cfg
+.python-version
+CACHEDIR.TAG
+.plone-version
+.plone*
+checkversion*.html
