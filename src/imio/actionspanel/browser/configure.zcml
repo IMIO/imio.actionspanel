@@ -3,6 +3,9 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:plone="http://namespaces.plone.org/plone">
 
+    <!-- cmf.ManageProperties, when loaded before Products.CMFCore (instance `zcml` option) -->
+    <include package="Products.CMFCore" file="permissions.zcml" />
+
     <!-- Publish static files -->
     <browser:resourceDirectory
         name="imio.actionspanel"

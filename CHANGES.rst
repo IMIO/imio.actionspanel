@@ -21,6 +21,8 @@ Changelog
   [chris-adam]
 - Renamed `ActionsPanelViewlet.async` to `is_async` (`async` is a Python 3 keyword).
   [aduchene]
+- Fixed instance startup (`ComponentLookupError` on `cmf.ManageProperties`) when the package ZCML is loaded before `Products.CMFCore`.
+  [chris-adam]
 
 
 1.71 (2026-08-19)
