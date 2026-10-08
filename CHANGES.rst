@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0 (unreleased)
-----------------
+2.0.0 (unreleased)
+------------------
 
 - Plone 6.2 / Python 3.10-3.13 compatibility, drop Plone 4 and Python 2: CSS/JS in bundles
   `imio-actionspanel` and `imio-actionspanel-variables`, skin layer removed (`folder_position_typeaware` and

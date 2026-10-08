@@ -9,7 +9,7 @@ long_description = open("README.rst").read() + "\n" + open("CHANGES.rst").read()
 
 setup(
     name="imio.actionspanel",
-    version="2.0.dev0",
+    version="2.0.0.dev0",
     description="Actions panel",
     long_description=long_description,
     # Get more from http://pypi.python.org/pypi?%3Aaction=list_classifiers
