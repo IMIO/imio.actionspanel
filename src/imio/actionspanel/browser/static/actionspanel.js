@@ -8,50 +8,37 @@ function confirmDeleteObject(base_url, object_uid, tag, msgName=null, view_name=
         deleteElement(base_url, object_uid, tag, view_name, redirect); }
 }
 
-initializeOverlays = function () {
-    jQuery(function($) {
-        // WF transition confirmation popup
-        $('a.link-overlay-actionspanel.transition-overlay').prepOverlay({
-              subtype: 'ajax',
-              closeselector: '[name="form.buttons.cancel"]',
-        config: {
-            onBeforeClose : function (e) {
-                // avoid closing overlay when click outside overlay
-                // or when it is closed by WSC
-                if (e.target.id == "exposeMask" ||
-                    e.target.classList.contains("wsc-icon") ||
-                    e.target.classList.contains("wsc-button")) {return false;}
-            },
-        },
-        });
-        // Delete comments popup
-        $('a.link-overlay-actionspanel.delete-comments-overlay').prepOverlay({
-              subtype: 'ajax',
-              closeselector: '[name="form.buttons.cancel"]',
-        });
-        // Content history popup
-        $('a.overlay-history').prepOverlay({
-           subtype: 'ajax',
-           filter: 'h2, #content-history',
-           cssclass: 'overlay-history',
-           urlmatch: '@@historyview',
-           urlreplace: '@@contenthistorypopup'
-        });
-    });
-};
+// CSRF token (plone.protect) sent with the AJAX writes
+function actionsPanelAuthenticator() {
+    var script = document.getElementById('protect-script');
+    return script ? script.dataset.token : $('input[name="_authenticator"]').val();
+}
 
-jQuery(document).ready(initializeOverlays);
+// The modals are links with the pat-plone-modal class and their options in data-pat-plone-modal,
+// initialized by Plone when the page loads.  Initialize the ones of HTML added afterwards
+// (async panel, faceted results); does nothing until the modal pattern is loaded, Plone does it then.
+function initializeOverlays() {
+    if ($.fn.patPloneModal) {
+        $('a.link-overlay-actionspanel, a.overlay-history').patPloneModal();
+    }
+}
+
+// onRender of the modals with a form: the modal copies the form buttons in its footer, clicking
+// a copy clicks the button, so remove the onclick of the copies: it runs once, on the button of the form
+function actionsPanelModalRendered(modal) {
+    $('.pattern-modal-buttons [onclick]', modal.$modal).removeAttr('onclick');
+}
 
 // prevent default click action
-preventDefaultClick = function() {
+function preventDefaultClick() {
 $("a.prevent-default").click(function(event) {
   event.preventDefault();
 });
-// on the comment overlay
+// on the comment form
 $("input.prevent-default").click(function(event) {
   event.preventDefault();
 });
-};
+}
 jQuery(document).ready(preventDefaultClick);
 
 function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, event_id=null) {
@@ -60,32 +47,34 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
   temp_disable_link(tag);
 
   // find comment in the page
-  comment = '';
+  var comment = '';
   if ($('form#commentsForm textarea').length) {
       comment = $('form#commentsForm textarea')[0].value;
-      // find the right tag because we are in an overlay and the tag will
-      // never be found like being in a faceted
-      // find the button that opened this overlay
-      overlay_id = $(tag).closest('div.overlay-ajax').attr('id');
-      tag = $('[rel="#' + overlay_id + '"]');
+      // we are in a modal, the tag will never be found like being in a faceted:
+      // use the link that opened the modal
+      var modal = $(tag).closest('.modal').data('pattern-plone-modal');
+      if (modal) {
+          tag = modal.$el;
+      }
   }
 
   // refresh faceted if we are on it, else, let the view manage redirect
-  redirect = 0;
+  var redirect = 0;
   if (!has_faceted() || force_redirect) {
     redirect = 1;
   }
 
   // create data that will be passed to view
-  preComment = extraData.preComment;
+  var preComment = extraData.preComment;
   if (preComment != undefined) {
       // we replaced ' by &#39; to avoid problems in generated JS, now back to '
       preComment = preComment.replaceAll("&#39;", "'") + "\n\n";
       comment = preComment + comment;
   }
-  data = {'comment': comment,
-          'form.submitted': '1',
-          'redirect:int': redirect};
+  var data = {'comment': comment,
+              'form.submitted': '1',
+              'redirect:int': redirect,
+              '_authenticator': actionsPanelAuthenticator()};
   // update data with extraData
   data = Object.assign({}, data, extraData);
 
@@ -98,6 +87,8 @@ function applyWithComments(baseUrl, viewName, extraData, tag, force_redirect=0, 
     async: true,
     type: "POST",
     success: function(data) {
+        // an empty response is a 204 (undefined data) since Zope 4, it was "" (reload current page)
+        data = data || "";
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect === 0) && !(data)) {
             Faceted.URLHandler.hash_changed();
@@ -128,10 +119,14 @@ function deleteElement(baseUrl, object_uid, tag, view_name="@@delete_givenuid", 
     url: baseUrl + "/"+ view_name,
     dataType: 'html',
     data: {'object_uid': object_uid,
-           'redirect:int': redirect||0},
+           'redirect:int': redirect||0,
+           '_authenticator': actionsPanelAuthenticator()},
     cache: false,
     async: true,
+    type: "POST",
     success: function(data) {
+        // an empty response is a 204 (undefined data) since Zope 4, it was "" (reload current page)
+        data = data || "";
         // reload the faceted page if we are on it, refresh current if not
         if ((redirect == null) && !(data)) {
             if (has_faceted()) {
@@ -170,7 +165,7 @@ function load_actions_panel(tag){
       dataType: 'html',
       data: tag.dataset,
       cache: false,
-      // keep async: false so overlays are correctly initialized
+      // keep async: false so modals are correctly initialized
       async: false,
       success: function(data) {
         tag.innerHTML = data;

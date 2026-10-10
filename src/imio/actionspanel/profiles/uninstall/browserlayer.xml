@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<layers>
+    <layer name="imio.actionspanel.layer"
+           interface="imio.actionspanel.interfaces.IActionsPanelLayer"
+           remove="True" />
+</layers>

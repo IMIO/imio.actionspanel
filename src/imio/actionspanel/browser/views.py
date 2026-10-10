@@ -2,7 +2,7 @@
 
 from AccessControl import Unauthorized
 from Acquisition import aq_base
-from appy.gen import No
+from appy.utils import No
 from imio.actionspanel import ActionsPanelMessageFactory as _
 from imio.actionspanel import logger
 from imio.actionspanel.interfaces import IContentDeletable
@@ -13,17 +13,24 @@ from imio.history.browser.views import should_highlight_history_link
 from imio.history.utils import add_event_to_history
 from operator import itemgetter
 from plone import api
+from plone.base import PloneMessageFactory as _plone
+from plone.base.utils import get_installer
+from plone.base.utils import safe_text
+from plone.protect.utils import addTokenToUrl
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.ActionInformation import ActionInfo
+from Products.CMFCore.permissions import AddPortalContent
+from Products.CMFCore.permissions import DeleteObjects
 from Products.CMFCore.permissions import ManageProperties
+from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.permissions import ReviewPortalContent
 from Products.CMFCore.utils import _checkPermission
-from Products.CMFPlone import PloneMessageFactory as _plone
-from Products.CMFPlone.utils import safe_unicode
 from Products.DCWorkflow.Expression import createExprContext
 from Products.DCWorkflow.Expression import StateChangeInfo
 from Products.DCWorkflow.Transitions import TRIGGER_USER_ACTION
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from urllib.parse import urljoin
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.dottedname.resolve import resolve
@@ -34,35 +41,64 @@ import json
 import transaction
 
 
-DEFAULT_CONFIRM_VIEW = '@@triggertransition'
+DEFAULT_CONFIRM_VIEW = "@@triggertransition"
+
+# data-pat-plone-modal of the links opening a form in a modal: the form buttons run their onclick
+# (applyWithComments), the modal doesn't submit the form; links in the modal navigate
+MODAL_FORM_OPTIONS = {
+    "automaticallyAddButtonActions": False,
+    "loadLinksWithinModal": False,
+    "onRender": "actionsPanelModalRendered",
+}
 
 
 class ActionsPanelView(BrowserView):
     """
-      This manage the view displaying actions on context.
+    This manage the view displaying actions on context.
     """
+
+    # pat-plone-modal options (data-pat-plone-modal), a click outside the transition modal
+    # doesn't close it (comment being typed, spellchecker), as in Plone 4
+    TRANSITION_MODAL_OPTIONS = json.dumps(
+        dict(MODAL_FORM_OPTIONS, backdropOptions={"closeOnClick": False})
+    )
+    DELETE_MODAL_OPTIONS = json.dumps(MODAL_FORM_OPTIONS)
+    # the modal keeps the class of the Plone 4 overlay (overlay-history)
+    HISTORY_MODAL_OPTIONS = json.dumps(
+        {
+            "titleSelector": "h3:first",
+            "modalSizeClass": "modal-xl",
+            "loadLinksWithinModal": False,
+            "templateOptions": {"className": "modal fade overlay-history"},
+        }
+    )
+
     def __init__(self, context, request):
         super(ActionsPanelView, self).__init__(context, request)
         self.context = context
         self.request = request
         self.parent = self.context.getParentNode()
-        self.portal_url = self.request.get('imio.actionspanel_portal_url_cachekey', None)
-        self.portal = self.request.get('imio.actionspanel_portal_cachekey', None)
+        self.portal_url = self.request.get(
+            "imio.actionspanel_portal_url_cachekey", None
+        )
+        self.portal = self.request.get("imio.actionspanel_portal_cachekey", None)
         if not self.portal_url or not self.portal:
             self.portal = api.portal.get()
             self.portal_url = self.portal.absolute_url()
-            self.request.set('imio.actionspanel_portal_url_cachekey', self.portal_url)
-            self.request.set('imio.actionspanel_portal_cachekey', self.portal)
-        self.SECTIONS_TO_RENDER = ('renderFolderContents',
-                                   'renderEdit',
-                                   'renderExtEdit',
-                                   'renderTransitions',
-                                   'renderArrows',
-                                   'renderOwnDelete',
-                                   'renderOwnDeleteWithComments',
-                                   'renderActions',
-                                   'renderAddContent',
-                                   'renderHistory')
+            self.request.set("imio.actionspanel_portal_url_cachekey", self.portal_url)
+            self.request.set("imio.actionspanel_portal_cachekey", self.portal)
+        self.SECTIONS_TO_RENDER = (
+            "renderFolderContents",
+            "renderEdit",
+            "renderExtEdit",
+            "renderTransitions",
+            "renderArrows",
+            "renderOwnDelete",
+            "renderOwnDeleteWithComments",
+            "renderActions",
+            "renderAddContent",
+            "renderHistory",
+        )
         # portal_actions.object_buttons action ids not to keep
         # every actions will be kept except actions listed here
         self.IGNORABLE_ACTIONS = ()
@@ -71,28 +107,30 @@ class ActionsPanelView(BrowserView):
         # if you define some here, only these actions will be kept
         self.ACCEPTABLE_ACTIONS = ()
 
-    def __call__(self,
-                 useIcons=True,
-                 showTransitions=True,
-                 appendTypeNameToTransitionLabel=False,
-                 showEdit=True,
-                 showExtEdit=False,
-                 showOwnDelete=True,
-                 showOwnDeleteWithComments=False,
-                 showActions=True,
-                 showAddContent=False,
-                 showHistory=False,
-                 showHistoryLastEventHasComments=True,
-                 showArrows=False,
-                 showFolderContents=False,
-                 arrowsPortalTypeAware=False,
-                 markingInterface=None,
-                 forceRedirectOnOwnDelete=True,
-                 forceRedirectAfterTransition=False,
-                 **kwargs):
+    def __call__(
+        self,
+        useIcons=True,
+        showTransitions=True,
+        appendTypeNameToTransitionLabel=False,
+        showEdit=True,
+        showExtEdit=False,
+        showOwnDelete=True,
+        showOwnDeleteWithComments=False,
+        showActions=True,
+        showAddContent=False,
+        showHistory=False,
+        showHistoryLastEventHasComments=True,
+        showArrows=False,
+        showFolderContents=False,
+        arrowsPortalTypeAware=False,
+        markingInterface=None,
+        forceRedirectOnOwnDelete=True,
+        forceRedirectAfterTransition=False,
+        **kwargs,
+    ):
         """
-          Master method that will render the content.
-          This is not supposed to be overrided.
+        Master method that will render the content.
+        This is not supposed to be overrided.
         """
         self.useIcons = useIcons
         self.showTransitions = showTransitions
@@ -102,11 +140,11 @@ class ActionsPanelView(BrowserView):
         self.showOwnDelete = showOwnDelete
         self.showOwnDeleteWithComments = showOwnDeleteWithComments
         # if 'delete' is in acceptable actions, it takes precedence on showOwnDelete
-        if showActions and 'delete' in self.ACCEPTABLE_ACTIONS:
+        if showActions and "delete" in self.ACCEPTABLE_ACTIONS:
             self.showOwnDelete = False
         # if we manage our own delete, do not use Plone default one
-        elif self.showOwnDelete and 'delete' not in self.IGNORABLE_ACTIONS:
-            self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ('delete', )
+        elif self.showOwnDelete and "delete" not in self.IGNORABLE_ACTIONS:
+            self.IGNORABLE_ACTIONS = self.IGNORABLE_ACTIONS + ("delete",)
         self.showActions = showActions
         self.showAddContent = showAddContent
         self.showHistory = showHistory
@@ -137,172 +175,211 @@ class ActionsPanelView(BrowserView):
     @property
     def member(self):
         """Caching for member."""
-        member = self.request.get('imio.actionspanel_member_cachekey', None)
+        member = self.request.get("imio.actionspanel_member_cachekey", None)
         if not member:
             member = api.user.get_current()
-            self.request.set('imio.actionspanel_member_cachekey', member)
+            self.request.set("imio.actionspanel_member_cachekey", member)
         return member
 
     def isInFacetedNavigation(self):
         """Is the actions panel displayed in a faceted navigation?"""
-        return bool(self.request['URL'].endswith('@@faceted_query'))
+        return bool(self.request["URL"].endswith("@@faceted_query"))
 
     def _renderSections(self):
         """
-          This will check what sections need to be rendered.
-          This is not supposed to be overrided.
+        This will check what sections need to be rendered.
+        This is not supposed to be overrided.
         """
-        res = ''
+        res = ""
 
         for section in self.SECTIONS_TO_RENDER:
-            renderedSection = getattr(self, section)() or ''
+            renderedSection = getattr(self, section)() or ""
             res += renderedSection
         return res
 
     def renderArrows(self):
         """
-          Render arrows if user may change order of elements.
+        Render arrows if user may change order of elements.
         """
         if not self.useIcons:
-            return ''
+            return ""
 
-        if self.showArrows and self.member.has_permission(ManageProperties, self.parent):
+        if self.showArrows and self.member.has_permission(
+            ManageProperties, self.parent
+        ):
             self.parentObjectIds = [
-                ob.id for ob in self.parent.objectValues()
-                if (not self.arrowsPortalTypeAware or ob.portal_type == self.context.portal_type)]
+                ob.id
+                for ob in self.parent.objectValues()
+                if (
+                    not self.arrowsPortalTypeAware
+                    or ob.portal_type == self.context.portal_type
+                )
+            ]
             self.objId = self.context.getId()
             self.moveUrl = self._moveUrl()
             return ViewPageTemplateFile("actions_panel_arrows.pt")(self)
-        return ''
+        return ""
 
     def _moveUrl(self):
         """ """
-        script_name = 'folder_position'
+        script_name = "folder_position"
         if self.arrowsPortalTypeAware:
-            script_name = 'folder_position_typeaware'
+            script_name = "folder_position_typeaware"
 
-        return "{0}/{1}?position=%s&id=%s&template_id={2}".format(
-            self.parent.absolute_url(), script_name, self._returnTo())
+        return addTokenToUrl(
+            "{0}/{1}?position=%s&id=%s&template_id={2}".format(
+                self.parent.absolute_url(), script_name, self._returnTo()
+            ),
+            self.request,
+        )
 
-    def _returnTo(self, ):
+    def _returnTo(
+        self,
+    ):
         """What URL should I return to after moving the element and page is refreshed."""
         return self.request.getURL()
 
     def renderTransitions(self):
         """
-          Render the current context available workflow transitions.
+        Render the current context available workflow transitions.
         """
         if self.showTransitions:
             return ViewPageTemplateFile("actions_panel_transitions.pt")(self)
-        return ''
+        return ""
 
     def renderFolderContents(self):
         """
-          Render a 'folder_contents' action.
+        Render a 'folder_contents' action.
         """
-        if self.showFolderContents and \
-           (not self.markingInterface or self.isMarked(self.markingInterface, self.getCurrentFolder())) and \
-           self.mayFolderContents():
+        if (
+            self.showFolderContents
+            and (
+                not self.markingInterface
+                or self.isMarked(self.markingInterface, self.getCurrentFolder())
+            )
+            and self.mayFolderContents()
+        ):
             return ViewPageTemplateFile("actions_panel_folder_contents.pt")(self)
-        return ''
+        return ""
 
     def renderEdit(self):
         """
-          Render a 'edit' action.  By default, only available when actions are displayed
-          as icons because when it is not the case, we already have a 'edit' tab and that would
-          be redundant.
+        Render a 'edit' action.  By default, only available when actions are displayed
+        as icons because when it is not the case, we already have a 'edit' tab and that would
+        be redundant.
         """
         if self.showEdit and self.mayEdit():
             return ViewPageTemplateFile("actions_panel_edit.pt")(self)
-        return ''
+        return ""
 
     def renderExtEdit(self):
         """
-          Render a 'external_edit' action.  By default, only available when actions are displayed
-          as icons because when it is not the case, we already have a 'external_edit' viewlet and that would
-          be redundant.
+        Render a 'external_edit' action.  By default, only available when actions are displayed
+        as icons because when it is not the case, we already have a 'external_edit' viewlet and that would
+        be redundant.
         """
         if self.showExtEdit and self.useIcons and self.mayExtEdit():
             return ViewPageTemplateFile("actions_panel_ext_edit.pt")(self)
-        return ''
+        return ""
 
     def renderOwnDelete(self):
         """
-          Render our own version of the 'delete' action.
+        Render our own version of the 'delete' action.
         """
-        if self.showOwnDelete and \
-           IContentDeletable(self.context).mayDelete():
+        if self.showOwnDelete and IContentDeletable(self.context).mayDelete():
             return ViewPageTemplateFile("actions_panel_own_delete.pt")(self)
-        return ''
+        return ""
 
     def renderOwnDeleteWithComments(self):
         """
-          Render our own version of the 'delete' action with possibility to provide comments.
+        Render our own version of the 'delete' action with possibility to provide comments.
         """
-        if self.showOwnDeleteWithComments and \
-           IContentDeletable(self.context).mayDelete():
-            return ViewPageTemplateFile("actions_panel_own_delete_with_comments.pt")(self)
-        return ''
+        if (
+            self.showOwnDeleteWithComments
+            and IContentDeletable(self.context).mayDelete()
+        ):
+            return ViewPageTemplateFile("actions_panel_own_delete_with_comments.pt")(
+                self
+            )
+        return ""
 
     def renderActions(self):
         """
-          Render actions coming from portal_actions.object_buttons and available on the context.
+        Render actions coming from portal_actions.object_buttons and available on the context.
         """
         if self.showActions:
             return ViewPageTemplateFile("actions_panel_actions.pt")(self)
 
     def renderAddContent(self):
         """
-          Render allowed_content_types coming from portal_type.
+        Render allowed_content_types coming from portal_type.
         """
         if self.showAddContent:
             return ViewPageTemplateFile("actions_panel_add_content.pt")(self)
 
     def renderHistory(self):
         """
-          Render a link to the object's history (@@historyview).
+        Render a link to the object's history (@@historyview).
         """
         if self.showHistory and self.useIcons and self.showHistoryForContext():
             return ViewPageTemplateFile("actions_panel_history.pt")(self)
 
     def showHistoryForContext(self):
         """
-          Method to control access to the @@historyview view and so to the action icon.
-          We rely on view 'contenthistory' overrided in imio.history.
+        Method to control access to the @@historyview view and so to the action icon.
+        We rely on view 'contenthistory' overrided in imio.history.
         """
-        self.contenthistory = getMultiAdapter((self.context, self.request), name='contenthistory')
+        self.contenthistory = getMultiAdapter(
+            (self.context, self.request), name="contenthistory"
+        )
         return self.contenthistory.show_history()
 
     def historyLastEventHasComments(self):
         """
-          Returns True if the last event of the object's history has a comment.
+        Returns True if the last event of the object's history has a comment.
         """
         return should_highlight_history_link(self.context, self.contenthistory)
 
     def mayFolderContents(self):
         """
-          Method that check if folder_contents action has to be displayed.
+        Method that check if folder_contents action has to be displayed.
+        Same rules as Plone 4 '@@plone/displayContentsTab' (removed in Plone 5).
         """
-        if self.member.has_permission('List folder contents', self.context):
-            plone_view = getMultiAdapter((self.context, self.request), name='plone')
-            return bool(plone_view.displayContentsTab())
-        return False
+        if not self.member.has_permission("List folder contents", self.context):
+            return False
+        context_state = getMultiAdapter(
+            (self.context, self.request), name="plone_context_state"
+        )
+        if not (
+            context_state.is_structural_folder() or context_state.is_default_page()
+        ):
+            return False
+        folder = context_state.folder()
+        return self.member.has_permission("List folder contents", folder) and any(
+            self.member.has_permission(permission, folder)
+            for permission in (
+                ModifyPortalContent,
+                AddPortalContent,
+                DeleteObjects,
+                ReviewPortalContent,
+            )
+        )
 
     def mayEdit(self):
         """
-          Method that check if special 'edit' action has to be displayed.
+        Method that check if special 'edit' action has to be displayed.
         """
-        return self.member.has_permission('Modify portal content', self.context)
+        return self.member.has_permission("Modify portal content", self.context)
 
     def mayExtEdit(self):
         """
-          Method that check if special 'external_edit' action has to be displayed.
+        Method that check if special 'external_edit' action has to be displayed.
         """
-        if not self.member.has_permission('Modify portal content', self.context):
+        if not self.member.has_permission("Modify portal content", self.context):
             return False
-        portal_quickinstaller = api.portal.get_tool('portal_quickinstaller')
-        external_edit_installed = portal_quickinstaller.isProductInstalled('collective.externaleditor')
-        if not external_edit_installed:
+        if not get_installer(self.context, self.request).is_product_installed(
+            "collective.externaleditor"
+        ):
             return False
         # Can be to slow for a dashboard ?
         # view = getMultiAdapter((self.context, self.request), name='externalEditorEnabled')
@@ -311,46 +388,62 @@ class ActionsPanelView(BrowserView):
         # with available method
         registry = getUtility(IRegistry)
         # check if enabled
-        if not registry.get('externaleditor.ext_editor', False):
+        if not registry.get("externaleditor.ext_editor", False):
             return False
         # check portal type
-        externaleditor_enabled_types = registry.get('externaleditor.externaleditor_enabled_types', [])
+        externaleditor_enabled_types = registry.get(
+            "externaleditor.externaleditor_enabled_types", []
+        )
         return self.context.portal_type in externaleditor_enabled_types
+
+    def iconUrl(self, icon):
+        """URL of p_icon: a Plone icon name (e.g. 'plone-cut') is resolved by the iconresolver,
+        a file (e.g. '++resource++my.package/icon.png') is relative to the portal."""
+        if "." in icon:
+            return "{0}/{1}".format(self.portal_url, icon)
+        return getMultiAdapter((self.portal, self.request), name="iconresolver").url(
+            icon
+        )
 
     def saveHasActions(self):
         """
-          Save the fact that we have actions.
+        Save the fact that we have actions.
         """
         self.hasActions = True
 
     def sortTransitions(self, lst):
-        """ Sort the list of transitions by title """
-        lst.sort(key=itemgetter('title'))
+        """Sort the list of transitions by title"""
+        lst.sort(key=itemgetter("title"))
 
     def getTransitions(self, caching=True):
         """
-          This method is similar to portal_workflow.getTransitionsFor, but
-          with some improvements:
-          - we retrieve transitions that the user can't trigger, but for
-            which he needs to know for what reason he can't trigger it;
-          - for every transition, we know if we need to display a confirm
-            popup or not;
-          If caching=True, we will stored result in _transitions and use it
-          if method is called again.
+        This method is similar to portal_workflow.getTransitionsFor, but
+        with some improvements:
+        - we retrieve transitions that the user can't trigger, but for
+          which he needs to know for what reason he can't trigger it;
+        - for every transition, we know if we need to display a confirm
+          popup or not;
+        If caching=True, we will stored result in _transitions and use it
+        if method is called again.
         """
         if caching:
-            if getattr(self, '_transitions', None):
+            if getattr(self, "_transitions", None):
                 return self._transitions
         res = []
         # Get the workflow definition for p_obj.
-        workflow = self.request.get('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, None)
+        workflow = self.request.get(
+            "imio.actionspanel_workflow_%s_cachekey" % self.context.portal_type, None
+        )
         if not workflow:
-            wfTool = api.portal.get_tool('portal_workflow')
+            wfTool = api.portal.get_tool("portal_workflow")
             workflows = wfTool.getWorkflowsFor(self.context)
             if not workflows:
                 return res
             workflow = workflows[0]
-            self.request.set('imio.actionspanel_workflow_%s_cachekey' % self.context.portal_type, workflow)
+            self.request.set(
+                "imio.actionspanel_workflow_%s_cachekey" % self.context.portal_type,
+                workflow,
+            )
         # What is the current state for self.context?
         currentState = workflow._getWorkflowStateOf(self.context)
         if not currentState:
@@ -360,53 +453,71 @@ class ActionsPanelView(BrowserView):
         # Analyse all the transitions that start from this state.
         for transitionId in currentState.transitions:
             transition = workflow.transitions.get(transitionId, None)
-            if transition and (transition.trigger_type == TRIGGER_USER_ACTION) \
-               and transition.actbox_name:
+            if (
+                transition
+                and (transition.trigger_type == TRIGGER_USER_ACTION)
+                and transition.actbox_name
+            ):
                 # We have a possible candidate for a user-triggerable transition
                 if transition.guard is None:
                     mayTrigger = True
                 else:
-                    mayTrigger = self._checkTransitionGuard(transition.guard,
-                                                            self.member,
-                                                            workflow,
-                                                            self.context)
+                    mayTrigger = self._checkTransitionGuard(
+                        transition.guard, self.member, workflow, self.context
+                    )
                 if mayTrigger or isinstance(mayTrigger, No):
                     # Information about this transition must be part of result.
                     # check if the transition have to be confirmed regarding
                     # current object class_name/portal_type and transition to trigger
-                    preNameClassName = '%s.%s' % (self.context.__class__.__name__, transition.id)
-                    preNamePortalType = '%s.%s' % (self.context.portal_type, transition.id)
-                    confirmation_view = toConfirm.get(preNameClassName, '') or \
-                        toConfirm.get(preNamePortalType, '')
+                    preNameClassName = "%s.%s" % (
+                        self.context.__class__.__name__,
+                        transition.id,
+                    )
+                    preNamePortalType = "%s.%s" % (
+                        self.context.portal_type,
+                        transition.id,
+                    )
+                    confirmation_view = toConfirm.get(
+                        preNameClassName, ""
+                    ) or toConfirm.get(preNamePortalType, "")
                     tInfo = {
-                        'id': transition.id,
+                        "id": transition.id,
                         # if the transition.id is not translated, use translated transition.title...
-                        'title': translate(safe_unicode(transition.title),
-                                           domain="plone",
-                                           context=self.request),
-                        'description': transition.description,
-                        'name': transition.actbox_name, 'may_trigger': True,
-                        'confirm': bool(confirmation_view),
-                        'confirmation_view': confirmation_view or DEFAULT_CONFIRM_VIEW,
-                        'url': transition.actbox_url %
-                            {'content_url': self.context.absolute_url(),
-                             'portal_url': '',
-                             'folder_url': ''},
-                        'icon': transition.actbox_icon %
-                            {'content_url': self.context.absolute_url(),
-                             'portal_url': self.portal_url,
-                             'folder_url': ''},
+                        "title": translate(
+                            safe_text(transition.title),
+                            domain="plone",
+                            context=self.request,
+                        ),
+                        "description": transition.description,
+                        "name": transition.actbox_name,
+                        "may_trigger": True,
+                        "confirm": bool(confirmation_view),
+                        "confirmation_view": confirmation_view or DEFAULT_CONFIRM_VIEW,
+                        "url": transition.actbox_url
+                        % {
+                            "content_url": self.context.absolute_url(),
+                            "portal_url": "",
+                            "folder_url": "",
+                        },
+                        "icon": transition.actbox_icon
+                        % {
+                            "content_url": self.context.absolute_url(),
+                            "portal_url": self.portal_url,
+                            "folder_url": "",
+                        },
                     }
                     if not mayTrigger:
-                        tInfo['may_trigger'] = False
+                        tInfo["may_trigger"] = False
                         # mayTrigger.msg is a 'zope.i18nmessageid.message.Message', translate it now
-                        tInfo['reason'] = translate(mayTrigger.msg, context=self.request)
+                        tInfo["reason"] = translate(
+                            mayTrigger.msg, context=self.request
+                        )
                     res.append(tInfo)
 
         self.sortTransitions(res)
         if caching:
             # store transitions in case getTransitions is called several times
-            setattr(self, '_transitions', res)
+            setattr(self, "_transitions", res)
         return res
 
     def _transitionsToConfirmInfos(self):
@@ -414,43 +525,44 @@ class ActionsPanelView(BrowserView):
         if type(transitions) is not dict:
             transitions = dict([(t, DEFAULT_CONFIRM_VIEW) for t in transitions])
         else:
-            for name, confirm_view in transitions.iteritems():
+            for name, confirm_view in transitions.items():
                 if not confirm_view:
                     transitions[name] = DEFAULT_CONFIRM_VIEW
         return transitions
 
     def _transitionsToConfirm(self):
         """
-          Return the list of transitions the user will have to confirm, aka
-          the user will be able to enter a comment for.
-          This is a per class_name or portal_type list of transitions to confirm.
-          So for example, this could be :
-          ('ATDocument.reject', 'Document.publish', 'Collection.publish', )
-          --> ATDocument is a class_name and Document is a portal_type for example
-          The list can also be a dict with the key being the transition name to
-          confirm and the value being the name of the view to call to confirm
-          the transition. eg:
-          {'Document.reject': 'simpleconfirmview', 'Mytype.cancel': 'messageconfirmview'}
-          If no confirmation view is provided (empty string) imio.actionspanel confirmation
-          default view is used instead.
+        Return the list of transitions the user will have to confirm, aka
+        the user will be able to enter a comment for.
+        This is a per class_name or portal_type list of transitions to confirm.
+        So for example, this could be :
+        ('ATDocument.reject', 'Document.publish', 'Collection.publish', )
+        --> ATDocument is a class_name and Document is a portal_type for example
+        The list can also be a dict with the key being the transition name to
+        confirm and the value being the name of the view to call to confirm
+        the transition. eg:
+        {'Document.reject': 'simpleconfirmview', 'Mytype.cancel': 'messageconfirmview'}
+        If no confirmation view is provided (empty string) imio.actionspanel confirmation
+        default view is used instead.
         """
         values = api.portal.get_registry_record(
-            'imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions')
+            "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions"
+        )
         if values is None:
             return ()
-        return dict([val.split('|') for val in values])
+        return dict([val.split("|") for val in values])
 
     def _checkTransitionGuard(self, guard, sm, wf_def, ob):
         """
-          This method is similar to DCWorkflow.Guard.check, but allows to
-          retrieve the truth value as a appy.gen.No instance, not simply "1"
-          or "0".
+        This method is similar to DCWorkflow.Guard.check, but allows to
+        retrieve the truth value as a appy.gen.No instance, not simply "1"
+        or "0".
         """
         u_roles = None
         if wf_def.manager_bypass:
             # Possibly bypass.
             u_roles = sm.getRolesInContext(ob)
-            if 'Manager' in u_roles:
+            if "Manager" in u_roles:
                 return 1
         if guard.permissions:
             for p in guard.permissions:
@@ -471,9 +583,9 @@ class ActionsPanelView(BrowserView):
             # Require at least one of the specified groups.
             u = sm.getUser()
             b = aq_base(u)
-            if hasattr(b, 'getGroupsInContext'):
+            if hasattr(b, "getGroupsInContext"):
                 u_groups = u.getGroupsInContext(ob)
-            elif hasattr(b, 'getGroups'):
+            elif hasattr(b, "getGroups"):
                 u_groups = u.getGroups()
             else:
                 u_groups = ()
@@ -490,130 +602,161 @@ class ActionsPanelView(BrowserView):
         return 1
 
     def getTransitionTitle(self, transition):
-        '''Render the transition title including portal_type title if necessary.'''
-        transition_title = transition['title']
+        """Render the transition title including portal_type title if necessary."""
+        transition_title = transition["title"]
         if self.appendTypeNameToTransitionLabel:
-            typesTool = api.portal.get_tool('portal_types')
+            typesTool = api.portal.get_tool("portal_types")
             type_info = typesTool.getTypeInfo(self.context)
             type_info_title = type_info.Title()
             if isinstance(type_info_title, Message):
                 type_info_title = translate(type_info_title, context=self.request)
-            transition_title = u"{0} {1}".format(safe_unicode(transition_title),
-                                                 safe_unicode(type_info_title))
+            transition_title = "{0} {1}".format(
+                safe_text(transition_title), safe_text(type_info_title)
+            )
         return transition_title
 
     def computeTriggerTransitionLink(self, transition):
         """ """
-        return "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}&" \
+        return (
+            "{0}/{1}?transition={2}&actionspanel_view_name={3}{4}&"
             "force_redirect_after_transition={5}".format(
                 self.context.absolute_url(),
-                transition['confirmation_view'],
-                transition['id'],
+                transition["confirmation_view"],
+                transition["id"],
                 self.__name__,
-                not transition['confirm'] and '&form.submitted=1' or '',
-                self.forceRedirectAfterTransition and '1' or '0')
+                not transition["confirm"] and "&form.submitted=1" or "",
+                self.forceRedirectAfterTransition and "1" or "0",
+            )
+        )
 
     def computeTriggerTransitionOnClick(self, transition):
         """ """
-        transition_ids = [tr['id'] for tr in self.getTransitions()]
+        transition_ids = [tr["id"] for tr in self.getTransitions()]
         # if transition is no more available, this means that element's transition
         # was already triggered by another user or in another tab, we just refresh the page
-        if not transition or transition['id'] not in transition_ids:
-            return 'window.location.href=window.location.href;'
-        if not transition['confirm']:
-            return "applyWithComments(baseUrl='{0}', viewName='@@triggertransition', " \
-                "{{'transition': '{1}'}}, this, force_redirect={2}, " \
+        if not transition or transition["id"] not in transition_ids:
+            return "window.location.href=window.location.href;"
+        if not transition["confirm"]:
+            return (
+                "applyWithComments(baseUrl='{0}', viewName='@@triggertransition', "
+                "{{'transition': '{1}'}}, this, force_redirect={2}, "
                 "event_id='ap_transition_triggered');".format(
                     self.context.absolute_url(),
-                    transition['id'],
-                    self.forceRedirectAfterTransition and '1' or '0')
+                    transition["id"],
+                    self.forceRedirectAfterTransition and "1" or "0",
+                )
+            )
         else:
-            return ''
+            return ""
 
     def computeDeleteGivenUIDOnClick(self):
         """ """
         return "deleteElement(baseUrl='{0}', viewName='@@delete_givenuid', object_uid='{1}');".format(
-            self.context.absolute_url(),
-            self.context.UID())
+            self.context.absolute_url(), self.context.UID()
+        )
 
     def computeActionOnClick(self, action):
         """ """
-        if 'preventDefault' not in action:
-            action = action.replace('javascript:', 'javascript:event.preventDefault();')
+        if "preventDefault" not in action:
+            action = action.replace("javascript:", "javascript:event.preventDefault();")
         return action
 
     def addableContents(self):
         """
-          Return addable content types.
+        Return addable content types.
         """
         if not self.context.isPrincipiaFolderish:
             return []
-        factories_view = getMultiAdapter((self.context, self.request),
-                                         name='folder_factories')
+        factories_view = getMultiAdapter(
+            (self.context, self.request), name="folder_factories"
+        )
         return factories_view.addable_types()
 
     def listObjectButtonsActions(self):
         """
-          Return a list of object_buttons actions coming from portal_actions/portal_types.
+        Return a list of object_buttons actions coming from portal_actions/portal_types.
         """
-        actionsTool = api.portal.get_tool('portal_actions')
-        typesTool = api.portal.get_tool('portal_types')
+        actionsTool = api.portal.get_tool("portal_actions")
+        typesTool = api.portal.get_tool("portal_types")
         # filter acceptable/ignorable actions before evaluating the TAL expression
-        actions = [act for act in (actionsTool.listActions(categories=['object_buttons']) +
-                                   tuple(typesTool.listActions(object=self.context, category='object_buttons')))
-                   if (self.ACCEPTABLE_ACTIONS and act.id in self.ACCEPTABLE_ACTIONS) or
-                      (not self.ACCEPTABLE_ACTIONS and act.id not in self.IGNORABLE_ACTIONS)]
+        actions = [
+            act
+            for act in (
+                actionsTool.listActions(categories=["object_buttons"])
+                + tuple(
+                    typesTool.listActions(
+                        object=self.context, category="object_buttons"
+                    )
+                )
+            )
+            if (self.ACCEPTABLE_ACTIONS and act.id in self.ACCEPTABLE_ACTIONS)
+            or (not self.ACCEPTABLE_ACTIONS and act.id not in self.IGNORABLE_ACTIONS)
+        ]
         ec = actionsTool._getExprContext(self.context)
         actions = [ActionInfo(action, ec) for action in actions]
-        objectButtonActions = [act for act in actions if act['visible'] and act['allowed'] and act['available']]
+        objectButtonActions = [
+            act
+            for act in actions
+            if act["visible"] and act["allowed"] and act["available"]
+        ]
 
         res = []
         for action in objectButtonActions:
             act = action.copy()
+            # CSRF token, as Plone's actions menu
+            act["url"] = addTokenToUrl(act["url"], self.request)
             # We try to append the url of the icon of the action
             # look on the action itself
-            if act['icon']:
+            if act["icon"]:
                 # make sure we only have the action icon name not a complete
                 # path including portal_url or so, just take care that we do not have
                 # an image in a static resource folder
-                splittedIconPath = act['icon'].split('/')
-                if len(splittedIconPath) > 1 and '++resource++' in splittedIconPath[-2]:
+                splittedIconPath = act["icon"].split("/")
+                if len(splittedIconPath) > 1 and "++resource++" in splittedIconPath[-2]:
                     # keep last 2 parts of the path
-                    act['icon'] = '/'.join((splittedIconPath[-2], splittedIconPath[-1], ))
+                    act["icon"] = "/".join(
+                        (
+                            splittedIconPath[-2],
+                            splittedIconPath[-1],
+                        )
+                    )
                 else:
-                    act['icon'] = splittedIconPath[-1]
+                    act["icon"] = splittedIconPath[-1]
             res.append(act)
         return res
 
     def triggerTransition(self, transition, comment, redirect=True):
         """
-          Triggers a p_transition on self.context.
+        Triggers a p_transition on self.context.
         """
-        wfTool = api.portal.get_tool('portal_workflow')
-        plone_utils = api.portal.get_tool('plone_utils')
+        wfTool = api.portal.get_tool("portal_workflow")
+        plone_utils = api.portal.get_tool("plone_utils")
         try:
-            wfTool.doActionFor(self.context,
-                               transition,
-                               comment=comment)
-        except Exception, exc:
+            wfTool.doActionFor(self.context, transition, comment=comment)
+        except Exception as exc:
             # abort because element state was changed
             transaction.abort()
             import traceback
+
             logger.error(traceback.format_exc())
             msg = exc.message if hasattr(exc, "message") else repr(exc)
-            plone_utils.addPortalMessage(msg, type='warning')
+            plone_utils.addPortalMessage(msg, type="warning")
             return
 
         # use transition title to translate so if several transitions have the same title,
         # we manage only one translation
-        transition_title = wfTool.getWorkflowsFor(self.context)[0].transitions[transition].title or \
-            transition
+        transition_title = (
+            wfTool.getWorkflowsFor(self.context)[0].transitions[transition].title
+            or transition
+        )
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
-        msg = _(u'%s_done_descr' % safe_unicode(transition_title),
-                default=_plone("Item state changed."))
+        msg = _(
+            "%s_done_descr" % safe_text(transition_title),
+            default=_plone("Item state changed."),
+        )
         plone_utils.addPortalMessage(msg)
 
-        http_referer = self.request.get('HTTP_REFERER')
+        http_referer = self.request.get("HTTP_REFERER")
         # After having triggered a wfchange, it the current user
         # can not access the obj anymore, try to find a place viewable by the user
         redirectToUrl = self._redirectToViewableUrl()
@@ -627,17 +770,18 @@ class ActionsPanelView(BrowserView):
 
     def _redirectToViewableUrl(self):
         """
-          Return a url the user may access.
-          This is called when user does not have access anymore to
-          the object he triggered a transition for.
-          First check if HTTP_REFERER is not the object not accessible, if it is not, we redirect
-          to HTTP_REFERER, but if it is, we check parents until we find a viewable parent.
+        Return a url the user may access.
+        This is called when user does not have access anymore to
+        the object he triggered a transition for.
+        First check if HTTP_REFERER is not the object not accessible, if it is not, we redirect
+        to HTTP_REFERER, but if it is, we check parents until we find a viewable parent.
         """
         return findViewableURL(self.context, self.request, self.member)
 
     def getCurrentFolder(self):
-        plone_view = getMultiAdapter((self.context, self.request), name='plone')
-        return plone_view.getCurrentFolder()
+        return getMultiAdapter(
+            (self.context, self.request), name="plone_context_state"
+        ).folder()
 
     def isMarked(self, interface_name, context=None):
         if interface_name is None:
@@ -653,55 +797,58 @@ class ActionsPanelView(BrowserView):
 
 class DeleteGivenUidView(BrowserView):
     """
-      View that ease deletion of elements by not checking the 'Delete objects' permission on parent
-      but only on the object to delete itself (default implentation of IContentDeletable.mayDelete).
-      Callable using self.portal.restrictedTraverse('@@delete_givenuid)(object_to_delete.UID()) in the code
-      and using classic traverse in a url : http://nohost/plonesite/delete_givenuid?object_uid=anUID
+    View that ease deletion of elements by not checking the 'Delete objects' permission on parent
+    but only on the object to delete itself (default implentation of IContentDeletable.mayDelete).
+    Callable using self.portal.restrictedTraverse('@@delete_givenuid)(object_to_delete.UID()) in the code
+    and using classic traverse in a url : http://nohost/plonesite/delete_givenuid?object_uid=anUID
     """
+
     def __init__(self, context, request):
         super(DeleteGivenUidView, self).__init__(context, request)
         self.context = context
         self.request = request
         self.portal = api.portal.get()
 
-    def __call__(self,
-                 object_uid,
-                 redirect=True,
-                 catch_before_delete_exception=True,
-                 historize_in_parent=False):
+    def __call__(
+        self,
+        object_uid,
+        redirect=True,
+        catch_before_delete_exception=True,
+        historize_in_parent=False,
+    ):
         """ """
         # redirect can by passed by JS, in this case, we may receive '0' or '1'
-        redirect = self.request.form.get('redirect', redirect)
-        if redirect in ('0', 'null', 0):
+        redirect = self.request.form.get("redirect", redirect)
+        if redirect in ("0", "null", 0):
             redirect = False
         # Get the object to delete, if not found using UID index,
         # try with contained_uids index
         objs = uuidsToObjects(uuids=[object_uid], check_contained_uids=True)
-        if not objs and "uid_catalog" in self.portal:
-            objs = uuidsToObjects(uuids=[object_uid], catalog="uid_catalog")
         if not objs:
-            raise KeyError('The given uid could not be found!')
+            raise KeyError("The given uid could not be found!")
         obj = objs[0]
 
         # we use an adapter to manage if we may delete the object
         # that checks if the user has the 'Delete objects' permission
         # on the content by default but that could be overrided
         if IContentDeletable(obj).mayDelete():
-            msg = {'message': _('object_deleted'),
-                   'type': 'info'}
+            msg = {"message": _("object_deleted"), "type": "info"}
             # remove the object
             # just manage BeforeDeleteException because we rise it ourselves
             from OFS.ObjectManager import BeforeDeleteException
+
             try:
                 unrestrictedRemoveGivenObject(obj)
-            except BeforeDeleteException, exc:
+            except BeforeDeleteException as exc:
                 # abort because element was removed
                 transaction.abort()
-                msg = {'message': u'{0} ({1})'.format(
-                    exc.message, exc.__class__.__name__),
-                    'type': 'error'}
+                exc_msg = str(exc)
+                msg = {
+                    "message": "{0} ({1})".format(exc_msg, exc.__class__.__name__),
+                    "type": "error",
+                }
                 if not catch_before_delete_exception:
-                    raise BeforeDeleteException(exc.message)
+                    raise BeforeDeleteException(exc_msg)
         else:
             # as the action calling delete_givenuid is already protected by the check
             # made in the 'if' here above, if we arrive here it is that user is doing
@@ -714,26 +861,30 @@ class DeleteGivenUidView(BrowserView):
                 obj.aq_inner.aq_parent,
                 "deleted_children_history",
                 "delete_element",
-                comments=self.request.form.get('comment'))
+                comments=self.request.form.get("comment"),
+            )
 
         # Redirect the user to the correct page and display the correct message.
         self.portal.plone_utils.addPortalMessage(**msg)
-        if redirect and not msg['type'] == 'error':
+        if redirect and not msg["type"] == "error":
             return self._findViewablePlace(obj)
         else:
             self.request.RESPONSE.setStatus(204)
 
     def _findViewablePlace(self, obj):
-        '''
-          Find a place the current user may access.
-          By default, it will try to find a viewable parent.
-        '''
+        """
+        Find a place the current user may access.
+        By default, it will try to find a viewable parent.
+        """
         # redirect to HTTP_REFERER if it is not delete object
-        if not self.request['HTTP_REFERER'].startswith(self.context.absolute_url()):
-            return self.request['HTTP_REFERER']
+        if not self.request["HTTP_REFERER"].startswith(self.context.absolute_url()):
+            return self.request["HTTP_REFERER"]
         parent = obj.aq_inner.aq_parent
         member = api.user.get_current()
-        while (not member.has_permission('View', parent) and not parent.meta_type == 'Plone Site'):
+        while (
+            not member.has_permission("View", parent)
+            and not parent.meta_type == "Plone Site"
+        ):
             parent = parent.aq_inner.aq_parent
         return parent.absolute_url()
 
@@ -743,19 +894,82 @@ class AsyncActionsPanelView(BrowserView):
 
     def _convert_form_values(self):
         """As values are sent by JS, we need to change 'false' to False, 'true' to True, ..."""
-        values = {key: json.loads(value) for key, value in self.request.form.items()}
+        values = {
+            key: json.loads(value) for key, value in list(self.request.form.items())
+        }
         return values
 
     def show(self):
         """Will we show the viewlet on context?"""
-        return 'ajax_load' not in self.request
+        return "ajax_load" not in self.request
 
     def __call__(self, **kwargs):
         """ """
         kwargs.update(self._convert_form_values())
         # remove '_' from kwargs, it is the ajax_load id
         # if we leave it, ram.cached __call__ is never cached as this value is always different
-        if '_' in kwargs:
-            kwargs.pop('_')
-        rendered_actions_panel = self.context.restrictedTraverse('@@actions_panel')(**kwargs)
+        if "_" in kwargs:
+            kwargs.pop("_")
+        rendered_actions_panel = self.context.restrictedTraverse("@@actions_panel")(
+            **kwargs
+        )
         return rendered_actions_panel
+
+
+class FolderPositionView(BrowserView):
+    """
+    Move the element p_id of the context folder, used by the arrows.
+    Replaces the Plone 4 skin script 'folder_position' (removed in Plone 6),
+    same parameters, message and redirect (template_id, relative or absolute URL).
+    """
+
+    portal_type_aware = False
+
+    def __call__(self, position, id, template_id=None):
+        position = position.lower()
+        if position == "ordered":
+            # id is the field to order on
+            self.context.orderObjects(id)
+        elif position == "top":
+            self.context.moveObjectsToTop(id)
+        elif position == "bottom":
+            self.context.moveObjectsToBottom(id)
+        elif position in ("up", "down"):
+            self._move(position, id)
+        plone_utils = api.portal.get_tool("plone_utils")
+        plone_utils.reindexOnReorder(self.context)
+        plone_utils.addPortalMessage(_plone("Item's position has changed."))
+        url = urljoin(
+            self.context.absolute_url() + "/",
+            template_id or self.request.get("template_id", "folder_contents"),
+        )
+        if not api.portal.get_tool("portal_url").isURLInPortal(url):
+            url = self.context.absolute_url()
+        return self.request.response.redirect(url)
+
+    def _move(self, position, id):
+        """Move p_id one step up or down, over the elements of another portal_type
+        when portal_type_aware."""
+        ids = list(self.context.objectIds())
+        pos = ids.index(id)
+        neighbours = reversed(ids[:pos]) if position == "up" else ids[pos + 1 :]
+        portal_type = self.context[id].portal_type
+        for delta, neighbour_id in enumerate(neighbours, 1):
+            if (
+                not self.portal_type_aware
+                or self.context[neighbour_id].portal_type == portal_type
+            ):
+                if position == "up":
+                    self.context.moveObjectsUp(id, delta=delta)
+                else:
+                    self.context.moveObjectsDown(id, delta=delta)
+                return
+
+
+class FolderPositionTypeAwareView(FolderPositionView):
+    """
+    'folder_position' moving up and down over the elements of another portal_type.
+    Replaces the skin script 'folder_position_typeaware'.
+    """
+
+    portal_type_aware = True

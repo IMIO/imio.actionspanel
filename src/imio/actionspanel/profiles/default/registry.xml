@@ -3,4 +3,23 @@
     <records interface="imio.actionspanel.browser.registry.IImioActionsPanelConfig">
     </records>
 
+    <records prefix="plone.bundles/imio-actionspanel-variables"
+             interface="plone.base.interfaces.IBundleRegistry">
+        <value key="enabled">True</value>
+        <value key="jscompilation">actions_panel_javascript_variables.js</value>
+        <value key="load_async">False</value>
+        <value key="load_defer">False</value>
+    </records>
+
+    <!-- not deferred: the comment forms call preventDefaultClick in an inline script -->
+    <records prefix="plone.bundles/imio-actionspanel"
+             interface="plone.base.interfaces.IBundleRegistry">
+        <value key="enabled">True</value>
+        <value key="depends">plone</value>
+        <value key="jscompilation">++resource++imio.actionspanel/actionspanel.js</value>
+        <value key="csscompilation">++resource++imio.actionspanel/actionspanel.css</value>
+        <value key="load_async">False</value>
+        <value key="load_defer">False</value>
+    </records>
+
 </registry>
