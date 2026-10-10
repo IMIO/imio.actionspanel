@@ -70,6 +70,20 @@ Save the modal
 Cancel the modal
     Click button  css=.modal-footer [name="form.buttons.cancel"]
 
+Click the modal button
+    [Documentation]  Button of the form shown in the modal (moved to the modal footer), by id
+    [Arguments]  ${id}
+    Click button  css=.modal-footer [id="${id}"]
+
+Input the modal field
+    [Documentation]  Field of the form shown in the modal, by id
+    [Arguments]  ${id}  ${text}
+    Input text  ${MODAL} [id="${id}"]  ${text}
+
+The modal shows the error
+    [Arguments]  ${text}
+    Wait until element contains  ${MODAL} .field.error  ${text}
+
 The modal is closed
     Wait until page does not contain element  ${MODAL}
 

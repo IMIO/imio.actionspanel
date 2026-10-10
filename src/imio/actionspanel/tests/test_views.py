@@ -490,6 +490,27 @@ class TestActionsPanelView(BaseViewsTestCase):
             rendered,
         )
         self.assertIn('class="apButton apButtonAction apButtonAction_cut"', rendered)
+        # an action with a 'modal' property (Plone's rename) opens in a modal: the button is in a link
+        self.assertEqual(rendered.count("pat-plone-modal"), 2)
+        self.assertIn(
+            '<a class="pat-plone-modal link-overlay-actionspanel" '
+            'href="http://nohost/plone/folder/doc/object_rename?_authenticator={0}" '
+            'data-pat-plone-modal="{{}}">'.format(self.token()),
+            rendered,
+        )
+        # as icon, with the options of the action
+        self.portal.portal_actions.object_buttons.rename.manage_changeProperties(
+            modal='{"actionOptions": {"redirectOnResponse": true}}'
+        )
+        rendered = self.panel().renderActions()
+        self.assertIn(
+            'class="apButtonAction_form_rename pat-plone-modal link-overlay-actionspanel"',
+            rendered,
+        )
+        self.assertIn(
+            'data-pat-plone-modal="{&quot;actionOptions&quot;: {&quot;redirectOnResponse&quot;: true}}"',
+            rendered,
+        )
         # a javascript action uses onclick, link_target is used
         self.portal.portal_actions.object_buttons._setObject(
             "js_action",

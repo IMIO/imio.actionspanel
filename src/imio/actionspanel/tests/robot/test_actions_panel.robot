@@ -99,6 +99,21 @@ The action buttons copy and paste the document
     Go to  ${FOLDER_URL}/copy_of_doc1
     The content title is  First document
 
+An action with a modal property opens its form in a modal
+    [Documentation]  Plone's rename, with the modal options of imio.pm.wsclient's send actions (testing.py)
+    Go to  ${DOC_URL}
+    Click the action button  rename
+    The modal is open
+    Location should be  ${DOC_URL}
+    Input the modal field  form-widgets-new_title  ${EMPTY}
+    Click the modal button  form-buttons-Rename
+    The modal shows the error  Required input is missing
+    Input the modal field  form-widgets-new_title  Renamed document
+    Input the modal field  form-widgets-new_id  renamed
+    Click the modal button  form-buttons-Rename
+    Wait until location is  ${FOLDER_URL}/renamed
+    The content title is  Renamed document
+
 A member only gets the actions she may do
     Publish the document
     Go to  ${DOC_URL}

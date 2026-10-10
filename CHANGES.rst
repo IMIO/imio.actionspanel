@@ -24,6 +24,8 @@ Changelog
   [duchenean]
 - Fixed instance startup (`ComponentLookupError` on `cmf.ManageProperties`) when the package ZCML is loaded before `Products.CMFCore`.
   [chris-adam]
+- Open the action forms in a modal on Plone 6: object_buttons actions with a `modal` property (as imio.pm.wsclient's) are `pat-plone-modal` links, as in Plone's Actions menu.
+  [chris-adam]
 
 
 1.71 (2026-08-19)

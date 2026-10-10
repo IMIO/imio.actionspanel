@@ -155,6 +155,10 @@ class RobotLayer(PloneSandboxLayer):
             "imio.actionspanel.browser.registry.IImioActionsPanelConfig.transitions",
             ["Document.publish|"],
         )
+        # Plone's rename opens in a modal ({}): redirect on success, as imio.pm.wsclient's send actions
+        portal.portal_actions.object_buttons.rename.manage_changeProperties(
+            modal='{"actionOptions": {"redirectOnResponse": true}}'
+        )
         setRequest(None)
 
 
