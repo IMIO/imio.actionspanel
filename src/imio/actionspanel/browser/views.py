@@ -752,7 +752,7 @@ class ActionsPanelView(BrowserView):
         # add a portal message, we try to translate a specific one or add 'Item state changed.' as default
         msg = _(
             "%s_done_descr" % safe_text(transition_title),
-            default=_plone("Item state changed."),
+            default=translate(_plone("Item state changed."), context=self.request),
         )
         plone_utils.addPortalMessage(msg)
 

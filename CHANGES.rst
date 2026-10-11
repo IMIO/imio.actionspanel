@@ -26,6 +26,8 @@ Changelog
   [chris-adam]
 - Open the action forms in a modal on Plone 6: object_buttons actions with a `modal` property (as imio.pm.wsclient's) are `pat-plone-modal` links, as in Plone's Actions menu.
   [chris-adam]
+- Translate the default transition message (`Item state changed.`): Plone 6's status message template doesn't.
+  [chris-adam]
 
 
 1.71 (2026-08-19)

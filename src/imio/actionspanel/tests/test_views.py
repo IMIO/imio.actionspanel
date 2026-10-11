@@ -11,6 +11,7 @@ from plone import api
 from plone.app.testing import login
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.i18n.utility import setLanguageBinding
 from plone.registry import field
 from plone.registry import Record
 from Products.CMFCore.ActionInformation import Action
@@ -1026,6 +1027,18 @@ class TestActionsPanelView(BaseViewsTestCase):
             "My comment",
         )
         self.assertEqual(self.status_messages(), [("Item state changed.", "info")])
+        # the default message is translated (Plone 6's status message template has no i18n domain)
+        language = api.portal.get_registry_record("plone.default_language")
+        api.portal.set_registry_record("plone.default_language", "fr")
+        setLanguageBinding(self.request)
+        view.triggerTransition("retract", "")
+        self.assertEqual(
+            self.status_messages(),
+            [("L'\xe9tat de l'\xe9l\xe9ment a chang\xe9.", "info")],
+        )
+        api.portal.set_registry_record("plone.default_language", language)
+        setLanguageBinding(self.request)
+        self.wft.doActionFor(self.doc, "submit")
         # HTTP_REFERER is returned when redirecting
         self.request["HTTP_REFERER"] = "http://nohost/plone/folder"
         self.assertEqual(
