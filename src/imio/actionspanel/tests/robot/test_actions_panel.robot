@@ -61,7 +61,7 @@ The delete button deletes the document after a confirmation
     The document is deleted
 
 Delete with comments deletes the element and shows its parent
-    [Documentation]  On a folder: on a document, the form deletes the parent (Known issues in MIGRATION.md)
+    [Documentation]  On a folder (the element itself is deleted, a document too)
     Go to  ${SUBFOLDER_URL}
     Open the delete with comments form
     Input the modal comment  No more needed
