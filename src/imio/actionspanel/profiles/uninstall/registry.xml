@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<registry>
+
+    <records interface="imio.actionspanel.browser.registry.IImioActionsPanelConfig"
+             remove="True" />
+
+    <records prefix="plone.bundles/imio-actionspanel-variables"
+             interface="plone.base.interfaces.IBundleRegistry"
+             remove="True" />
+
+    <records prefix="plone.bundles/imio-actionspanel"
+             interface="plone.base.interfaces.IBundleRegistry"
+             remove="True" />
+
+</registry>

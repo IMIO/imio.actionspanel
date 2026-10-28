@@ -3,6 +3,9 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:plone="http://namespaces.plone.org/plone">
 
+    <!-- cmf.ManageProperties, when loaded before Products.CMFCore (instance `zcml` option) -->
+    <include package="Products.CMFCore" file="permissions.zcml" />
+
     <!-- Publish static files -->
     <browser:resourceDirectory
         name="imio.actionspanel"
@@ -61,5 +64,18 @@
         name="actions_panel_javascript_variables.js"
         class=".jsvariables.JSVariables"
         permission="zope.Public" />
+
+    <!-- Arrows, were skin scripts in Plone 4; no layer: dependents' tests call them -->
+    <browser:page
+        for="*"
+        name="folder_position"
+        class=".views.FolderPositionView"
+        permission="cmf.ManageProperties" />
+
+    <browser:page
+        for="*"
+        name="folder_position_typeaware"
+        class=".views.FolderPositionTypeAwareView"
+        permission="cmf.ManageProperties" />
 
 </configure>

@@ -7,7 +7,8 @@
     <a class="#"
        href="@@triggertransition"
        tal:attributes="href python: view.computeTriggerTransitionLink(transition);
-                       class python: transition['confirm'] and 'link-overlay-actionspanel transition-overlay' or 'prevent-default';
+                       class python: transition['confirm'] and 'pat-plone-modal link-overlay-actionspanel transition-overlay' or 'prevent-default';
+                       data-pat-plone-modal python: transition['confirm'] and view.TRANSITION_MODAL_OPTIONS or None;
                        onClick python: view.computeTriggerTransitionOnClick(transition);"
        tal:define="icon_url transition/icon;">
       <tal:comment replace="nothing">Icon</tal:comment>

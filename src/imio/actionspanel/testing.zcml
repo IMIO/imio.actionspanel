@@ -1,6 +1,41 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="imio.actionspanel">
+
+  <include package="imio.actionspanel" />
+
+  <!-- The viewlet is only a sample in browser/configure.zcml: dependents register it with their params -->
+  <browser:viewlet
+      name="imio.actionspanel"
+      for="*"
+      manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
+      layer="imio.actionspanel.interfaces.IActionsPanelLayer"
+      class=".browser.viewlets.ActionsPanelViewlet"
+      template="browser/actions_panel_viewlet.pt"
+      permission="zope2.View" />
+
+  <!-- Commented out in configure.zcml: dependents enable it to check IContentDeletable on deletion -->
+  <subscriber
+      for="OFS.interfaces.IItem
+           OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".events.onObjWillBeRemoved" />
+
+  <!-- Robot: icons panel and async panel above the content, robot site only (testing.py) -->
+  <browser:viewlet
+      name="imio.actionspanel.robot_icons"
+      for="*"
+      manager="plone.app.layout.viewlets.interfaces.IAboveContentBody"
+      layer=".testing.IRobotLayer"
+      class=".testing.RobotIconsViewlet"
+      permission="zope2.View" />
+  <browser:viewlet
+      name="imio.actionspanel.robot_async"
+      for="*"
+      manager="plone.app.layout.viewlets.interfaces.IAboveContentBody"
+      layer=".testing.IRobotLayer"
+      class=".testing.RobotAsyncViewlet"
+      template="browser/actions_panel_viewlet.pt"
+      permission="zope2.View" />
 
 </configure>

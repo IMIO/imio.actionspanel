@@ -1,3 +1,8 @@
+.. image:: https://github.com/IMIO/imio.actionspanel/actions/workflows/main.yml/badge.svg
+    :target: https://github.com/IMIO/imio.actionspanel/actions/workflows/main.yml
+.. image:: https://coveralls.io/repos/github/IMIO/imio.actionspanel/badge.svg
+    :target: https://coveralls.io/github/IMIO/imio.actionspanel
+
 imio.actionspanel
 =================
 

@@ -3,14 +3,15 @@
 
     <tal:comment replace="nothing">Delete icon/button</tal:comment>
     <td class="noPadding" i18n:domain="plone" tal:define="dummy view/saveHasActions;">
-      <a class="link-overlay-actionspanel delete-comments-overlay"
-         tal:attributes="href string:@@delete_with_comments?uid=${objectUID};">
+      <a class="pat-plone-modal link-overlay-actionspanel delete-comments-overlay"
+         tal:attributes="href string:${context/absolute_url}/@@delete_with_comments?uid=${objectUID};
+                         data-pat-plone-modal view/DELETE_MODAL_OPTIONS;">
 
         <tal:comment replace="nothing">Icon</tal:comment>
         <img tal:condition="useIcons"
              i18n:attributes="title"
              title="Delete"
-             tal:attributes="src string:${view/portal_url}/delete_icon.png;" />
+             tal:attributes="src python: view.iconUrl('plone-delete');" />
 
         <tal:comment replace="nothing">Button</tal:comment>
         <form tal:condition="python: not useIcons">

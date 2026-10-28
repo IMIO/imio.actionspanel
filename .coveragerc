@@ -1,0 +1,6 @@
+[report]
+include =
+    src/imio/actionspanel/*
+omit =
+    */test*
+    */__init__.py

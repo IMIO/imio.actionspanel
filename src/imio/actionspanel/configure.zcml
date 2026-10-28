@@ -1,7 +1,4 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:cmf="http://namespaces.zope.org/cmf"
-           xmlns:five="http://namespaces.zope.org/five"
            xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
            xmlns:i18n="http://namespaces.zope.org/i18n"
            i18n_domain="imio.actionspanel">
@@ -9,10 +6,9 @@
   <include package=".browser" />
   <include package="Products.GenericSetup" file="meta.zcml" />
 
+  <include package="imio.helpers" />
   <include package="imio.history" />
   <include package="collective.fingerpointing" />
-
-  <include file="upgrades.zcml" />
 
   <i18n:registerTranslations directory="locales" />
 
@@ -28,14 +24,18 @@
            name="deleted_children"
            provides="imio.history.interfaces.IImioHistory" />
 
-  <!-- File System Directory Views registration -->
-  <cmf:registerDirectory name="actionspanel_plone"/>
-
   <genericsetup:registerProfile
       name="default"
       title="imio.actionspanel"
       directory="profiles/default"
       description="Extension profile for imio.actionspanel."
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="imio.actionspanel uninstall"
+      directory="profiles/uninstall"
+      description="Uninstalls imio.actionspanel."
       provides="Products.GenericSetup.interfaces.EXTENSION" />
 
   <!-- Enable this if using IContentDeletable adapters or this will
