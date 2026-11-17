@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.72 (unreleased)
+1.72 (2026-11-17)
 -----------------
 
 - In `triggerTransition`, display the exception message as an `error` portal message instead of a `warning`.
