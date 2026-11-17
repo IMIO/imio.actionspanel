@@ -4,8 +4,8 @@ Changelog
 1.72 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- In `triggerTransition`, display the exception message as an `error` portal message instead of a `warning`.
+  [sgeulette]
 
 1.71 (2026-08-19)
 -----------------
